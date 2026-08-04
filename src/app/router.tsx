@@ -1,10 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <h1>Vurn Frontend</h1>,
-  },
+import { PublicRoutes } from "@/routes/PublicRoutes";
+
+export const router = createBrowserRouter([
+  ...PublicRoutes,
 ]);
 
 export default router;

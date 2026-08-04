@@ -17,7 +17,7 @@ export default function AppProviders({
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>{children}</BrowserRouter>
+      {children}
       </QueryClientProvider>
     </Provider>
   );
