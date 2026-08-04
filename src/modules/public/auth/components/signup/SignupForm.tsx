@@ -17,7 +17,14 @@ import { registerSchema } from "../../schemas/registerSchema";
 
 import { useSendOTPMutation } from "../../api/authMutations";
 
-export function SignupForm() {
+
+interface SignupFormProps {
+  onOTPSent: (email: string) => void;
+}
+
+export function SignupForm({
+  onOTPSent,
+}:SignupFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const sendOTPMutation = useSendOTPMutation();
@@ -31,21 +38,18 @@ export function SignupForm() {
 
   const onSubmit = (data: RegisterRequest) => {
     sendOTPMutation.mutate(data, {
-      onSuccess: (response) => {
-        console.log(response.message);
+  onSuccess: () => {
+    onOTPSent(data.email);
+  },
 
-        // Next Step:
-        // show OTP form
-      },
-
-      onError: (error) => {
-        console.error(error);
-      },
-    });
+  onError: (error) => {
+    console.error(error);
+  },
+});
   };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+    <div className="rounded-xl border border-white/10 bg-white/3 p-6 sm:p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* First & Last Name */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
