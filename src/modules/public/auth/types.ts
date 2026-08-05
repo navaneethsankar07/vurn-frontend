@@ -42,3 +42,13 @@ export interface LoginResponse {
   user: User;
   access: string;
 }
+
+export interface GoogleLoginRequest {
+  id_token: string;
+}
+
+export interface GoogleLoginResponse {
+  message: string;
+  user: User;
+  access: string;
+}

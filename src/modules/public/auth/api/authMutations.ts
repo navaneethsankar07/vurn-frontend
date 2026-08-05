@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { login, register, sendOTP } from "./authApi";
+import { googleLogin, login, register, sendOTP } from "./authApi";
 
 export const useSendOTPMutation = () => {
   return useMutation({
@@ -17,5 +17,11 @@ export const useRegisterMutation = () => {
 export const useLoginMutation = () => {
   return useMutation({
     mutationFn: login,
+  });
+};
+
+export const useGoogleLoginMutation = () => {
+  return useMutation({
+    mutationFn: googleLogin,
   });
 };

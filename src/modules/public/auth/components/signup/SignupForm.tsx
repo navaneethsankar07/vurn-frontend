@@ -16,6 +16,7 @@ import {
 import { registerSchema } from "../../schemas/registerSchema";
 
 import { useSendOTPMutation } from "../../api/authMutations";
+import { GoogleAuthButton } from "../shared/GoogleAuthButton";
 
 
 interface SignupFormProps {
@@ -235,9 +236,10 @@ export function SignupForm({
           <button
             type="button"
             aria-label="Continue with Google"
-            className="flex h-12 items-center justify-center rounded-sm border border-white/10 bg-black/40 transition-colors hover:bg-white/5"
+            className="flex h-12 items-center justify-center rounded-sm border border-white/10 bg-white transition-colors hover:bg-white/80 hover:border-black"
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24">
+            <GoogleAuthButton />
+            {/* <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
                 fill="#EA4335"
                 d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"
@@ -254,7 +256,7 @@ export function SignupForm({
                 fill="#34A853"
                 d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"
               />
-            </svg>
+            </svg> */}
           </button>
 
           <button

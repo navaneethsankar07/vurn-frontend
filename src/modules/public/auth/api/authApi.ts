@@ -1,7 +1,9 @@
 import api from "@/api/axios";
 
 import type {
-    LoginRequest,
+    GoogleLoginRequest,
+  GoogleLoginResponse,
+  LoginRequest,
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
@@ -25,6 +27,14 @@ export const register = async (
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>("/auth/login/", data);
+
+  return response.data;
+};
+
+export const googleLogin = async (
+  data: GoogleLoginRequest,
+): Promise<GoogleLoginResponse> => {
+  const response = await api.post("/auth/google/", data);
 
   return response.data;
 };
