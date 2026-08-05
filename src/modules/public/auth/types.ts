@@ -31,3 +31,14 @@ export interface RegisterResponse {
   user: User;
   access: string;
 }
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  message: string;
+  user: User;
+  access: string;
+}

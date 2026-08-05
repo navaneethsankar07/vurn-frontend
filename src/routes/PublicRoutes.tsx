@@ -2,6 +2,7 @@ import type { RouteObject } from "react-router-dom";
 
 import { PublicLayout } from "@/components/layouts/PublicLayout";
 import SignupPage from "@/modules/public/auth/pages/SignUpPage";
+import LoginPage from "@/modules/public/auth/pages/LoginPage";
 
 export const PublicRoutes: RouteObject[] = [
   {
@@ -15,6 +16,10 @@ export const PublicRoutes: RouteObject[] = [
         path: "/register",
         element: <SignupPage />,
       },
+      {
+  path: "/login",
+  element: <LoginPage />,
+},
     ],
   },
 ];
