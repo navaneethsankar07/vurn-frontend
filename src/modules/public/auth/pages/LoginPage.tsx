@@ -1,4 +1,3 @@
-// src/pages/LoginPage.tsx
 import { Link } from "react-router-dom";
 
 import { LoginForm } from "../components/login/LoginForm";
@@ -25,7 +24,7 @@ export default function LoginPage() {
           <p className="mt-6 text-sm text-gray-400">
             Don&apos;t have an account?{" "}
             <Link
-              to="/signup"
+              to="/register"
               className="font-medium text-primary hover:text-primary/80 transition-colors"
             >
               Sign Up

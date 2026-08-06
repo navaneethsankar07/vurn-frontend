@@ -1,12 +1,16 @@
 import api from "@/api/axios";
 
 import type {
-    GoogleLoginRequest,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  GoogleLoginRequest,
   GoogleLoginResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
   SendOTPResponse,
   VerifyOTPRequest,
 } from "../types";
@@ -35,6 +39,28 @@ export const googleLogin = async (
   data: GoogleLoginRequest,
 ): Promise<GoogleLoginResponse> => {
   const response = await api.post("/auth/google/", data);
+
+  return response.data;
+};
+
+export const forgotPassword = async (
+  data: ForgotPasswordRequest,
+): Promise<ForgotPasswordResponse> => {
+  const response = await api.post<ForgotPasswordResponse>(
+    "/auth/forgot-password/",
+    data,
+  );
+
+  return response.data;
+};
+
+export const resetPassword = async (
+  data: ResetPasswordRequest,
+): Promise<ResetPasswordResponse> => {
+  const response = await api.post<ResetPasswordResponse>(
+    "/auth/reset-password/",
+    data,
+  );
 
   return response.data;
 };

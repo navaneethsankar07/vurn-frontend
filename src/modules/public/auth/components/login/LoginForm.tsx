@@ -1,16 +1,18 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import {
-  loginSchema,
-  type LoginFormData,
-} from "../../schemas/loginSchema";
+
+import { loginSchema, type LoginFormData } from "../../schemas/loginSchema";
+
 import type { LoginRequest } from "../../types";
+
 import { useLoginMutation } from "../../api/authMutations";
 import { GoogleAuthButton } from "../shared/GoogleAuthButton";
 
@@ -18,6 +20,7 @@ interface LoginFormProps {}
 
 export function LoginForm({}: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
+
   const loginMutation = useLoginMutation();
 
   const {
@@ -54,7 +57,6 @@ export function LoginForm({}: LoginFormProps) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/3 p-6 sm:p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Email */}
         <div className="space-y-2">
           <Label
             htmlFor="email"
@@ -62,6 +64,7 @@ export function LoginForm({}: LoginFormProps) {
           >
             Email Address
           </Label>
+
           <Input
             id="email"
             type="email"
@@ -70,12 +73,12 @@ export function LoginForm({}: LoginFormProps) {
             {...register("email")}
             className="h-12 border-white/10 bg-black/40 text-white placeholder:text-gray-600 focus-visible:ring-primary/40 rounded-sm"
           />
+
           {errors.email && (
             <p className="text-xs text-red-500">{errors.email.message}</p>
           )}
         </div>
 
-        {/* Password */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label
@@ -84,13 +87,15 @@ export function LoginForm({}: LoginFormProps) {
             >
               Password
             </Label>
-            <a
-              href="#forgot-password"
-              className="text-xs font-mono uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
+
+            <Link
+              to="/forgot-password"
+              className="text-xs font-mono uppercase tracking-wider text-primary transition-colors hover:text-primary/80"
             >
               Forgot?
-            </a>
+            </Link>
           </div>
+
           <div className="relative">
             <Input
               id="password"
@@ -100,6 +105,7 @@ export function LoginForm({}: LoginFormProps) {
               {...register("password")}
               className="h-12 border-white/10 bg-black/40 pr-10 text-white placeholder:text-gray-600 focus-visible:ring-primary/40 rounded-sm"
             />
+
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
@@ -113,12 +119,12 @@ export function LoginForm({}: LoginFormProps) {
               )}
             </button>
           </div>
+
           {errors.password && (
             <p className="text-xs text-red-500">{errors.password.message}</p>
           )}
         </div>
 
-        {/* Submit */}
         <Button
           type="submit"
           disabled={loginMutation.isPending}
@@ -130,9 +136,11 @@ export function LoginForm({}: LoginFormProps) {
 
         <div className="flex items-center gap-4">
           <Separator className="flex-1 bg-white/10" />
+
           <span className="text-xs font-mono uppercase tracking-wider text-gray-500">
             Or
           </span>
+
           <Separator className="flex-1 bg-white/10" />
         </div>
 
@@ -140,7 +148,7 @@ export function LoginForm({}: LoginFormProps) {
           <button
             type="button"
             aria-label="Continue with Google"
-            className="flex h-12 items-center justify-center rounded-sm border border-white/10 bg-white transition-colors hover:bg-white/80 hover:border-black"
+            className="flex h-12 items-center justify-center rounded-sm border border-white/10 bg-white transition-colors hover:border-black hover:bg-white/80"
           >
             <GoogleAuthButton />
           </button>

@@ -1,6 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { googleLogin, login, register, sendOTP } from "./authApi";
+import {
+  forgotPassword,
+  googleLogin,
+  login,
+  register,
+  resetPassword,
+  sendOTP,
+} from "./authApi";
 
 export const useSendOTPMutation = () => {
   return useMutation({
@@ -23,5 +30,17 @@ export const useLoginMutation = () => {
 export const useGoogleLoginMutation = () => {
   return useMutation({
     mutationFn: googleLogin,
+  });
+};
+
+export const useForgotPasswordMutation = () => {
+  return useMutation({
+    mutationFn: forgotPassword,
+  });
+};
+
+export const useResetPasswordMutation = () => {
+  return useMutation({
+    mutationFn: resetPassword,
   });
 };
