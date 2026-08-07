@@ -9,23 +9,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
-import {
-  type RegisterRequest,
-} from "../../types";
+import { type RegisterRequest } from "../../types";
 
 import { registerSchema } from "../../schemas/registerSchema";
 
 import { useSendOTPMutation } from "../../api/authMutations";
 import { GoogleAuthButton } from "../shared/GoogleAuthButton";
 
-
 interface SignupFormProps {
   onOTPSent: (email: string) => void;
 }
 
-export function SignupForm({
-  onOTPSent,
-}:SignupFormProps) {
+export function SignupForm({ onOTPSent }: SignupFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const sendOTPMutation = useSendOTPMutation();
@@ -39,14 +34,14 @@ export function SignupForm({
 
   const onSubmit = (data: RegisterRequest) => {
     sendOTPMutation.mutate(data, {
-  onSuccess: () => {
-    onOTPSent(data.email);
-  },
+      onSuccess: () => {
+        onOTPSent(data.email);
+      },
 
-  onError: (error) => {
-    console.error(error);
-  },
-});
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   };
 
   return (
@@ -70,7 +65,9 @@ export function SignupForm({
               className="h-12 border-white/10 bg-black/40 text-white placeholder:text-gray-600 focus-visible:ring-amber-500/40 rounded-sm"
             />
             {errors.first_name && (
-              <p className="text-xs text-red-500">{errors.first_name.message}</p>
+              <p className="text-xs text-red-500">
+                {errors.first_name.message}
+              </p>
             )}
           </div>
 
@@ -203,10 +200,12 @@ export function SignupForm({
               </button>
             </div>
             {errors.confirm_password && (
-              <p className="text-xs text-red-500">{errors.confirm_password.message}</p>
+              <p className="text-xs text-red-500">
+                {errors.confirm_password.message}
+              </p>
             )}
           </div>
-          
+
           <div className="flex gap-1.5">
             <span className="h-1 flex-1 rounded-full bg-primary" />
             <span className="h-1 flex-1 rounded-full bg-primary" />
@@ -233,13 +232,23 @@ export function SignupForm({
         </div>
 
         <div className="grid grid-cols-2 gap-3">
+          <div id="google-button" className="hidden">
+            <GoogleAuthButton />
+          </div>
+
           <button
             type="button"
             aria-label="Continue with Google"
-            className="flex h-12 items-center justify-center rounded-sm border border-white/10 bg-white transition-colors hover:bg-white/80 hover:border-black"
+            onClick={() => {
+              const googleButton = document.querySelector(
+                "#google-button div[role='button']",
+              ) as HTMLDivElement | null;
+
+              googleButton?.click();
+            }}
+            className="flex h-12 items-center justify-center rounded-sm border  border-white/10 bg-black/40 text-white transition-colors hover:bg-white/5"
           >
-            <GoogleAuthButton />
-            {/* <svg className="h-5 w-5" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
                 fill="#EA4335"
                 d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"
@@ -256,7 +265,7 @@ export function SignupForm({
                 fill="#34A853"
                 d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"
               />
-            </svg> */}
+            </svg>
           </button>
 
           <button
