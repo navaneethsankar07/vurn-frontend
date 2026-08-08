@@ -70,3 +70,7 @@ export interface ResetPasswordRequest {
 export interface ResetPasswordResponse {
   message: string;
 }
+
+export interface RefreshTokenResponse {
+  access: string;
+}

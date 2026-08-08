@@ -7,11 +7,13 @@ import type {
   GoogleLoginResponse,
   LoginRequest,
   LoginResponse,
+  RefreshTokenResponse,
   RegisterRequest,
   RegisterResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
   SendOTPResponse,
+  User,
   VerifyOTPRequest,
 } from "../types";
 
@@ -64,3 +66,15 @@ export const resetPassword = async (
 
   return response.data;
 };
+
+export async function refreshToken(): Promise<RefreshTokenResponse> {
+  const response = await api.post<RefreshTokenResponse>("/auth/refresh/");
+
+  return response.data;
+}
+
+export async function getCurrentUser(): Promise<User> {
+  const response = await api.get<User>("/auth/me/");
+
+  return response.data;
+}

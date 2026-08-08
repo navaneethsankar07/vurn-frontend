@@ -19,6 +19,7 @@ export function GoogleAuthButton() {
           },
           {
             onSuccess: (response) => {
+              localStorage.setItem("hasSession", "true");
               console.log("Message:", response.message);
               console.log("User:", response.user);
               console.log("Access Token:", response.access);
@@ -31,7 +32,7 @@ export function GoogleAuthButton() {
             onError: (error) => {
               console.error(error);
             },
-          }
+          },
         );
       }}
       onError={() => {

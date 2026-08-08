@@ -1,13 +1,17 @@
-import axiosInstance from "./axios";
+import api from "./axios";
+import { store } from "@/app/store";
 
-export const setupInterceptors = () => {
-  axiosInstance.interceptors.request.use(
-    (config) => config,
-    (error) => Promise.reject(error)
-  );
+export function setupInterceptors() {
+  api.interceptors.request.use(
+    (config) => {
+      const accessToken = store.getState().auth.accessToken;
 
-  axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => Promise.reject(error)
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+
+      return config;
+    },
+    (error) => Promise.reject(error),
   );
-};
+}

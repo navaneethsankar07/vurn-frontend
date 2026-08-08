@@ -108,6 +108,7 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
 
     userRegistrationMutation.mutate(payload, {
       onSuccess: (response) => {
+        localStorage.setItem("hasSession", "true");
         console.log("Message:", response.message);
         console.log("User:", response.user);
         console.log("Access Token:", response.access);
@@ -132,7 +133,7 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
     setSecondsLeft(OTP_RESEND_SECONDS);
   }
   return (
-    <div className="w-full max-w-md rounded-xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+    <div className="w-full max-w-md rounded-xl border border-white/10 bg-white/3 p-6 sm:p-8">
       <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
         Verify Your Email
       </h1>

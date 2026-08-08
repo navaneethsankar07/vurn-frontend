@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,8 @@ import type { LoginRequest } from "../../types";
 
 import { useLoginMutation } from "../../api/authMutations";
 import { GoogleAuthButton } from "../shared/GoogleAuthButton";
+import { useAppDispatch } from "@/app/hooks";
+import { setCredentials } from "../../authSlice";
 
 interface LoginFormProps {}
 
@@ -22,6 +24,8 @@ export function LoginForm({}: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const loginMutation = useLoginMutation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -39,13 +43,15 @@ export function LoginForm({}: LoginFormProps) {
 
     loginMutation.mutate(payload, {
       onSuccess: (response) => {
-        console.log("Message:", response.message);
-        console.log("User:", response.user);
-        console.log("Access Token:", response.access);
-
-        // TODO:
-        // Dispatch Redux auth state
-        // Navigate to dashboard
+        localStorage.setItem("hasSession", "true");
+        
+        dispatch(
+          setCredentials({
+            user: response.user,
+            accessToken: response.access,
+          })
+        )
+        navigate('/dashboard')
       },
 
       onError: (error) => {
