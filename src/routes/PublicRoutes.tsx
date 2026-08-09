@@ -1,6 +1,6 @@
 import type { RouteObject } from "react-router-dom";
 
-import { PublicLayout } from "@/components/layouts/PublicLayout";
+import { PublicLayout } from "@/layouts/PublicLayout";
 
 import { PublicOnlyRoute } from "./guards/PublicOnlyRoute";
 import { passwordResetLoader } from "./guards/PasswordResetRoute";

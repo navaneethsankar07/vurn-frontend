@@ -1,5 +1,3 @@
-// src/routes/guards/PasswordResetRoute.tsx
-
 import { redirect } from "react-router-dom";
 
 export function passwordResetLoader() {
@@ -7,6 +5,7 @@ export function passwordResetLoader() {
   const token = params.get("token");
 
   if (!token) {
+
     throw redirect("/login");
   }
 

@@ -7,7 +7,7 @@ export function SiteFooter() {
         <p className="font-mono">
           © 2026 Vurn. Built for modern engineering teams.
         </p>
-        <div className="flex items-center gap-4 font-mono">
+        <div className="flex items-center gap-10 font-mono">
           <Link to="#privacy" className="transition-colors hover:text-white">
             Privacy
           </Link>
@@ -17,8 +17,6 @@ export function SiteFooter() {
           <Link to="#status" className="transition-colors hover:text-white">
             Status
           </Link>
-          <span className="text-gray-700">|</span>
-          <span>v2.4.1-stable</span>
         </div>
       </div>
     </footer>

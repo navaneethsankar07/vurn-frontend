@@ -47,7 +47,6 @@ export function SignupForm({ onOTPSent }: SignupFormProps) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/3 p-6 sm:p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* First & Last Name */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label
@@ -92,7 +91,6 @@ export function SignupForm({ onOTPSent }: SignupFormProps) {
           </div>
         </div>
 
-        {/* Username */}
         <div className="space-y-2">
           <Label
             htmlFor="username"
@@ -113,7 +111,6 @@ export function SignupForm({ onOTPSent }: SignupFormProps) {
           )}
         </div>
 
-        {/* Email */}
         <div className="space-y-2">
           <Label
             htmlFor="email"
@@ -134,7 +131,6 @@ export function SignupForm({ onOTPSent }: SignupFormProps) {
           )}
         </div>
 
-        {/* Password + Confirm */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label
@@ -214,7 +210,6 @@ export function SignupForm({ onOTPSent }: SignupFormProps) {
           </div>
         </div>
 
-        {/* Submit */}
         <Button
           type="submit"
           className="h-12 w-full rounded-sm gap-2 bg-primary text-base font-semibold text-black hover:bg-amber-500/90"

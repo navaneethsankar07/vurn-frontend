@@ -1,9 +1,14 @@
 import { GoogleLogin } from "@react-oauth/google";
 
 import { useGoogleLoginMutation } from "@/modules/public/auth/api/authMutations";
+import { useAppDispatch } from "@/app/hooks";
+import { useNavigate } from "react-router-dom";
+import { setCredentials } from "../../authSlice";
 
 export function GoogleAuthButton() {
   const googleLoginMutation = useGoogleLoginMutation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   return (
     <GoogleLogin
@@ -20,13 +25,15 @@ export function GoogleAuthButton() {
           {
             onSuccess: (response) => {
               localStorage.setItem("hasSession", "true");
-              console.log("Message:", response.message);
-              console.log("User:", response.user);
-              console.log("Access Token:", response.access);
+              
 
-              // TODO:
-              // Dispatch Redux
-              // Navigate Dashboard
+              dispatch(
+                setCredentials({
+                  user: response.user,
+                  accessToken: response.access,
+                }),
+              );
+              navigate("/dashboard");
             },
 
             onError: (error) => {

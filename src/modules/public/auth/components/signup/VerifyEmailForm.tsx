@@ -9,6 +9,9 @@ import {
   OTP_RESEND_SECONDS,
 } from "@/utils/constants/auth.constants";
 import { useRegisterMutation } from "../../api/authMutations";
+import { useAppDispatch } from "@/app/hooks";
+import { useNavigate } from "react-router-dom";
+import { setCredentials } from "../../authSlice";
 
 interface VerifyEmailFormProps {
   email: string;
@@ -22,6 +25,8 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   const userRegistrationMutation = useRegisterMutation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const {
     setValue,
@@ -100,7 +105,7 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
 
   function onSubmit(data: OTPFormData) {
     console.log("Form Submitted");
-  console.log(data);
+    console.log(data);
     const payload: VerifyOTPRequest = {
       email,
       otp: data.otp,
@@ -109,13 +114,14 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
     userRegistrationMutation.mutate(payload, {
       onSuccess: (response) => {
         localStorage.setItem("hasSession", "true");
-        console.log("Message:", response.message);
-        console.log("User:", response.user);
-        console.log("Access Token:", response.access);
 
-        // TODO:
-        // Dispatch auth state
-        // Navigate to dashboard
+        dispatch(
+          setCredentials({
+            user: response.user,
+            accessToken: response.access,
+          }),
+        );
+        navigate("/dashboard");
       },
 
       onError: (error) => {
