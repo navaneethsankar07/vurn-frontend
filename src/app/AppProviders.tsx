@@ -9,15 +9,13 @@ type AppProvidersProps = {
   children: ReactNode;
 };
 
-
-export default function AppProviders({
-  children,
-}: AppProvidersProps) {
+export default function AppProviders({ children }: AppProvidersProps) {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <AuthBootstrap/>
-      {children}
+        <AuthBootstrap />
+          {children}
+          
       </QueryClientProvider>
     </Provider>
   );

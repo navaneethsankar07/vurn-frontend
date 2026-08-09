@@ -4,7 +4,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./styles/globals.css";
 
 import App from "./App";
-import AppProviders from "./app/providers";
+import AppProviders from "./app/AppProviders";
 import { setupInterceptors } from "./api/interceptors";
 
 setupInterceptors();
