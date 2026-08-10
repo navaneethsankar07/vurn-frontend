@@ -64,3 +64,13 @@ export interface GeneralSettingsFormData {
   email: string;
   avatar: string | File | null;
 }
+
+export interface ChangePasswordFormData {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface SecuritySettingsData {
+  lastPasswordChange?: string;
+}

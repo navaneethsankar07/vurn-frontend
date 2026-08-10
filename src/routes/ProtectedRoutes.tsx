@@ -5,6 +5,8 @@ import { ProtectedRoute } from "./guards/ProtectedRoute";
 import ProfilePage from "@/modules/user/account/pages/ProfilePage";
 import GeneralSettingsPage from "@/modules/user/account/pages/GeneralSettingsPage";
 import { SettingsLayout } from "@/modules/user/account/components/SettingsLayout";
+import SecuritySettingsPage from "@/modules/user/account/pages/SecuritySettingsPage";
+import DangerZonePage from "@/modules/user/account/pages/DangerZonePage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -27,6 +29,14 @@ export const ProtectedRoutes: RouteObject[] = [
               {
                 path: "/settings/general",
                 element: <GeneralSettingsPage />,
+              },
+              {
+                path: "/settings/security",
+                element: <SecuritySettingsPage />,
+              },
+              {
+                path: "/settings/danger-zone",
+                element: <DangerZonePage />,
               },
             ],
           },

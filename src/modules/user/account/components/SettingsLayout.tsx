@@ -25,7 +25,6 @@ const NAV_ITEMS = [
 export function SettingsLayout() {
   return (
     <div className="mx-auto max-w-6xl font-mono text-white">
-      {/* Page Header */}
       <div className="mb-6 border-b border-white/10 pb-5">
         <span className="text-xs font-semibold uppercase text-gray-500 tracking-wider">
           Account
@@ -36,7 +35,6 @@ export function SettingsLayout() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        {/* Sidebar Navigation */}
         <aside className="w-full md:w-64 shrink-0 rounded-[3px] border border-white/10 bg-[#0C0C0E] p-3">
           <nav className="space-y-1">
             {NAV_ITEMS.map((item) => {
@@ -46,7 +44,7 @@ export function SettingsLayout() {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-[2px] px-3.5 py-2.5 text-xs font-medium transition-all ${
+                    `flex items-center gap-3 rounded-xs px-3.5 py-2.5 text-xs font-medium transition-all ${
                       isActive
                         ? item.variant === "danger"
                           ? "bg-red-500/20 text-red-300 font-semibold"
@@ -79,7 +77,6 @@ export function SettingsLayout() {
           </nav>
         </aside>
 
-        {/* Dynamic Page Content */}
         <main className="flex-1 w-full rounded-[3px] border border-white/10 bg-[#0C0C0E] p-6 sm:p-8">
           <Outlet />
         </main>
