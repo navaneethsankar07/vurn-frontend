@@ -31,7 +31,6 @@ export function UserNavbar({
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-3 border-b border-white/10 bg-black px-4 sm:px-6">
-      {/* Sidebar Toggle */}
       <button
         type="button"
         onClick={onCollapseToggle}
@@ -47,7 +46,6 @@ export function UserNavbar({
         )}
       </button>
 
-      {/* Logo */}
       <a href="/" className="flex items-center gap-2">
         <span className="flex h-7 w-7 items-center justify-center rounded-[3px] bg-amber-500 text-black">
           <Sparkles className="h-4 w-4" strokeWidth={2.5} />
@@ -58,7 +56,6 @@ export function UserNavbar({
         </span>
       </a>
 
-      {/* Search */}
       <div className="relative mx-auto w-full max-w-xl">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
 
@@ -74,7 +71,6 @@ export function UserNavbar({
         </kbd>
       </div>
 
-      {/* Right Actions */}
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <Button className="hidden gap-1 rounded-0xl border-2 border-[#34343A] bg-secondary font-mono text-sm font-semibold text-white/80 hover:bg-hover-bg hover:text-text-primary sm:flex">
           <Plus strokeLinecap="butt" />
@@ -82,7 +78,6 @@ export function UserNavbar({
           <ChevronDown />
         </Button>
 
-        {/* Notifications */}
         <button
           type="button"
           aria-label="Notifications"
@@ -95,7 +90,6 @@ export function UserNavbar({
           )}
         </button>
 
-        {/* Profile */}
         <div className="relative">
           <button
             type="button"
@@ -107,7 +101,7 @@ export function UserNavbar({
             className="h-10 w-10 overflow-hidden rounded-full border-2 border-[#34343A] bg-white/5 hover:border-white/60"
           >
             <img
-              src={avatar || "/placeholder-avatar.jpg"}
+              src={avatar || "https://placehold.net/avatar.svg"}
               alt="Account"
               className="h-full w-full object-cover"
             />

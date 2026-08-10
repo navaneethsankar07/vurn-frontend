@@ -2,6 +2,7 @@ import type { RouteObject } from "react-router-dom";
 
 import { ProtectedRoute } from "./guards/ProtectedRoute";
 import { UserLayout } from "@/layouts/UserLayout";
+import ProfilePage from "@/modules/user/account/pages/ProfilePage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -13,6 +14,10 @@ export const ProtectedRoutes: RouteObject[] = [
           {
             path: "/dashboard",
             element: <h1>Dashboard</h1>,
+          },
+          {
+            path: "/profile",
+            element: <ProfilePage/>,
           },
         ],
       },
