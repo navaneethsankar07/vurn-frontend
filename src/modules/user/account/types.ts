@@ -57,3 +57,10 @@ export interface ProfileStatsCardProps {
 export interface RecentActivityCardProps {
   activities: ProfileActivity[];
 }
+
+export interface GeneralSettingsFormData {
+  full_name: string;
+  username: string;
+  email: string;
+  avatar: string | File | null;
+}

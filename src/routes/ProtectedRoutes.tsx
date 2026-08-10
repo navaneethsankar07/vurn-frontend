@@ -1,8 +1,10 @@
 import type { RouteObject } from "react-router-dom";
 
-import { ProtectedRoute } from "./guards/ProtectedRoute";
 import { UserLayout } from "@/layouts/UserLayout";
+import { ProtectedRoute } from "./guards/ProtectedRoute";
 import ProfilePage from "@/modules/user/account/pages/ProfilePage";
+import GeneralSettingsPage from "@/modules/user/account/pages/GeneralSettingsPage";
+import { SettingsLayout } from "@/modules/user/account/components/SettingsLayout";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -17,7 +19,16 @@ export const ProtectedRoutes: RouteObject[] = [
           },
           {
             path: "/profile",
-            element: <ProfilePage/>,
+            element: <ProfilePage />,
+          },
+          {
+            element: <SettingsLayout />,
+            children: [
+              {
+                path: "/settings/general",
+                element: <GeneralSettingsPage />,
+              },
+            ],
           },
         ],
       },
