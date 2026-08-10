@@ -1,75 +1,108 @@
-# React + TypeScript + Vite
+# Vurn Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for **Vurn**, an AI-native engineering workspace built with React and TypeScript.
 
-Currently, two official plugins are available:
+## Status
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Currently under active development.
 
-## React Compiler
+Implemented:
+- User registration
+- Email OTP verification
+- Login and Google authentication
+- Password reset
+- JWT-based authentication
+- Protected and public routes
+- Automatic access-token refresh
+- User navigation and responsive application shell
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Profile and organization management are in development.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React + TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **shadcn/ui**
+- **Redux Toolkit**
+- **TanStack Query**
+- **React Router**
+- **Axios**
+- **React Hook Form + Zod**
+- **Lucide React**
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Architecture
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+The frontend follows a feature-oriented architecture with centralized application infrastructure.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```text
+Browser
+  |
+  v
+React Application
+  |
+  +-- Routing
+  +-- Authentication
+  +-- State Management
+  +-- API Layer
+  +-- Feature Modules
+  +-- Shared UI
+  |
+  v
+Django REST API
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development Principles
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The frontend follows several architectural principles:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Separation of Concerns
 
-```
+UI components should not contain unnecessary API or business logic.
+
+### Feature Ownership
+
+Domain-specific functionality should remain within its feature module.
+
+### Centralized Infrastructure
+
+Application-wide concerns such as:
+
+* Routing
+* Redux
+* API configuration
+* Axios interceptors
+* Authentication bootstrap
+* Modal state
+
+are handled centrally.
+
+### Type Safety
+
+TypeScript is used throughout the application to provide compile-time guarantees for API contracts, component props, application state, and form data.
+
+### Validation at the Boundary
+
+Forms use Zod schemas together with React Hook Form to validate user input before requests are sent to the backend.
+
+## Project Context
+
+Vurn is an AI-native engineering workspace designed to bring essential software development workflows into a unified platform.
+
+The platform is intended to provide a centralized environment for teams to manage:
+
+* Organizations
+* Projects
+* Sprints
+* Issues
+* Engineering workflows
+* Documentation
+* Notifications
+* Integrations
+* AI-assisted engineering workflows
+
+The frontend provides the client-side application layer for these capabilities and is being developed incrementally, with authentication and identity forming the foundation for the remaining workspace features.
+
+---
+
+*Currently under active development.*
