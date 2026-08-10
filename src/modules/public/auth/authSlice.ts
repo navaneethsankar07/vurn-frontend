@@ -32,7 +32,11 @@ const authSlice = createSlice({
     setAccessToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
     },
-
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
     finishAuthInitialization: (state) => {
       state.isInitializing = false;
     },
@@ -49,6 +53,7 @@ const authSlice = createSlice({
 export const {
   setCredentials,
   setAccessToken,
+  updateUser,
   finishAuthInitialization,
   logout,
 } = authSlice.actions;

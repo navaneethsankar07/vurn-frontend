@@ -4,7 +4,7 @@ import { UserLayout } from "@/layouts/UserLayout";
 import { ProtectedRoute } from "./guards/ProtectedRoute";
 import ProfilePage from "@/modules/user/account/pages/ProfilePage";
 import GeneralSettingsPage from "@/modules/user/account/pages/GeneralSettingsPage";
-import { SettingsLayout } from "@/modules/user/account/components/SettingsLayout";
+import { SettingsLayout } from "@/modules/user/account/components/profile-settings/SettingsLayout";
 import SecuritySettingsPage from "@/modules/user/account/pages/SecuritySettingsPage";
 import DangerZonePage from "@/modules/user/account/pages/DangerZonePage";
 

@@ -1,47 +1,69 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Clock, Globe } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useProfileQuery } from "../api/accountQueries";
+import { useUpdateProfileMutation } from "../api/accountMutations";
 import { formatDate, formatDateTime } from "@/utils/date";
-import type { GeneralSettingsFormData } from "../types";
+import {
+  generalSettingsSchema,
+  type GeneralSettingsSchema,
+} from "../schemas/generalSettingsSchema";
 
 export default function GeneralSettingsPage() {
   const { data, isLoading, isError } = useProfileQuery();
+  const updateProfileMutation = useUpdateProfileMutation();
 
-  const [formData, setFormData] = useState<GeneralSettingsFormData>({
-    full_name: "",
-    username: "",
-    email: "",
-    avatar: null,
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<GeneralSettingsSchema>({
+    resolver: zodResolver(generalSettingsSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      username: "",
+      avatar: null,
+    },
   });
 
   useEffect(() => {
     if (data?.user) {
-      setFormData({
-        full_name: data.user.full_name || "",
+      const nameParts = (data.user.full_name || "").trim().split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      reset({
+        first_name: firstName,
+        last_name: lastName,
         username: data.user.username || "",
-        email: data.user.email || "",
         avatar: data.user.avatar || null,
       });
-    }
-  }, [data]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+      if (typeof data.user.avatar === "string") {
+        setAvatarPreview(data.user.avatar);
+      }
+    }
+  }, [data, reset]);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // TODO: Handle image preview or file state update for API upload
-      setFormData((prev) => ({ ...prev, avatar: file }));
+      setValue("avatar", file, { shouldValidate: true });
+      setAvatarPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Call PATCH/PUT API mutation here with formData
-    console.log("Submitting settings update:", formData);
+  const onSubmit = (formData: GeneralSettingsSchema) => {
+    updateProfileMutation.mutate({
+      ...formData,
+      avatar: formData.avatar ?? null,
+    });
   };
 
   if (isLoading) {
@@ -79,49 +101,58 @@ export default function GeneralSettingsPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-xs text-gray-300">Full Name</label>
+            <label className="text-xs text-gray-300">First Name</label>
             <input
               type="text"
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleChange}
+              {...register("first_name")}
               className="w-full rounded-[3px] border border-white/10 bg-[#030303] px-3.5 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-white/30"
             />
+            {errors.first_name && (
+              <p className="text-[11px] text-red-400">
+                {errors.first_name.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs text-gray-300">Username</label>
+            <label className="text-xs text-gray-300">Last Name</label>
             <input
               type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
+              {...register("last_name")}
               className="w-full rounded-[3px] border border-white/10 bg-[#030303] px-3.5 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-white/30"
             />
+            {errors.last_name && (
+              <p className="text-[11px] text-red-400">
+                {errors.last_name.message}
+              </p>
+            )}
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs text-gray-300">Email</label>
+          <label className="text-xs text-gray-300">Username</label>
           <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
+            type="text"
+            {...register("username")}
             className="w-full rounded-[3px] border border-white/10 bg-[#030303] px-3.5 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-white/30"
           />
+          {errors.username && (
+            <p className="text-[11px] text-red-400">
+              {errors.username.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
           <label className="text-xs text-gray-300">Profile Picture</label>
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[3px] border border-white/10 bg-[#141416] text-base font-semibold text-gray-300 overflow-hidden">
-              {typeof formData.avatar === "string" && formData.avatar ? (
+              {avatarPreview ? (
                 <img
-                  src={formData.avatar}
+                  src={avatarPreview}
                   alt={user.full_name}
                   referrerPolicy="no-referrer"
                   className="h-full w-full object-cover"
@@ -145,6 +176,9 @@ export default function GeneralSettingsPage() {
               PNG or JPG. 1MB maximum.
             </span>
           </div>
+          {errors.avatar && (
+            <p className="text-[11px] text-red-400">{errors.avatar.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -186,9 +220,10 @@ export default function GeneralSettingsPage() {
         <div className="pt-4 flex justify-end border-t border-white/10">
           <button
             type="submit"
-            className="rounded-[3px] border border-amber-500/80 bg-amber-500/10 px-6 py-2.5 text-xs font-semibold text-amber-500 transition-colors hover:bg-amber-500/20"
+            disabled={updateProfileMutation.isPending}
+            className="rounded-[3px] border border-amber-500/80 bg-amber-500/10 px-6 py-2.5 text-xs font-semibold text-amber-500 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
           >
-            Save Changes
+            {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </form>
