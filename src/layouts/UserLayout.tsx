@@ -11,7 +11,7 @@ export function UserLayout() {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col bg-black text-white selection:text-black">
+    <div className="flex h-screen w-full flex-col bg-[#030303] text-white selection:text-black">
       <UserNavbar onCollapseToggle={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed}/>
 
       <div className="flex flex-1 overflow-hidden">
