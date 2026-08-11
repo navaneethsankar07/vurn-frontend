@@ -18,7 +18,7 @@ export const generalSettingsSchema = z.object({
     .max(30, "Username must be less than 30 characters")
     .regex(
       /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores"
+      "Username can only contain letters, numbers, and underscores",
     ),
   avatar: z
     .union([

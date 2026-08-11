@@ -1,6 +1,11 @@
 import api from "@/api/axios";
 
-import type { GeneralSettingsFormData, LogoutResponse, ProfileResponse } from "../types";
+import type {
+  GeneralSettingsFormData,
+  LogoutResponse,
+  ProfileResponse,
+} from "../types";
+import type { ChangePasswordSchema } from "../schemas/securitySettingsSchema";
 
 export async function logout(): Promise<LogoutResponse> {
   const response = await api.post<LogoutResponse>("/auth/logout/");
@@ -15,7 +20,7 @@ export async function getProfile(): Promise<ProfileResponse> {
 }
 
 export async function updateProfile(
-  data: Omit<GeneralSettingsFormData, "email">
+  data: Omit<GeneralSettingsFormData, "email">,
 ): Promise<ProfileResponse> {
   const formData = new FormData();
   formData.append("first_name", data.first_name);
@@ -31,6 +36,21 @@ export async function updateProfile(
       "Content-Type": "multipart/form-data",
     },
   });
+
+  return response.data;
+}
+
+export async function changePassword(
+  data: ChangePasswordSchema,
+): Promise<{ message: string }> {
+  const response = await api.post<{ message: string }>(
+    "/profile/change-password/",
+    {
+      current_password: data.current_password,
+      new_password: data.new_password,
+      confirm_password: data.confirm_password,
+    },
+  );
 
   return response.data;
 }

@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { logout, updateProfile } from "./accountApi";
+import { changePassword, logout, updateProfile } from "./accountApi";
 import type { GeneralSettingsFormData } from "../types";
 import { profileKeys } from "./accountQueries";
 import { useDispatch } from "react-redux";
 import { updateUser } from "@/modules/public/auth/authSlice";
+import type { ChangePasswordSchema } from "../schemas/securitySettingsSchema";
 
 export const useLogoutMutation = () => {
   const queryClient = useQueryClient();
@@ -30,5 +31,11 @@ export function useUpdateProfileMutation() {
         dispatch(updateUser(responseData.user));
       }
     },
+  });
+}
+
+export function useChangePasswordMutation() {
+  return useMutation({
+    mutationFn: (data: ChangePasswordSchema) => changePassword(data),
   });
 }

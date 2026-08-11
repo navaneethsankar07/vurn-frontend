@@ -1,27 +1,60 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import type { ChangePasswordFormData } from "../types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useChangePasswordMutation } from "../api/accountMutations";
+import {
+  changePasswordSchema,
+  type ChangePasswordSchema,
+} from "../schemas/securitySettingsSchema";
 
 export default function SecuritySettingsPage() {
-  const [formData, setFormData] = useState<ChangePasswordFormData>({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const changePasswordMutation = useChangePasswordMutation();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Call password update API mutation here
-    console.log("Updating password:", formData);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors },
+  } = useForm<ChangePasswordSchema>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      current_password: "",
+      new_password: "",
+      confirm_password: "",
+    },
+  });
+
+  const onSubmit = (data: ChangePasswordSchema) => {
+    changePasswordMutation.mutate(data, {
+      onSuccess: () => {
+        reset();
+      },
+      onError: (error: any) => {
+        const apiErrors = error?.response?.data;
+        if (apiErrors?.current_password) {
+          setError("current_password", {
+            type: "server",
+            message: Array.isArray(apiErrors.current_password)
+              ? apiErrors.current_password[0]
+              : apiErrors.current_password,
+          });
+        }
+        if (apiErrors?.new_password) {
+          setError("new_password", {
+            type: "server",
+            message: Array.isArray(apiErrors.new_password)
+              ? apiErrors.new_password[0]
+              : apiErrors.new_password,
+          });
+        }
+      },
+    });
   };
 
   return (
@@ -35,7 +68,7 @@ export default function SecuritySettingsPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <h3 className="text-sm font-semibold text-white">Change Password</h3>
           <p className="mt-1 text-xs text-gray-400">
@@ -48,9 +81,7 @@ export default function SecuritySettingsPage() {
           <div className="relative">
             <input
               type={showCurrent ? "text" : "password"}
-              name="currentPassword"
-              value={formData.currentPassword}
-              onChange={handleChange}
+              {...register("current_password")}
               placeholder="••••••••"
               className="w-full rounded-[3px] border border-white/10 bg-[#030303] px-3.5 py-2.5 pr-10 text-sm text-white placeholder-gray-600 outline-none focus:border-white/30"
             />
@@ -59,9 +90,18 @@ export default function SecuritySettingsPage() {
               onClick={() => setShowCurrent(!showCurrent)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
             >
-              {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showCurrent ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
+          {errors.current_password && (
+            <p className="text-[11px] text-red-400">
+              {errors.current_password.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -69,9 +109,7 @@ export default function SecuritySettingsPage() {
           <div className="relative">
             <input
               type={showNew ? "text" : "password"}
-              name="newPassword"
-              value={formData.newPassword}
-              onChange={handleChange}
+              {...register("new_password")}
               placeholder="••••••••"
               className="w-full rounded-[3px] border border-white/10 bg-[#030303] px-3.5 py-2.5 pr-10 text-sm text-white placeholder-gray-600 outline-none focus:border-white/30"
             />
@@ -80,9 +118,18 @@ export default function SecuritySettingsPage() {
               onClick={() => setShowNew(!showNew)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
             >
-              {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showNew ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
+          {errors.new_password && (
+            <p className="text-[11px] text-red-400">
+              {errors.new_password.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -90,9 +137,7 @@ export default function SecuritySettingsPage() {
           <div className="relative">
             <input
               type={showConfirm ? "text" : "password"}
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
+              {...register("confirm_password")}
               placeholder="••••••••"
               className="w-full rounded-[3px] border border-white/10 bg-[#030303] px-3.5 py-2.5 pr-10 text-sm text-white placeholder-gray-600 outline-none focus:border-white/30"
             />
@@ -101,17 +146,29 @@ export default function SecuritySettingsPage() {
               onClick={() => setShowConfirm(!showConfirm)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
             >
-              {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showConfirm ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
+          {errors.confirm_password && (
+            <p className="text-[11px] text-red-400">
+              {errors.confirm_password.message}
+            </p>
+          )}
         </div>
 
         <div className="pt-2 flex justify-end">
           <button
             type="submit"
-            className="rounded-[3px] border border-amber-500/80 bg-amber-500/10 px-5 py-2 text-xs font-semibold text-amber-500 transition-colors hover:bg-amber-500/20"
+            disabled={changePasswordMutation.isPending}
+            className="rounded-[3px] border border-amber-500/80 bg-amber-500/10 px-5 py-2 text-xs font-semibold text-amber-500 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
           >
-            Update Password
+            {changePasswordMutation.isPending
+              ? "Updating..."
+              : "Update Password"}
           </button>
         </div>
       </form>
