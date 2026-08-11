@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { changePassword, logout, updateProfile } from "./accountApi";
-import type { GeneralSettingsFormData } from "../types";
-import { profileKeys } from "./accountQueries";
 import { useDispatch } from "react-redux";
+
+import { changePassword, logout, updateProfile } from "./accountApi";
+import { accountKeys } from "./accountQueries";
 import { updateUser } from "@/modules/public/auth/authSlice";
+import type { GeneralSettingsFormData } from "../types";
 import type { ChangePasswordSchema } from "../schemas/securitySettingsSchema";
 
 export const useLogoutMutation = () => {
@@ -25,7 +26,7 @@ export function useUpdateProfileMutation() {
     mutationFn: (data: Omit<GeneralSettingsFormData, "email">) =>
       updateProfile(data),
     onSuccess: (responseData) => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.all });
+      queryClient.invalidateQueries({ queryKey: accountKeys.profile });
 
       if (responseData?.user) {
         dispatch(updateUser(responseData.user));

@@ -54,3 +54,10 @@ export async function changePassword(
 
   return response.data;
 }
+
+export async function getLoginMethod(): Promise<{ is_email_login: boolean }> {
+  const response = await api.get<{ is_email_login: boolean }>(
+    "/auth/login-method/",
+  );
+  return response.data;
+}
