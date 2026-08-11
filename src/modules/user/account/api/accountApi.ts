@@ -61,3 +61,23 @@ export async function getLoginMethod(): Promise<{ is_email_login: boolean }> {
   );
   return response.data;
 }
+
+export async function requestAccountDeletion(data: {
+  confirmation: string;
+}): Promise<{ message: string; masked_email?: string }> {
+  const response = await api.post<{ message: string; masked_email?: string }>(
+    "/auth/delete-account/request/",
+    data,
+  );
+  return response.data;
+}
+
+export async function confirmAccountDeletion(data: {
+  otp: string;
+}): Promise<{ message: string }> {
+  const response = await api.post<{ message: string }>(
+    "/auth/delete-account/confirm/",
+    data,
+  );
+  return response.data;
+}
