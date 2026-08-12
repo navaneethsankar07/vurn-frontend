@@ -48,4 +48,25 @@ export interface OrganizationsResponse {
 }
 
 export type RoleFilter = "all" | "owner" | "member";
-export type SortOption = "recent" | "name" | "members" | "projects";
+export type SortOption = "recent" | "name" | "member" | "project";
+export type SortOrder = "asc" | "desc";
+
+export interface OrganizationQueryParams {
+  search?: string;
+  role?: string;
+  sort_by?: SortOption;
+  order?: SortOrder;
+  page?: number;
+  page_size?: number;
+}
+
+export interface PaginatedOrganizationsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    recent: Organization[];
+    pinned?: Organization[];
+    organizations: Organization[];
+  };
+}

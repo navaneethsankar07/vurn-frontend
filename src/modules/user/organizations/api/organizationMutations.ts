@@ -10,7 +10,7 @@ export function useCreateOrganizationMutation() {
   return useMutation({
     mutationFn: (data: CreateOrganizationPayload) => createOrganization(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: organizationKeys.all });
+      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() });
     },
   });
 }

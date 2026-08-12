@@ -3,7 +3,8 @@ import type {
   CreateOrganizationPayload,
   CreateOrganizationResponse,
   OrganizationOptionsResponse,
-  OrganizationsResponse,
+  OrganizationQueryParams,
+  PaginatedOrganizationsResponse,
 } from "../types";
 
 export async function fetchOrganizationOptions(): Promise<OrganizationOptionsResponse> {
@@ -23,7 +24,12 @@ export async function createOrganization(
   return response.data;
 }
 
-export async function fetchOrganizations(): Promise<OrganizationsResponse> {
-  const response = await api.get<OrganizationsResponse>("/organizations");
+export async function fetchOrganizations(
+  params?: OrganizationQueryParams,
+): Promise<PaginatedOrganizationsResponse> {
+  const response = await api.get<PaginatedOrganizationsResponse>(
+    "/organizations",
+    { params },
+  );
   return response.data;
 }

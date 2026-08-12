@@ -38,11 +38,15 @@ export function OrganizationListItem({
               {organization.role}
             </span>
           </div>
-          {organization.description && (
+          {organization.description ? (
             <p className="text-xs text-gray-400 line-clamp-1 leading-relaxed">
               {organization.description}
             </p>
-          )}
+          ):(
+            <p className="text-xs text-gray-400 line-clamp-1 leading-relaxed">
+              No description provided.
+            </p>
+          ) }
         </div>
       </div>
 

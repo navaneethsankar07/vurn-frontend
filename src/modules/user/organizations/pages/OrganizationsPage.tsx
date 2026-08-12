@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Search,
   Plus,
@@ -8,64 +9,79 @@ import {
   ChevronRight,
   Clock,
   Building2,
+  X,
 } from "lucide-react";
-import { useOrganizationOptionsQuery, useOrganizationsQuery } from "../api/organizationQueries";
+import {
+  useOrganizationOptionsQuery,
+  useOrganizationsQuery,
+  organizationKeys,
+} from "../api/organizationQueries";
 import { OrganizationListItem } from "../components/OrganizationListItem";
 import { OrganizationAvatar } from "../components/OrganizationAvatar";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { ITEMS_PER_PAGE } from "../constants";
-import type { RoleFilter, SortOption } from "../types";
+import type { RoleFilter, SortOption, SortOrder } from "../types";
 
 export function OrganizationsPage() {
-  const { data, isLoading } = useOrganizationsQuery();
-
-  const [searchQuery, setSearchQuery] = useState("");
+  const queryClient = useQueryClient();
+  const [searchInput, setSearchInput] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [sortOption, setSortOption] = useState<SortOption>("recent");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
-  const {data: options} = useOrganizationOptionsQuery()
 
-  const filteredAndSortedOrgs = useMemo(() => {
-    let result = [...(data?.organizations || [])];
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        queryClient.invalidateQueries({
+          queryKey: organizationKeys.lists(),
+        });
+      }
+    };
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (org) =>
-          org.name.toLowerCase().includes(q) ||
-          org.slug.toLowerCase().includes(q) ||
-          org.description?.toLowerCase().includes(q),
-      );
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, [queryClient]);
+
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setAppliedSearch("");
+    setCurrentPage(1);
+  };
+
+  const queryParams = {
+    search: appliedSearch.trim() || undefined,
+    sort_by: sortOption,
+    order: sortOrder,
+    page: currentPage,
+    page_size: ITEMS_PER_PAGE,
+  };
+
+  const { data, isLoading } = useOrganizationsQuery(queryParams);
+  const { data: options } = useOrganizationOptionsQuery();
+
+  const fetchedOrganizations = data?.results?.organizations || [];
+  const filteredOrganizations = fetchedOrganizations.filter((org) => {
+    const isOwner = (org as unknown as { is_owner?: boolean }).is_owner;
+    if (roleFilter === "owner") {
+      return isOwner ?? true;
     }
-
-    if (roleFilter !== "all") {
-      result = result.filter((org) => org.role === roleFilter);
+    if (roleFilter === "member") {
+      return isOwner === false;
     }
+    return true;
+  });
 
-    result.sort((a, b) => {
-      if (sortOption === "name") {
-        return a.name.localeCompare(b.name);
-      }
-      if (sortOption === "members") {
-        return b.member_count - a.member_count;
-      }
-      if (sortOption === "projects") {
-        return b.project_count - a.project_count;
-      }
-      return b.id - a.id;
-    });
-
-    return result;
-  }, [data?.organizations, searchQuery, roleFilter, sortOption]);
-
-  const totalPages =
-    Math.ceil(filteredAndSortedOrgs.length / ITEMS_PER_PAGE) || 1;
-  const paginatedOrgs = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredAndSortedOrgs.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredAndSortedOrgs, currentPage]);
-
-  const hasRecent = data?.recent && data.recent.length > 0;
+  const recentOrganizations = data?.results?.recent || [];
+  const totalCount = data?.count || 0;
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1;
+  const hasRecent = recentOrganizations.length > 0;
 
   return (
     <div className="min-h-screen bg-[#030303] text-white font-mono px-4 sm:px-6 lg:px-8 py-10 flex justify-center">
@@ -93,14 +109,26 @@ export function OrganizationsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setAppliedSearch(searchInput);
+                  setCurrentPage(1);
+                }
               }}
               placeholder="Search organizations..."
-              className="w-full rounded-[3px] border border-white/10 bg-[#09090b] pl-9 pr-3.5 py-2 text-xs text-white placeholder-gray-600 outline-none focus:border-white/30 transition-colors"
+              className="w-full rounded-[3px] border border-white/10 bg-[#09090b] pl-9 pr-9 py-2 text-xs text-white placeholder-gray-600 outline-none focus:border-white/30 transition-colors"
             />
+            {searchInput && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -124,12 +152,30 @@ export function OrganizationsPage() {
               ))}
             </div>
 
-            <div className="relative flex items-center rounded-[3px] border border-white/10 bg-[#09090b] px-2.5 py-1.5 text-xs text-gray-400">
-              <ArrowUpDown className="h-3.5 w-3.5 text-gray-500 mr-2 shrink-0" />
+            <div className="relative flex items-center rounded-[3px] border border-white/10 bg-[#09090b] px-2 py-1 text-xs text-gray-400">
+              <button
+                type="button"
+                onClick={toggleSortOrder}
+                title={`Order: ${sortOrder === "asc" ? "Ascending" : "Descending"}`}
+                className="p-1 hover:bg-white/5 rounded-[3px] transition-colors"
+              >
+                <ArrowUpDown
+                  className={`h-3.5 w-3.5 transition-colors ${
+                    sortOrder === "asc"
+                      ? "text-primary"
+                      : "text-gray-500 hover:text-gray-300"
+                  }`}
+                />
+              </button>
               <select
                 value={sortOption}
-                onChange={(e) => setSortOption(e.target.value as SortOption)}
-                className="bg-transparent text-white outline-none cursor-pointer pr-1"
+                onChange={(e) => {
+                  const newSort = e.target.value as SortOption;
+                  setSortOption(newSort);
+                  setSortOrder(newSort === "name" ? "asc" : "desc");
+                  setCurrentPage(1);
+                }}
+                className="bg-transparent text-white outline-none cursor-pointer pr-1 ml-1"
               >
                 <option value="recent" className="bg-[#09090b] text-white">
                   Recent
@@ -137,10 +183,10 @@ export function OrganizationsPage() {
                 <option value="name" className="bg-[#09090b] text-white">
                   Name
                 </option>
-                <option value="members" className="bg-[#09090b] text-white">
+                <option value="member" className="bg-[#09090b] text-white">
                   Members
                 </option>
-                <option value="projects" className="bg-[#09090b] text-white">
+                <option value="project" className="bg-[#09090b] text-white">
                   Projects
                 </option>
               </select>
@@ -155,7 +201,7 @@ export function OrganizationsPage() {
               Recently opened
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {data?.recent.map((org) => (
+              {recentOrganizations.map((org) => (
                 <a
                   key={org.id}
                   href={getOrganizationUrl(org.slug)}
@@ -196,9 +242,9 @@ export function OrganizationsPage() {
                 />
               ))}
             </div>
-          ) : paginatedOrgs.length > 0 ? (
+          ) : filteredOrganizations.length > 0 ? (
             <div className="space-y-2">
-              {paginatedOrgs.map((org) => (
+              {filteredOrganizations.map((org) => (
                 <OrganizationListItem key={org.id} organization={org} />
               ))}
             </div>
@@ -210,20 +256,13 @@ export function OrganizationsPage() {
           )}
         </div>
 
-        {!isLoading && filteredAndSortedOrgs.length > 0 && (
+        {!isLoading && totalCount > 0 && (
           <div className="flex items-center justify-between border-t border-white/10 pt-4 text-xs text-gray-500">
             <span>
               Showing{" "}
-              {Math.min(
-                (currentPage - 1) * ITEMS_PER_PAGE + 1,
-                filteredAndSortedOrgs.length,
-              )}{" "}
-              to{" "}
-              {Math.min(
-                currentPage * ITEMS_PER_PAGE,
-                filteredAndSortedOrgs.length,
-              )}{" "}
-              of {filteredAndSortedOrgs.length}
+              {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, totalCount)} to{" "}
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of{" "}
+              {totalCount}
             </span>
 
             <div className="flex items-center gap-2">
@@ -240,7 +279,7 @@ export function OrganizationsPage() {
               </span>
               <button
                 type="button"
-                disabled={currentPage === totalPages}
+                disabled={currentPage >= totalPages}
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
