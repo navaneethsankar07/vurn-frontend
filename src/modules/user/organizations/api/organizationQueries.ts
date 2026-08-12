@@ -1,6 +1,5 @@
-// api/organizationQueries.ts
 import { useQuery } from "@tanstack/react-query";
-import { fetchOrganizationOptions } from "./organizationApi";
+import { fetchOrganizationOptions, fetchOrganizations } from "./organizationApi";
 
 export const organizationKeys = {
   all: ["organizations"] as const,
@@ -12,5 +11,12 @@ export function useOrganizationOptionsQuery() {
     queryKey: organizationKeys.options(),
     queryFn: fetchOrganizationOptions,
     staleTime: 1000 * 60 * 60,
+  });
+}
+
+export function useOrganizationsQuery() {
+  return useQuery({
+    queryKey: organizationKeys.all,
+    queryFn: fetchOrganizations,
   });
 }

@@ -24,3 +24,28 @@ export interface CreateOrganizationResponse {
   icon?: string;
   accent_color?: string;
 }
+
+export type OrganizationRole = "owner" | "admin" | "member";
+
+export interface Organization {
+  id: number;
+  name: string;
+  description: string | null;
+  slug: string;
+  icon: string;
+  accent_color: string;
+  logo_url: string | null;
+  role: OrganizationRole;
+  member_count: number;
+  project_count: number;
+  last_opened_at: string | null;
+  is_pinned?: boolean;
+}
+
+export interface OrganizationsResponse {
+  recent: Organization[];
+  organizations: Organization[];
+}
+
+export type RoleFilter = "all" | "owner" | "member";
+export type SortOption = "recent" | "name" | "members" | "projects";

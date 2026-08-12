@@ -8,6 +8,7 @@ import { SettingsLayout } from "@/modules/user/account/components/profile-settin
 import SecuritySettingsPage from "@/modules/user/account/pages/SecuritySettingsPage";
 import DangerZonePage from "@/modules/user/account/pages/DangerZonePage";
 import { CreateOrganizationPage } from "@/modules/user/organizations/pages/CreateOrganizationPage";
+import { OrganizationsPage } from "@/modules/user/organizations/pages/OrganizationsPage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -23,6 +24,10 @@ export const ProtectedRoutes: RouteObject[] = [
           {
             path: "/profile",
             element: <ProfilePage />,
+          },
+          {
+            path: "/organizations",
+            element: <OrganizationsPage />,
           },
           {
             path: "/organizations/new",
