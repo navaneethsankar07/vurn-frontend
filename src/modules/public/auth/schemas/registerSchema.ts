@@ -6,17 +6,11 @@ export const registerSchema = z
 
     username: z
       .string()
-      .min(
-        3,
-        "Username must be 3-15 characters long and contain only lowercase letters, numbers, underscores, and periods.",
-      )
-      .max(
-        15,
-        "Username must be 3-15 characters long and contain only lowercase letters, numbers, underscores, and periods.",
-      )
+      .min(3, "Username must be at least 3 characters.")
+      .max(15, "Username cannot exceed 15 characters.")
       .regex(
         /^[a-z0-9_.]+$/,
-        "Username must be 3-15 characters long and contain only lowercase letters, numbers, underscores, and periods.",
+        "Only lowercase letters, numbers, underscores, and periods are allowed.",
       ),
 
     first_name: z
@@ -31,7 +25,7 @@ export const registerSchema = z
 
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters long.") 
+      .min(8, "Password must be at least 8 characters long.")
       .max(128, "Password cannot exceed 128 characters."),
 
     confirm_password: z.string(),
