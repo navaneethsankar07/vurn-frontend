@@ -19,11 +19,6 @@ export function useAuthBootstrap() {
     let mounted = true;
 
     async function initializeAuth() {
-      const hasSession = localStorage.getItem("hasSession");
-      if (!hasSession) {
-        dispatch(finishAuthInitialization());
-        return;
-      }
       try {
         const refreshResponse = await refreshToken();
 
@@ -43,9 +38,10 @@ export function useAuthBootstrap() {
         );
       } catch {
         if (!mounted) return;
-        localStorage.removeItem("hasSession");
-
-        dispatch(finishAuthInitialization());
+      } finally {
+        if (mounted) {
+          dispatch(finishAuthInitialization());
+        }
       }
     }
 

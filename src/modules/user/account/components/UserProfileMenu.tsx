@@ -51,7 +51,7 @@ export function UserProfileMenu({ onClose }: UserProfileMenuProps) {
     {
       label: "Personal Settings",
       icon: Sliders,
-      href: "/settings/personal",
+      href: "/settings/general",
     },
     {
       label: "Keyboard Shortcuts",

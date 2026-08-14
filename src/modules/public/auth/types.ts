@@ -16,6 +16,11 @@ export interface VerifyOTPRequest {
   otp: string;
 }
 
+export interface OrganizationSummary {
+  name: string;
+  slug: string;
+}
+
 export interface User {
   id: number;
   email: string;
@@ -23,6 +28,7 @@ export interface User {
   full_name: string;
   avatar: string | null;
   is_email_verified: boolean;
+  organizations?: OrganizationSummary[];
 }
 
 export interface RegisterResponse {

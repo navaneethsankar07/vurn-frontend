@@ -42,9 +42,7 @@ export function LoginForm({}: LoginFormProps) {
     };
 
     loginMutation.mutate(payload, {
-      onSuccess: (response) => {
-        localStorage.setItem("hasSession", "true");
-        
+      onSuccess: (response) => {        
         dispatch(
           setCredentials({
             user: response.user,

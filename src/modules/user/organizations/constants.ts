@@ -4,7 +4,7 @@ export const DEFAULT_ORGANIZATION_ICON = "hexagon";
 export const DEFAULT_ORGANIZATION_COLOR = "#F59E0B";
 
 export const APP_BASE_DOMAIN =
-  import.meta.env.VITE_APP_BASE_DOMAIN || "vurn.co";
+  import.meta.env.VITE_APP_BASE_DOMAIN || "lvh.me:5173";
 
 export const ITEMS_PER_PAGE = 5;
 

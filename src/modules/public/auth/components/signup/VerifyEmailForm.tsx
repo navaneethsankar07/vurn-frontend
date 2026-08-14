@@ -113,8 +113,6 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
 
     userRegistrationMutation.mutate(payload, {
       onSuccess: (response) => {
-        localStorage.setItem("hasSession", "true");
-
         dispatch(
           setCredentials({
             user: response.user,

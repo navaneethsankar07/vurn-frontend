@@ -70,3 +70,63 @@ export interface PaginatedOrganizationsResponse {
     organizations: Organization[];
   };
 }
+
+export interface OrganizationMetrics {
+  total_projects: number;
+  active_sprints: number;
+  members_count: number;
+  open_issues: number;
+  completed_issues: number;
+}
+
+export interface OrganizationProject {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  updated_at: string;
+}
+
+export interface ActiveSprint {
+  id: string;
+  project_code: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  progress: number;
+  status: "Active" | "Planning" | "Completed";
+}
+
+export interface RecentActivity {
+  id: string;
+  user: string;
+  action: string;
+  target: string;
+  time: string;
+}
+
+export interface OrganizationDashboardData {
+  id: string;
+  name: string;
+  description: string;
+  metrics: OrganizationMetrics;
+  recent_projects: OrganizationProject[];
+  active_sprints: ActiveSprint[];
+  recent_activities: RecentActivity[];
+}
+
+export interface BackendDashboardResponse {
+  id: string;
+  name: string;
+  description: string;
+  slug: string;
+  icon: string | null;
+  logo_url: string | null;
+  accent_color: string | null;
+  role: string;
+  total_projects: number;
+  total_members: number;
+  active_sprints: number;
+  open_issues: number;
+  completed_issues: number;
+}

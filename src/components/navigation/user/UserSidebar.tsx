@@ -70,7 +70,7 @@ export function UserSidebar({ isCollapsed = false }: UserSidebarProps) {
 
       <div className="w-full border-t border-white/10 pt-4">
         <Link
-          to="/settings"
+          to="/settings/general"
           title={isCollapsed ? "Settings" : undefined}
           className={`relative flex items-center rounded-md text-sm font-medium text-gray-400 transition-colors hover:bg-white/3 hover:text-white ${
             isCollapsed ? "h-10 justify-start px-2.5" : "px-3 py-2.5"

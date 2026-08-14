@@ -1,5 +1,4 @@
 import type { RouteObject } from "react-router-dom";
-
 import { UserLayout } from "@/layouts/UserLayout";
 import { ProtectedRoute } from "./guards/ProtectedRoute";
 import ProfilePage from "@/modules/user/account/pages/ProfilePage";

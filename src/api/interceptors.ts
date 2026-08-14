@@ -117,7 +117,6 @@ export function setupInterceptors() {
         clearRefreshSubscribers();
 
         store.dispatch(logout());
-        localStorage.removeItem("hasSession");
 
         return Promise.reject(refreshError);
       } finally {

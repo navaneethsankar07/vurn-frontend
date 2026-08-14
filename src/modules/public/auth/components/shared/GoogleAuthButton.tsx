@@ -24,7 +24,6 @@ export function GoogleAuthButton() {
           },
           {
             onSuccess: (response) => {
-              localStorage.setItem("hasSession", "true");
               
 
               dispatch(

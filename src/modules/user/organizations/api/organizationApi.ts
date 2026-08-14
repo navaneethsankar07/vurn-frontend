@@ -1,5 +1,6 @@
 import api from "@/api/axios";
 import type {
+  BackendDashboardResponse,
   CreateOrganizationPayload,
   CreateOrganizationResponse,
   OrganizationOptionsResponse,
@@ -30,6 +31,15 @@ export async function fetchOrganizations(
   const response = await api.get<PaginatedOrganizationsResponse>(
     "/organizations",
     { params },
+  );
+  return response.data;
+}
+
+export async function fetchOrganizationDashboard(
+  slug: string
+): Promise<BackendDashboardResponse> {
+  const response = await api.get<BackendDashboardResponse>(
+    `/organizations/${slug}/dashboard/`
   );
   return response.data;
 }

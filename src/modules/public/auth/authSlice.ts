@@ -45,7 +45,6 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.isAuthenticated = false;
       state.isInitializing = false;
-      localStorage.removeItem("hasSession");
     },
   },
 });
