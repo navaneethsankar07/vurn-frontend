@@ -74,7 +74,12 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
 }
 
 export async function getCurrentUser(): Promise<User> {
-  const response = await api.get<User>("/auth/me/");  
-  
+  const response = await api.get<User>("/auth/me/");
+
+  return response.data;
+}
+
+export async function resendOtp(email: string): Promise<{ message: string }> {
+  const response = await api.post("/auth/resend-otp/", { email });
   return response.data;
 }

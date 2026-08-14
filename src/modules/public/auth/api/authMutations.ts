@@ -5,6 +5,7 @@ import {
   googleLogin,
   login,
   register,
+  resendOtp,
   resetPassword,
   sendOTP,
 } from "./authApi";
@@ -44,3 +45,9 @@ export const useResetPasswordMutation = () => {
     mutationFn: resetPassword,
   });
 };
+
+export function useResendOtpMutation() {
+  return useMutation({
+    mutationFn: (email: string) => resendOtp(email),
+  });
+}

@@ -8,7 +8,10 @@ import {
   OTP_LENGTH,
   OTP_RESEND_SECONDS,
 } from "@/utils/constants/auth.constants";
-import { useRegisterMutation } from "../../api/authMutations";
+import {
+  useRegisterMutation,
+  useResendOtpMutation,
+} from "../../api/authMutations";
 import { useAppDispatch } from "@/app/hooks";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "../../authSlice";
@@ -25,6 +28,7 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   const userRegistrationMutation = useRegisterMutation();
+  const resendOtpMutation = useResendOtpMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -129,13 +133,21 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
   }
 
   function handleResend() {
-    if (secondsLeft > 0) return;
+    if (secondsLeft > 0 || resendOtpMutation.isPending) return;
 
-    // TODO:
-    // Call resend OTP API
-
-    setSecondsLeft(OTP_RESEND_SECONDS);
+    resendOtpMutation.mutate(email, {
+      onSuccess: () => {
+        setSecondsLeft(OTP_RESEND_SECONDS);
+      },
+      onError: (error: any) => {
+        console.error(error);
+        if (error?.response?.data?.retry_after_seconds) {
+          setSecondsLeft(error.response.data.retry_after_seconds);
+        }
+      },
+    });
   }
+
   return (
     <div className="w-full max-w-md rounded-xl border border-white/10 bg-white/3 p-6 sm:p-8">
       <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
@@ -194,9 +206,10 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
             <button
               type="button"
               onClick={handleResend}
-              className="font-mono font-medium text-primary hover:text-primary/80"
+              disabled={resendOtpMutation.isPending}
+              className="font-mono font-medium text-primary hover:text-primary/80 disabled:opacity-50"
             >
-              Resend code
+              {resendOtpMutation.isPending ? "Sending..." : "Resend code"}
             </button>
           )}
         </p>
