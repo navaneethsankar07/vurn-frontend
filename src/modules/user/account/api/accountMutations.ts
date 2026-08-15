@@ -14,6 +14,7 @@ import { accountKeys } from "./accountQueries";
 import type { GeneralSettingsFormData, ProfileResponse } from "../types";
 import type { ChangePasswordSchema } from "../schemas/securitySettingsSchema";
 import { useAppDispatch } from "@/app/hooks";
+import { toast } from "sonner";
 
 export const useLogoutMutation = () => {
   const queryClient = useQueryClient();
@@ -68,7 +69,7 @@ export function useUpdateProfileMutation() {
       return { previousProfile };
     },
 
-    onError: (_err, _newData, context) => {
+    onError: (err: any, _newData, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(
           accountKeys.profileDetail(),
@@ -78,12 +79,16 @@ export function useUpdateProfileMutation() {
           dispatch(updateUser(context.previousProfile.user));
         }
       }
+      toast.error(
+        err?.response?.data?.message || "Failed to update profile settings"
+      );
     },
 
     onSuccess: (responseData) => {
       if (responseData?.user) {
         dispatch(updateUser(responseData.user));
       }
+      toast.success(responseData?.message || "Profile updated successfully.");
     },
 
     onSettled: () => {

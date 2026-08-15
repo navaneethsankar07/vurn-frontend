@@ -15,6 +15,7 @@ import { registerSchema } from "../../schemas/registerSchema";
 
 import { useSendOTPMutation } from "../../api/authMutations";
 import { GoogleAuthButton } from "../shared/GoogleAuthButton";
+import { toast } from "sonner";
 
 interface SignupFormProps {
   onOTPSent: (email: string) => void;
@@ -34,12 +35,27 @@ export function SignupForm({ onOTPSent }: SignupFormProps) {
 
   const onSubmit = (data: RegisterRequest) => {
     sendOTPMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         onOTPSent(data.email);
+        toast.success(response.message);
       },
 
-      onError: (error) => {
-        console.error(error);
+      onError: (error: any) => {
+        const data = error?.response?.data;
+        const fieldError =
+          data?.email?.[0] ||
+          data?.username?.[0] ||
+          data?.password?.[0] ||
+          (Array.isArray(data?.email) ? data.email[0] : data?.email);
+        const generalError =
+          data?.detail || data?.message || data?.non_field_errors?.[0];
+
+        const errorMessage =
+          fieldError ||
+          generalError ||
+          "Registration failed. Please try again.";
+
+        toast.error(errorMessage);
       },
     });
   };

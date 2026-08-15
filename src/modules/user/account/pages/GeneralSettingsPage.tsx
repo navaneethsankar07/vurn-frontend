@@ -10,7 +10,6 @@ import {
   type GeneralSettingsSchema,
 } from "../schemas/generalSettingsSchema";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 export default function GeneralSettingsPage() {
   const { data, isLoading, isError } = useProfileQuery();
@@ -68,7 +67,6 @@ export default function GeneralSettingsPage() {
     });
 
     navigate("/profile");
-    toast.success('Updated Successfully')
   };
 
   if (isLoading) {

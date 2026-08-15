@@ -36,6 +36,7 @@ export interface ProfileStatistics {
 }
 
 export interface ProfileResponse {
+  message?: string;
   user: ProfileUser;
   statistics: ProfileStatistics;
   recent_activity: ProfileActivity[];

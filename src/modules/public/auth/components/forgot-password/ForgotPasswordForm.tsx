@@ -12,6 +12,7 @@ import {
   type ForgotPasswordFormData,
 } from "../../schemas/forgotPasswordSchema";
 import { useForgotPasswordMutation } from "../../api/authMutations";
+import { toast } from "sonner";
 
 interface ForgotPasswordFormProps {
   onEmailSent: (email: string) => void;
@@ -33,9 +34,10 @@ export function ForgotPasswordForm({
   const onSubmit = (data: ForgotPasswordFormData) => {
     forgotPasswordMutation.mutate(data, {
       onSuccess: (response) => {
-        console.log(response.message);
 
         onEmailSent(data.email);
+        toast.success(response.message);
+
       },
 
       onError: (error) => {

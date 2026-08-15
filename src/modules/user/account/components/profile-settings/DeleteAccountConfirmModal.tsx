@@ -12,6 +12,7 @@ import {
   useRequestAccountDeletionMutation,
 } from "../../api/accountMutations";
 import { DANGER_ZONE_CONSTANTS } from "../../constants";
+import { toast } from "sonner";
 
 interface Props {
   isOpen: boolean;
@@ -49,20 +50,33 @@ export function DeleteAccountConfirmModal({
   const handleResendOtp = () => {
     resendMutation.mutate({
       confirmation: DANGER_ZONE_CONSTANTS.CONFIRMATION_PHRASE,
+    },
+  {
+      onSuccess: (response: any) => {
+        toast.success(response?.data?.message || response?.message || "OTP resent successfully");
+      },
+      onError: (error: any) => {
+        toast.error(
+          error?.response?.data?.message || "Failed to resend OTP. Please try again."
+        );
+      },
     });
+
   };
 
   const onSubmit = (data: DeleteAccountConfirmSchema) => {
     confirmMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         reset();
         navigate("/login", { replace: true });
+        toast.info(response.message)
       },
       onError: (error: any) => {
         const message =
           error?.response?.data?.otp ||
           error?.response?.data?.message ||
           "Invalid OTP";
+          toast.error(message)
         setError("otp", {
           type: "server",
           message: Array.isArray(message) ? message[0] : message,

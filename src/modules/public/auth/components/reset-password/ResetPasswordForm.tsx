@@ -13,6 +13,7 @@ import {
 } from "../../schemas/resetPasswordSchema";
 import { useResetPasswordMutation } from "../../api/authMutations";
 import type { ResetPasswordRequest } from "../../types";
+import { toast } from "sonner";
 
 interface ResetPasswordFormProps {
   token: string;
@@ -44,7 +45,7 @@ export function ResetPasswordForm({
 
     resetPasswordMutation.mutate(payload, {
       onSuccess: (response) => {
-        console.log(response.message);
+        toast.success(response.message);
 
         onSuccess?.();
       },

@@ -17,6 +17,7 @@ import { useLoginMutation } from "../../api/authMutations";
 import { GoogleAuthButton } from "../shared/GoogleAuthButton";
 import { useAppDispatch } from "@/app/hooks";
 import { setCredentials } from "../../authSlice";
+import { toast } from "sonner";
 
 interface LoginFormProps {}
 
@@ -42,18 +43,26 @@ export function LoginForm({}: LoginFormProps) {
     };
 
     loginMutation.mutate(payload, {
-      onSuccess: (response) => {        
+      onSuccess: (response) => {
         dispatch(
           setCredentials({
             user: response.user,
             accessToken: response.access,
-          })
-        )
-        navigate('/dashboard')
+          }),
+        );
+        navigate("/dashboard");
+        toast.success("Login successful");
       },
 
-      onError: (error) => {
-        console.error(error);
+      onError: (error: any) => {
+        const serverMessage =
+          error?.response?.data?.detail ||
+          error?.response?.data?.message ||
+          error?.response?.data?.non_field_errors?.[0];
+
+        toast.error(
+          serverMessage || "Invalid credentials or account no longer exists.",
+        );
       },
     });
   };

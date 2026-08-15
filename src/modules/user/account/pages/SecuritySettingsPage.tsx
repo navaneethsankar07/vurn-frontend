@@ -8,6 +8,7 @@ import {
   changePasswordSchema,
   type ChangePasswordSchema,
 } from "../schemas/securitySettingsSchema";
+import { toast } from "sonner";
 
 export default function SecuritySettingsPage() {
   const [showCurrent, setShowCurrent] = useState(false);
@@ -35,8 +36,9 @@ export default function SecuritySettingsPage() {
 
   const onSubmit = (data: ChangePasswordSchema) => {
     changePasswordMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         reset();
+        toast.success(response.message);
       },
       onError: (error: any) => {
         const apiErrors = error?.response?.data;

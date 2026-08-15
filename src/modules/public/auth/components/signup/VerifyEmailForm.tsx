@@ -15,6 +15,7 @@ import {
 import { useAppDispatch } from "@/app/hooks";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "../../authSlice";
+import { toast } from "sonner";
 
 interface VerifyEmailFormProps {
   email: string;
@@ -124,6 +125,7 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
           }),
         );
         navigate("/dashboard");
+        toast.success(response.message)
       },
 
       onError: (error) => {

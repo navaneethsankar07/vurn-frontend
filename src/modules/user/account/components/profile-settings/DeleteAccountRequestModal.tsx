@@ -8,6 +8,7 @@ import {
 } from "../../schemas/dangerZoneSchema";
 import { useRequestAccountDeletionMutation } from "../../api/accountMutations";
 import { DANGER_ZONE_CONSTANTS } from "../../constants";
+import { toast } from "sonner";
 
 interface Props {
   isOpen: boolean;
@@ -42,15 +43,18 @@ export function DeleteAccountRequestModal({
 
   const onSubmit = (data: DeleteAccountRequestSchema) => {
     requestMutation.mutate(data, {
-      onSuccess: (resData) => {
+      onSuccess: (response) => {
         reset();
-        onSuccess(resData?.masked_email);
+        onSuccess(response?.masked_email);
+        toast.success(response.message)
+
       },
       onError: (error: any) => {
         const message =
           error?.response?.data?.confirmation ||
           error?.response?.data?.message ||
           "Failed to request deletion";
+          toast.error(message)
         setError("confirmation", {
           type: "server",
           message: Array.isArray(message) ? message[0] : message,

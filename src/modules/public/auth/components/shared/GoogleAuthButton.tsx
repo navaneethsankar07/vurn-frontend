@@ -4,6 +4,7 @@ import { useGoogleLoginMutation } from "@/modules/public/auth/api/authMutations"
 import { useAppDispatch } from "@/app/hooks";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "../../authSlice";
+import { toast } from "sonner";
 
 export function GoogleAuthButton() {
   const googleLoginMutation = useGoogleLoginMutation();
@@ -24,8 +25,6 @@ export function GoogleAuthButton() {
           },
           {
             onSuccess: (response) => {
-              
-
               dispatch(
                 setCredentials({
                   user: response.user,
@@ -33,6 +32,7 @@ export function GoogleAuthButton() {
                 }),
               );
               navigate("/dashboard");
+              toast.success("Login successful");
             },
 
             onError: (error) => {
