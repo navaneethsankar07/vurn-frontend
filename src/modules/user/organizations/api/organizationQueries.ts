@@ -140,18 +140,22 @@ export function useOrganizationDashboardQuery(slug?: string) {
       const data = await fetchOrganizationDashboard(slug);
 
       return {
-        id: data.id,
+        id: Number(data.id),
         name: data.name,
+        slug: data.slug,
         description: data.description,
-        metrics: {
-          total_projects: data.total_projects,
-          active_sprints: data.active_sprints,
-          members_count: data.total_members,
-          open_issues: data.open_issues,
-          completed_issues: data.completed_issues,
-        },
+        icon: data.icon,
+        logo_url: data.logo_url,
+        accent_color: data.accent_color,
+
+        total_projects: data.total_projects,
+        total_members: data.total_members,
+        active_sprints_count: data.active_sprints, 
+        open_issues: data.open_issues,
+        completed_issues: data.completed_issues,
+
         recent_projects: [...MOCK_EXTRAS.recent_projects],
-        active_sprints: [...MOCK_EXTRAS.active_sprints],
+        active_sprints: [...MOCK_EXTRAS.active_sprints], 
         recent_activities: [...MOCK_EXTRAS.recent_activities],
       };
     },

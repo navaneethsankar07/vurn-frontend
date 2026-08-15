@@ -1,10 +1,11 @@
-import { Settings, Plus } from "lucide-react";
+import { Settings, Plus, Building2 } from "lucide-react";
 import { useOrganizationDashboardQuery } from "../api/organizationQueries";
 import { RecentProjects } from "../components/RecentProjects";
 import { ActiveSprints } from "../components/ActiveSprints";
 import { QuickActions } from "../components/QuickActions";
 import { RecentActivity } from "../components/RecentActivity";
 import { getSubdomain } from "@/utils/subdomain";
+import { renderOrgIcon } from "@/utils/renderOrgIcon";
 
 export function OrganizationDashboard() {
   const subdomain = getSubdomain();
@@ -17,7 +18,11 @@ export function OrganizationDashboard() {
   }
 
   if (isLoading) {
-    return <div>Loading dashboard...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-neutral-950">
+        <p className="font-mono text-sm text-gray-500">Loading...</p>
+      </div>
+    );
   }
 
   if (isError) {
@@ -28,15 +33,37 @@ export function OrganizationDashboard() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 font-mono">
-      {/* Title & Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
-        <div>
-          <h1 className="text-xl font-bold text-white tracking-tight">
-            {data.name}
-          </h1>
-          <p className="text-xs text-gray-400 mt-1 max-w-2xl leading-relaxed">
-            {data.description || "No description provided for this organization."}
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-[#09090b] overflow-hidden">
+            {data.logo_url ? (
+              <img
+                src={data.logo_url}
+                alt={data.name}
+                className="h-full w-full object-cover"
+              />
+            ) : data.icon ? (
+              renderOrgIcon(data.icon, {
+                className: "h-6 w-6",
+                style: { color: data.accent_color || "#f59e0b" },
+              })
+            ) : (
+              <Building2
+                className="h-6 w-6"
+                style={{ color: data.accent_color || "#f59e0b" }}
+              />
+            )}
+          </div>
+
+          <div>
+            <h1 className="text-xl font-bold text-white tracking-tight">
+              {data.name}
+            </h1>
+            <p className="text-xs text-gray-400 mt-1 max-w-2xl leading-relaxed">
+              {data.description ||
+                "No description provided for this organization."}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -57,7 +84,6 @@ export function OrganizationDashboard() {
         </div>
       </div>
 
-      {/* Metrics Row */}
       <div className="space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
           Organization Overview
@@ -65,7 +91,7 @@ export function OrganizationDashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <div className="rounded border border-white/10 bg-[#09090b] p-3.5">
             <span className="text-xl font-bold text-white block">
-              {data.metrics.total_projects}
+              {data.total_projects}
             </span>
             <span className="text-[10px] text-gray-500 uppercase mt-1 block">
               Total Projects
@@ -73,7 +99,7 @@ export function OrganizationDashboard() {
           </div>
           <div className="rounded border border-white/10 bg-[#09090b] p-3.5">
             <span className="text-xl font-bold text-white block">
-              {data.metrics.active_sprints}
+              {data.active_sprints?.length || 0}
             </span>
             <span className="text-[10px] text-gray-500 uppercase mt-1 block">
               Active Sprints
@@ -81,7 +107,7 @@ export function OrganizationDashboard() {
           </div>
           <div className="rounded border border-white/10 bg-[#09090b] p-3.5">
             <span className="text-xl font-bold text-white block">
-              {data.metrics.members_count}
+              {data.total_members}
             </span>
             <span className="text-[10px] text-gray-500 uppercase mt-1 block">
               Members
@@ -89,7 +115,7 @@ export function OrganizationDashboard() {
           </div>
           <div className="rounded border border-white/10 bg-[#09090b] p-3.5">
             <span className="text-xl font-bold text-white block">
-              {data.metrics.open_issues}
+              {data.open_issues}
             </span>
             <span className="text-[10px] text-gray-500 uppercase mt-1 block">
               Open Issues
@@ -97,7 +123,7 @@ export function OrganizationDashboard() {
           </div>
           <div className="rounded border border-white/10 bg-[#09090b] p-3.5">
             <span className="text-xl font-bold text-white block">
-              {data.metrics.completed_issues.toLocaleString()}
+              {data.completed_issues?.toLocaleString()}
             </span>
             <span className="text-[10px] text-gray-500 uppercase mt-1 block">
               Completed Issues
@@ -106,16 +132,15 @@ export function OrganizationDashboard() {
         </div>
       </div>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <RecentProjects projects={data.recent_projects} />
-          <ActiveSprints sprints={data.active_sprints} />
+          <RecentProjects projects={data.recent_projects || []} />
+          <ActiveSprints sprints={data.active_sprints || []} />
         </div>
 
         <div className="space-y-6">
           <QuickActions />
-          <RecentActivity activities={data.recent_activities} />
+          <RecentActivity activities={data.recent_activities || []} />
         </div>
       </div>
     </div>

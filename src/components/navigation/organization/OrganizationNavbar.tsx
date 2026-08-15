@@ -10,6 +10,14 @@ import {
 import { useAppSelector } from "@/app/hooks";
 import { getSubdomain } from "@/utils/subdomain";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
+import { renderOrgIcon } from "@/utils/renderOrgIcon";
+
+interface OrganizationSummary {
+  name: string;
+  slug: string;
+  icon?: string | null;
+  logo_url?: string | null;
+}
 
 interface OrganizationNavbarProps {
   currentOrgName?: string;
@@ -21,8 +29,6 @@ export function OrganizationNavbar({
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
 
   const { user } = useAppSelector((state) => state.auth);
-  console.log(user);
-  
 
   const currentSubdomain = getSubdomain();
 
@@ -41,21 +47,28 @@ export function OrganizationNavbar({
     window.location.href = getOrganizationUrl(slug);
   };
 
-  // Derive initial for fallback avatar
   const fallbackInitial = user?.full_name
     ? user.full_name.charAt(0).toUpperCase()
     : user?.username
-    ? user.username.charAt(0).toUpperCase()
-    : "U";
+      ? user.username.charAt(0).toUpperCase()
+      : "U";
 
-  // Formatted display name for current workspace
+  const userOrgs = (user?.organizations as OrganizationSummary[]) || [];
+
+  const extractedSubdomain = currentSubdomain?.split(".")[0]?.toLowerCase();
+
+  const activeOrg = userOrgs.find(
+    (org) => org.slug.toLowerCase() === extractedSubdomain,
+  );
+
   const activeOrgName =
-    currentOrgName || (currentSubdomain ? currentSubdomain : "Workspace");
+    activeOrg?.name ||
+    currentOrgName ||
+    (currentSubdomain ? currentSubdomain : "Workspace");
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#030303] font-mono">
       <div className="flex h-14 items-center justify-between px-4 sm:px-6">
-        {/* Left: Logo & Org Switcher */}
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -72,20 +85,37 @@ export function OrganizationNavbar({
 
           <div className="h-4 w-px bg-white/10" />
 
-          {/* Org Switcher */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setOrgDropdownOpen((prev) => !prev)}
               className="flex items-center gap-2 rounded border border-white/10 bg-[#09090b] px-2.5 py-1 text-xs text-gray-300 hover:border-white/20 hover:text-white transition-colors cursor-pointer"
             >
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] text-gray-500 uppercase leading-none">
-                  Organization
-                </span>
-                <span className="font-semibold text-white leading-tight capitalize">
-                  {activeOrgName}
-                </span>
+              <div className="flex items-center gap-2">
+                {activeOrg?.logo_url ? (
+                  <img
+                    src={activeOrg.logo_url}
+                    alt={activeOrgName}
+                    className="h-4 w-4 rounded object-cover shrink-0"
+                  />
+                ) : activeOrg?.icon ? (
+                  <span className="shrink-0 flex items-center justify-center">
+                    {renderOrgIcon(activeOrg.icon, {
+                      className: "h-3.5 w-3.5 text-amber-500",
+                    })}
+                  </span>
+                ) : (
+                  <Building2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                )}
+
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] text-gray-500 uppercase leading-none">
+                    Organization
+                  </span>
+                  <span className="font-semibold text-white leading-tight capitalize">
+                    {activeOrgName}
+                  </span>
+                </div>
               </div>
               <ChevronDown className="h-3.5 w-3.5 text-gray-400 ml-1" />
             </button>
@@ -96,27 +126,44 @@ export function OrganizationNavbar({
                   Your Organizations
                 </div>
 
-                {user?.organizations && user.organizations.length > 0 ? (
-                  user.organizations.map((slug) => {
+                {userOrgs.length > 0 ? (
+                  userOrgs.map((org) => {
                     const isCurrent =
-                      currentSubdomain?.toLowerCase() === slug.toLowerCase();
+                      currentSubdomain?.toLowerCase() ===
+                      org.slug.toLowerCase();
                     return (
                       <button
-                        key={slug}
+                        key={org.slug}
                         type="button"
-                        onClick={() => handleSwitchOrg(slug)}
+                        onClick={() => handleSwitchOrg(org.slug)}
                         className={`flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-white/5 transition-colors cursor-pointer ${
                           isCurrent
                             ? "text-white bg-white/5 font-semibold"
                             : "text-gray-300"
                         }`}
                       >
-                        <Building2
-                          className={`h-3.5 w-3.5 ${
-                            isCurrent ? "text-amber-500" : "text-gray-500"
-                          }`}
-                        />
-                        <span className="truncate capitalize">{slug}</span>
+                        {org.logo_url ? (
+                          <img
+                            src={org.logo_url}
+                            alt={org.name}
+                            className="h-4 w-4 rounded object-cover shrink-0"
+                          />
+                        ) : org.icon ? (
+                          <span className="shrink-0 flex items-center justify-center">
+                            {renderOrgIcon(org.icon, {
+                              className: `h-3.5 w-3.5 ${
+                                isCurrent ? "text-amber-500" : "text-gray-500"
+                              }`,
+                            })}
+                          </span>
+                        ) : (
+                          <Building2
+                            className={`h-3.5 w-3.5 shrink-0 ${
+                              isCurrent ? "text-amber-500" : "text-gray-500"
+                            }`}
+                          />
+                        )}
+                        <span className="truncate capitalize">{org.name}</span>
                       </button>
                     );
                   })
@@ -141,7 +188,6 @@ export function OrganizationNavbar({
           </div>
         </div>
 
-        {/* Center: Global Search */}
         <div className="hidden md:flex flex-1 max-w-md mx-8">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
@@ -157,7 +203,6 @@ export function OrganizationNavbar({
           </div>
         </div>
 
-        {/* Right: Actions & User Avatar */}
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -178,7 +223,7 @@ export function OrganizationNavbar({
           <button
             type="button"
             onClick={() => handleBaseDomainNavigate("/profile")}
-            className="h-7 w-7 rounded-full bg-linear-to-tr from-amber-500 to-amber-200 p-[1px] cursor-pointer overflow-hidden shrink-0"
+            className="h-7 w-7 rounded-full bg-linear-to-tr from-amber-500 to-amber-200 p-px cursor-pointer overflow-hidden shrink-0"
             title={user?.full_name || user?.username || "Profile"}
           >
             {user?.avatar ? (

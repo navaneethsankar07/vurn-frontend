@@ -106,13 +106,25 @@ export interface RecentActivity {
 }
 
 export interface OrganizationDashboardData {
-  id: string;
+  id: number;
   name: string;
+  slug: string;
   description: string;
-  metrics: OrganizationMetrics;
-  recent_projects: OrganizationProject[];
-  active_sprints: ActiveSprint[];
-  recent_activities: RecentActivity[];
+  icon?: string | null;
+  logo_url?: string | null;
+  accent_color?: string | null;
+
+  // Counts for metric cards
+  total_projects: number;
+  total_members: number;
+  active_sprints_count: number;
+  open_issues: number;
+  completed_issues: number;
+
+  // Data lists for sub-components
+  recent_projects?: OrganizationProject[];
+  active_sprints?: ActiveSprint[];
+  recent_activities?: RecentActivity[];
 }
 
 export interface BackendDashboardResponse {

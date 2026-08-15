@@ -19,6 +19,8 @@ export interface VerifyOTPRequest {
 export interface OrganizationSummary {
   name: string;
   slug: string;
+  icon?: string | null;
+  logo_url?: string | null;
 }
 
 export interface User {

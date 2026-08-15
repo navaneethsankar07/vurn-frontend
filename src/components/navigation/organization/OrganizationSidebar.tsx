@@ -25,11 +25,11 @@ export function OrganizationSidebar() {
 
   return (
     <aside
-      className={`relative flex flex-col border-r border-white/10 bg-[#030303] font-mono transition-all duration-300 ${
-        collapsed ? "w-16" : "w-56"
+      className={`sticky top-14 h-[calc(100vh-3.5rem)] shrink-0 flex flex-col justify-between border-r border-white/10 bg-secondary p-4 font-mono transition-all duration-300 ease-in-out ${
+        collapsed ? "w-16 px-2" : "w-56"
       }`}
     >
-      <div className="flex-1 py-4 px-2 space-y-1">
+      <div className="w-full space-y-1">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           return (
@@ -37,40 +37,61 @@ export function OrganizationSidebar() {
               key={item.label}
               to={item.href}
               end={item.href === "/"}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded text-xs font-medium transition-colors ${
-                  isActive
-                    ? "bg-white/10 text-white"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                } ${collapsed ? "justify-center px-0" : ""}`
-              }
               title={collapsed ? item.label : undefined}
+              className={({ isActive }) =>
+                `relative flex items-center rounded-[3px] text-xs font-medium transition-colors ${
+                  collapsed
+                    ? "h-10 justify-start px-2.5"
+                    : "justify-between px-3 py-2.5"
+                } ${
+                  isActive
+                    ? "bg-white/6 text-white"
+                    : "text-gray-400 hover:bg-white/3 hover:text-white"
+                }`
+              }
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
+              <div className="flex items-center overflow-hidden">
+                <Icon className="h-4 w-4 shrink-0" />
+                <span
+                  className={`whitespace-nowrap transition-all ease-in-out ${
+                    collapsed
+                      ? "max-w-0 -translate-x-2 opacity-0 duration-150"
+                      : "ml-3 max-w-37.5 translate-x-0 opacity-100 delay-100 duration-200"
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </div>
             </NavLink>
           );
         })}
       </div>
 
-      {/* Sidebar Collapse Toggle Button */}
-      <div className="p-2 border-t border-white/10">
+      <div className="w-full border-t border-white/10 pt-4">
         <button
           type="button"
           onClick={() => setCollapsed((prev) => !prev)}
-          className={`flex w-full items-center gap-3 px-3 py-2 rounded text-xs text-gray-500 hover:text-white hover:bg-white/5 transition-colors ${
-            collapsed ? "justify-center px-0" : ""
+          title={collapsed ? "Expand Sidebar" : undefined}
+          className={`relative flex w-full items-center rounded-md text-xs font-medium text-gray-500 transition-colors hover:bg-white/3 hover:text-white ${
+            collapsed ? "h-10 justify-start px-2.5" : "px-3 py-2.5"
           }`}
-          title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
-          {collapsed ? (
-            <PanelLeftOpen className="h-4 w-4 shrink-0" />
-          ) : (
-            <>
+          <div className="flex items-center overflow-hidden">
+            {collapsed ? (
+              <PanelLeftOpen className="h-4 w-4 shrink-0" />
+            ) : (
               <PanelLeftClose className="h-4 w-4 shrink-0" />
-              <span>Collapse Sidebar</span>
-            </>
-          )}
+            )}
+            <span
+              className={`whitespace-nowrap transition-all ease-in-out ${
+                collapsed
+                  ? "max-w-0 -translate-x-2 opacity-0 duration-150"
+                  : "ml-3 max-w-37.45 translate-x-0 opacity-100 delay-100 duration-200"
+              }`}
+            >
+              Collapse Sidebar
+            </span>
+          </div>
         </button>
       </div>
     </aside>
