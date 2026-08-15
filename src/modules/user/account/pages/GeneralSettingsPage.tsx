@@ -9,13 +9,15 @@ import {
   generalSettingsSchema,
   type GeneralSettingsSchema,
 } from "../schemas/generalSettingsSchema";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function GeneralSettingsPage() {
   const { data, isLoading, isError } = useProfileQuery();
   const updateProfileMutation = useUpdateProfileMutation();
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -64,6 +66,9 @@ export default function GeneralSettingsPage() {
       ...formData,
       avatar: formData.avatar ?? null,
     });
+
+    navigate("/profile");
+    toast.success('Updated Successfully')
   };
 
   if (isLoading) {

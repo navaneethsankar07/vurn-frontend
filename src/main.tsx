@@ -10,11 +10,11 @@ import { setupInterceptors } from "./api/interceptors";
 setupInterceptors();
 
 createRoot(document.getElementById("root")!).render(
-  // <StrictMode>
+  <StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <AppProviders>
       <App />
     </AppProviders>
     </GoogleOAuthProvider>
-  // </StrictMode>
+   </StrictMode>
 );

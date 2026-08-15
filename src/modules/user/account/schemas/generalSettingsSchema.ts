@@ -26,8 +26,8 @@ export const generalSettingsSchema = z.object({
     ),
   avatar: z
     .union([
-      z.instanceof(File).refine((file) => file.size <= 1024 * 1024, {
-        message: "Image must be 1MB or smaller",
+      z.instanceof(File).refine((file) => file.size <= 5 * 1024 * 1024, {
+        message: "Image must be 5MB or smaller",
       }),
       z.string(),
       z.null(),

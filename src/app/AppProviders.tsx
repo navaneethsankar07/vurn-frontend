@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Provider } from "react-redux";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { store } from "./store";
+import { Toaster } from "@/components/ui/sonner";
 import { queryClient } from "./queryClient";
 import { AuthBootstrap } from "./AuthBootstrap";
 
@@ -14,8 +15,8 @@ export default function AppProviders({ children }: AppProvidersProps) {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <AuthBootstrap />
-          {children}
-          
+        {children}
+        <Toaster/>
       </QueryClientProvider>
     </Provider>
   );

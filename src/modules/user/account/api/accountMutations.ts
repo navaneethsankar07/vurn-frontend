@@ -11,7 +11,7 @@ import {
   updateUser,
 } from "@/modules/public/auth/authSlice";
 import { accountKeys } from "./accountQueries";
-import type { GeneralSettingsFormData } from "../types";
+import type { GeneralSettingsFormData, ProfileResponse } from "../types";
 import type { ChangePasswordSchema } from "../schemas/securitySettingsSchema";
 import { useAppDispatch } from "@/app/hooks";
 
@@ -35,12 +35,59 @@ export function useUpdateProfileMutation() {
   return useMutation({
     mutationFn: (data: Omit<GeneralSettingsFormData, "email">) =>
       updateProfile(data),
-    onSuccess: (responseData) => {
-      queryClient.invalidateQueries({ queryKey: accountKeys.profile });
 
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: accountKeys.profileDetail() });
+
+      const previousProfile = queryClient.getQueryData<ProfileResponse>(
+        accountKeys.profileDetail()
+      );
+
+      if (previousProfile?.user) {
+        const updatedFullName =
+          `${newData.first_name} ${newData.last_name}`.trim();
+
+        const optimisticUser = {
+          ...previousProfile.user,
+          full_name: updatedFullName,
+          username: newData.username,
+          avatar:
+            newData.avatar instanceof File
+              ? URL.createObjectURL(newData.avatar)
+              : newData.avatar,
+        };
+
+        queryClient.setQueryData<ProfileResponse>(accountKeys.profileDetail(), {
+          ...previousProfile,
+          user: optimisticUser,
+        });
+
+        dispatch(updateUser(optimisticUser));
+      }
+
+      return { previousProfile };
+    },
+
+    onError: (_err, _newData, context) => {
+      if (context?.previousProfile) {
+        queryClient.setQueryData(
+          accountKeys.profileDetail(),
+          context.previousProfile
+        );
+        if (context.previousProfile.user) {
+          dispatch(updateUser(context.previousProfile.user));
+        }
+      }
+    },
+
+    onSuccess: (responseData) => {
       if (responseData?.user) {
         dispatch(updateUser(responseData.user));
       }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: accountKeys.profileDetail() });
     },
   });
 }
