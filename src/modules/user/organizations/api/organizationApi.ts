@@ -83,13 +83,16 @@ export async function archiveOrganization(slug: string): Promise<void> {
   await api.post(`/organizations/${slug}/archive/`);
 }
 
-export async function requestDeleteOrganization(slug: string): Promise<void> {
-  await api.post(`/organizations/${slug}/delete/request/`);
+export async function requestDeleteOrganization(
+  slug: string,
+  name: string,
+): Promise<void> {
+  await api.post(`/organizations/${slug}/delete/request/`, { name });
 }
 
 export async function confirmDeleteOrganization(
   slug: string,
-  code: string,
+  otp: string,
 ): Promise<void> {
-  await api.post(`/organizations/${slug}/delete/confirm/`, { code });
+  await api.post(`/organizations/${slug}/delete/confirm/`, { otp });
 }

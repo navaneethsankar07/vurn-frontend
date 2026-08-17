@@ -6,6 +6,7 @@ import { getSubdomain } from "@/utils/subdomain";
 import { GeneralSettingsPage } from "@/modules/user/organizations/pages/GeneralSettingsPage";
 import { SettingsLayout } from "@/modules/user/organizations/layout/SettingsLayout";
 import { BrandingSettingsPage } from "@/modules/user/organizations/pages/BrandingSettingsPage";
+import { DangerZonePage } from "@/modules/user/organizations/pages/DangerZonePage";
 
 const subdomain = getSubdomain();
 
@@ -36,6 +37,10 @@ export const OrganizationRoutes: RouteObject[] = subdomain
                   {
                     path: "branding",
                     element: <BrandingSettingsPage/>
+                  },
+                  {
+                    path: "danger-zone",
+                    element: <DangerZonePage/>
                   }
                 ],
               },

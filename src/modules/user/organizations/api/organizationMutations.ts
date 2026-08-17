@@ -1,6 +1,6 @@
-// api/organizationMutations.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  archiveOrganization,
   confirmDeleteOrganization,
   createOrganization,
   requestDeleteOrganization,
@@ -55,9 +55,20 @@ export function useUpdateBrandingMutation(slug: string) {
   });
 }
 
+export function useArchiveOrgMutation(slug: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => archiveOrganization(slug),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() });
+    },
+  });
+}
+
 export function useRequestDeleteOrgMutation(slug: string) {
   return useMutation({
-    mutationFn: () => requestDeleteOrganization(slug),
+    mutationFn: (name: string) => requestDeleteOrganization(slug, name),
   });
 }
 

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Upload } from "lucide-react";
+import { Check, Upload } from "lucide-react";
 import {
   brandingSettingsSchema,
   type BrandingSettingsFormValues,
@@ -160,7 +160,7 @@ export function BrandingSettingsPage() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-4 font-mono text-xs">
+    <div className="w- max-w-3xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-4 font-mono text-xs">
       <div className="text-gray-400 text-xs">Branding</div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -211,7 +211,7 @@ export function BrandingSettingsPage() {
               </label>
             </div>
 
-            <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5 sm:gap-2 pt-0.5">
+            <div className="grid grid-cols-4 sm:grid-cols-9 gap-1.5 sm:gap-2 pt-0.5">
               {availableIcons.map((iconName) => {
                 const isSelected = selectedIcon === iconName;
                 return (
@@ -270,23 +270,29 @@ export function BrandingSettingsPage() {
                     style={
                       isSelected
                         ? {
-                            borderColor: `${color.value}60`,
-                            backgroundColor: `${color.value}15`,
+                            borderColor: `${color.value}80`,
+                            backgroundColor: `${color.value}20`,
                             color: color.value,
                           }
                         : {}
                     }
                     className={`flex items-center gap-1.5 rounded border px-2.5 py-1.5 text-[11px] sm:text-xs transition-all ${
                       isSelected
-                        ? ""
+                        ? "font-medium"
                         : "border-white/10 bg-[#121215] text-gray-400 hover:border-white/20 hover:text-white"
                     }`}
                   >
-                    <span
+                    {/* <span
                       className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: color.value }}
-                    />
+                    /> */}
                     <span className="capitalize">{color.name}</span>
+                    {isSelected && (
+                      <Check
+                        className="h-3 w-3 shrink-0"
+                        style={{ color: color.value }}
+                      />
+                    )}
                   </button>
                 );
               })}
@@ -364,7 +370,7 @@ export function BrandingSettingsPage() {
               disabled={
                 (!isDirty && !logoFile) || updateBrandingMutation.isPending
               }
-              className="bg-[#3a2810] hover:bg-[#4d3515] text-amber-400 disabled:opacity-40 px-3.5 py-1.5 rounded text-xs font-medium border border-amber-500/20 transition-colors"
+              className="w-full sm:w-auto bg-secondary border-primary border-2 hover:text-primary/70 hover:border-primary/70 disabled:opacity-50 text-primary px-4 py-2 rounded-xs text-xs font-medium transition-colors"
             >
               {updateBrandingMutation.isPending ? "Saving..." : "Save Changes"}
             </button>

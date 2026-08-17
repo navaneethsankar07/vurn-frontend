@@ -16,7 +16,7 @@ const SETTINGS_NAV = [
   { label: "Billing", href: "/settings/billing", icon: CreditCard },
   {
     label: "Danger Zone",
-    href: "/settings/danger",
+    href: "/settings/danger-zone",
     icon: AlertTriangle,
     danger: true,
   },
@@ -24,7 +24,7 @@ const SETTINGS_NAV = [
 
 export function SettingsSidebar() {
   return (
-    <aside className="w-full md:w-56 lg:w-60 lg:pl-8 lg:pt-6 flex flex-row md:flex-col gap-1 font-mono text-xs sm:text-sm border-b md:border-b-0 md:border-r border-white/10 pb-4 md:pb-0 md:pr-6 overflow-x-auto md:overflow-x-visible shrink-0 md:sticky md:top-6">
+    <aside className="w-full md:w-56 lg:w-60 lg:pl-8 flex flex-row md:flex-col gap-1 font-mono text-xs sm:text-sm border-b md:border-b-0 md:border-r border-white/10 pb-4 md:pb-0 md:pr-6 overflow-x-auto md:overflow-x-visible shrink-0 md:sticky md:top-6">
       {SETTINGS_NAV.map((item) => {
         const Icon = item.icon;
         return (

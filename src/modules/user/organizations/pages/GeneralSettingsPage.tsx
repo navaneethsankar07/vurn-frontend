@@ -18,11 +18,13 @@ import {
   formatSubdomainPreview,
   getOrganizationUrl,
 } from "@/utils/organizationUrl";
+import { formatDate } from "@/utils/date";
 
 interface FormOrgData {
   name?: string;
   slug?: string;
   description?: string | null;
+  updated_at?: string;
   role?: string;
   total_members?: number;
   total_projects?: number;
@@ -49,6 +51,7 @@ export function GeneralSettingsPage() {
         name: orgDetail.name,
         slug: orgDetail.slug,
         description: orgDetail.description,
+        updated_at: orgDetail.updated_at,
         role: "role" in orgDetail ? String(orgDetail.role) : undefined,
         total_members: orgDetail.total_members,
         total_projects: orgDetail.total_projects,
@@ -65,6 +68,7 @@ export function GeneralSettingsPage() {
   }, [orgDetail, authOrg]);
 
   const updateSettingsMutation = useUpdateSettingsMutation(slug);
+console.log(data);
 
   const {
     register,
@@ -161,7 +165,7 @@ export function GeneralSettingsPage() {
   const projectCount = data.total_projects ?? 0;
 
   return (
-    <div className="w-full max-w-2xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-6 font-mono text-xs">
+    <div className="w-full max-w-3xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-6 font-mono text-xs">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded border border-white/10 bg-[#09090b] p-4 sm:p-5 space-y-4">
           <div className="border-b border-white/10 pb-3">
@@ -182,7 +186,7 @@ export function GeneralSettingsPage() {
                   register("name").onChange(e);
                   handleNameChange(e);
                 }}
-                className="w-full bg-[#121215] border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-white/30"
+                className="w-full bg-[#121215] border border-white/10 rounded-xs px-3 py-2 text-white focus:outline-none focus:border-white/30"
               />
               {errors.name && (
                 <p className="text-red-400 mt-1">{errors.name.message}</p>
@@ -193,7 +197,7 @@ export function GeneralSettingsPage() {
               <label className="block text-gray-300 mb-1.5 font-medium">
                 Slug
               </label>
-              <div className="flex rounded border border-white/10 bg-[#121215] overflow-hidden focus-within:border-white/30">
+              <div className="flex rounded-xs border border-white/10 bg-[#121215] overflow-hidden focus-within:border-white/30">
                 <input
                   type="text"
                   {...register("slug")}
@@ -216,14 +220,14 @@ export function GeneralSettingsPage() {
             <textarea
               {...register("description")}
               rows={3}
-              className="w-full bg-[#121215] border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-white/30 resize-none"
+              className="w-full bg-[#121215] border border-white/10 rounded-xs px-3 py-2 text-white focus:outline-none focus:border-white/30 resize-none"
             />
             {errors.description && (
               <p className="text-red-400 mt-1">{errors.description.message}</p>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 rounded border border-white/10 bg-[#08080a] px-3.5 sm:px-4 py-3 text-xs text-gray-400">
+          <div className="flex flex-wrap items-center gap-2 rounded-xs border border-white/10 bg-[#08080a] px-3.5 sm:px-4 py-3 text-xs text-gray-400">
             <Link className="h-4 w-4 text-gray-500 shrink-0" />
             <span>Workspace URL:</span>
             <span className="text-white font-semibold break-all">
@@ -232,7 +236,7 @@ export function GeneralSettingsPage() {
           </div>
         </div>
 
-        <div className="rounded border border-white/10 bg-[#09090b] p-4 sm:p-5 space-y-3">
+        <div className="rounded-xs border border-white/10 bg-[#09090b] p-4 sm:p-5 space-y-3">
           <div className="border-b border-white/10 pb-3">
             <h2 className="text-sm font-semibold text-white">Metadata</h2>
             <p className="text-gray-400 text-[11px] mt-0.5">
@@ -256,8 +260,8 @@ export function GeneralSettingsPage() {
               </span>
             </div>
             <div>
-              <span className="text-gray-500 block mb-1">Status</span>
-              <span className="text-white font-medium">Active</span>
+              <span className="text-gray-500 block mb-1">Last Updated At</span>
+              <span className="text-white font-medium">{formatDate(data.updated_at)}</span>
             </div>
           </div>
         </div>
@@ -266,7 +270,7 @@ export function GeneralSettingsPage() {
           <button
             type="submit"
             disabled={!isDirty || updateSettingsMutation.isPending}
-            className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white px-4 py-2 rounded text-xs font-medium transition-colors"
+            className="w-full sm:w-auto bg-secondary border-primary border-2 hover:text-primary/70 hover:border-primary/70 disabled:opacity-50 text-primary px-4 py-2 rounded-xs text-xs font-medium transition-colors"
           >
             {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
           </button>

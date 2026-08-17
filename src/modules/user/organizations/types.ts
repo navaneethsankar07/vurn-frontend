@@ -128,6 +128,7 @@ export interface BackendDashboardResponse {
   id: string;
   name: string;
   description: string;
+  updated_at: string;
   slug: string;
   icon: string | null;
   logo_url: string | null;
