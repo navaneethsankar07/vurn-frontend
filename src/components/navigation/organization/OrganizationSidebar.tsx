@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { label: "Members", href: "/members", icon: Users },
   { label: "Roles", href: "/roles", icon: ShieldCheck },
   { label: "Docs", href: "/docs", icon: FileText },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Settings", href: "/settings/general", icon: Settings },
 ];
 
 export function OrganizationSidebar() {

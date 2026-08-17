@@ -1,5 +1,5 @@
 export function getSubdomain(): string | null {
-  const hostname = window.location.hostname; // e.g., "my-org.lvh.me" or "lvh.me"
+  const hostname = window.location.hostname;
 
   if (
     hostname === "localhost" ||

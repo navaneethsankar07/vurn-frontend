@@ -113,15 +113,12 @@ export interface OrganizationDashboardData {
   icon?: string | null;
   logo_url?: string | null;
   accent_color?: string | null;
-
-  // Counts for metric cards
   total_projects: number;
   total_members: number;
   active_sprints_count: number;
   open_issues: number;
   completed_issues: number;
 
-  // Data lists for sub-components
   recent_projects?: OrganizationProject[];
   active_sprints?: ActiveSprint[];
   recent_activities?: RecentActivity[];
@@ -142,3 +139,21 @@ export interface BackendDashboardResponse {
   open_issues: number;
   completed_issues: number;
 }
+
+export interface OrganizationSettings {
+  name: string;
+  slug: string;
+  description: string;
+  created_by?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface OrganizationBranding {
+  accent_color: string;
+  icon: string;
+  logo_url?: string | null;
+}
+
+export type UpdateSettingsPayload = Partial<OrganizationSettings>;
+export type UpdateBrandingPayload = FormData | Partial<OrganizationBranding>;

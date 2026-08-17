@@ -1,14 +1,15 @@
 import { APP_BASE_DOMAIN } from "@/modules/user/organizations/constants";
 
-export function getOrganizationUrl(slug: string): string {
+export function getOrganizationUrl(slug: string, path: string = ""): string {
   const protocol = window.location.protocol;
   const port = window.location.port ? `:${window.location.port}` : "";
   const cleanedSlug = slug.trim().toLowerCase();
 
-  // Strip any accidental port attached to APP_BASE_DOMAIN if present
   const baseDomainWithoutPort = APP_BASE_DOMAIN.split(":")[0];
 
-  return `${protocol}//${cleanedSlug}.${baseDomainWithoutPort}${port}`;
+  const formattedPath = path ? (path.startsWith("/") ? path : `/${path}`) : "";
+
+  return `${protocol}//${cleanedSlug}.${baseDomainWithoutPort}${port}${formattedPath}`;
 }
 
 export function formatSubdomainPreview(slug: string): string {

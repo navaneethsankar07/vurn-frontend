@@ -3,6 +3,9 @@ import { OrganizationLayout } from "@/layouts/OrganizationLayout";
 import { ProtectedRoute } from "@/routes/guards/ProtectedRoute";
 import { OrganizationDashboard } from "@/modules/user/organizations/pages/OrganizationDashboard";
 import { getSubdomain } from "@/utils/subdomain";
+import { GeneralSettingsPage } from "@/modules/user/organizations/pages/GeneralSettingsPage";
+import { SettingsLayout } from "@/modules/user/organizations/layout/SettingsLayout";
+import { BrandingSettingsPage } from "@/modules/user/organizations/pages/BrandingSettingsPage";
 
 const subdomain = getSubdomain();
 
@@ -24,7 +27,17 @@ export const OrganizationRoutes: RouteObject[] = subdomain
               },
               {
                 path: "settings",
-                element: <h1>Organization Settings</h1>,
+                element: <SettingsLayout />,
+                children: [
+                  {
+                    path: "general",
+                    element: <GeneralSettingsPage />,
+                  },
+                  {
+                    path: "branding",
+                    element: <BrandingSettingsPage/>
+                  }
+                ],
               },
               {
                 path: "members",

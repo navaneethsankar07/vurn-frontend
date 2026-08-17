@@ -15,6 +15,7 @@ export const organizationKeys = {
   lists: () => [...organizationKeys.all, "list"] as const,
   list: (params?: OrganizationQueryParams) =>
     [...organizationKeys.lists(), params] as const,
+  detail: (slug?: string) => [...organizationKeys.all, "detail", slug] as const,
   dashboards: () => [...organizationKeys.all, "dashboard"] as const,
   dashboard: (slug?: string) =>
     [...organizationKeys.dashboards(), slug] as const,
@@ -33,6 +34,17 @@ export function useOrganizationsQuery(params?: OrganizationQueryParams) {
     queryKey: organizationKeys.list(params),
     queryFn: () => fetchOrganizations(params),
     refetchOnMount: "always",
+  });
+}
+
+export function useOrganizationDetailQuery(slug?: string) {
+  return useQuery({
+    queryKey: organizationKeys.detail(slug),
+    queryFn: async () => {
+      if (!slug) throw new Error("Organization slug is required");
+      return await fetchOrganizationDashboard(slug);
+    },
+    enabled: Boolean(slug),
   });
 }
 
@@ -150,12 +162,12 @@ export function useOrganizationDashboardQuery(slug?: string) {
 
         total_projects: data.total_projects,
         total_members: data.total_members,
-        active_sprints_count: data.active_sprints, 
+        active_sprints_count: data.active_sprints,
         open_issues: data.open_issues,
         completed_issues: data.completed_issues,
 
         recent_projects: [...MOCK_EXTRAS.recent_projects],
-        active_sprints: [...MOCK_EXTRAS.active_sprints], 
+        active_sprints: [...MOCK_EXTRAS.active_sprints],
         recent_activities: [...MOCK_EXTRAS.recent_activities],
       };
     },

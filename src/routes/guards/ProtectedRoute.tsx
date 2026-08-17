@@ -12,15 +12,6 @@ export function ProtectedRoute() {
 
   const subdomain = getSubdomain();
 
-  console.log("[ProtectedRoute Render]", {
-    pathname: location.pathname,
-    subdomain,
-    isInitializing,
-    isAuthenticated,
-    user,
-    userOrganizations: user?.organizations,
-  });
-
   const buildRootUrl = (path: string) => {
     const protocol = window.location.protocol;
     const cleanBaseDomain = APP_BASE_DOMAIN.replace(/:\d+$/, "").replace(/\/$/, "");
@@ -30,25 +21,16 @@ export function ProtectedRoute() {
   };
 
   useEffect(() => {
-    console.log("[ProtectedRoute useEffect trigger]", {
-      isInitializing,
-      isAuthenticated,
-      hasUser: !!user,
-      subdomain,
-    });
 
     if (isInitializing) {
-      console.log("[ProtectedRoute Effect] Still initializing, skipping redirect checks.");
       return;
     }
 
     if (!isAuthenticated || !user) {
-      console.warn("[ProtectedRoute Effect] User is not authenticated or user object missing.");
       if (subdomain) {
         const rootLoginUrl = buildRootUrl("/login");
         const returnUrl = encodeURIComponent(window.location.href);
         const targetUrl = `${rootLoginUrl}?redirect=${returnUrl}`;
-        console.warn("[ProtectedRoute Effect] Redirecting unauthenticated subdomain request to:", targetUrl);
         window.location.href = targetUrl;
       }
       return;

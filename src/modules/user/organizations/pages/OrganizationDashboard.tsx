@@ -32,10 +32,10 @@ export function OrganizationDashboard() {
   if (!data) return null;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 font-mono">
+    <div className="max-w-6xl lg:p-8 mx-auto space-y-8 font-mono">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-[#09090b] overflow-hidden">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded border border-white/10 bg-[#09090b] overflow-hidden">
             {data.logo_url ? (
               <img
                 src={data.logo_url}
