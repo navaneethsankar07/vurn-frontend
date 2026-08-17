@@ -2,58 +2,26 @@ import { useState } from "react";
 import { useAppSelector } from "@/app/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Bell,
-  ChevronDown,
-  ChevronsLeft,
-  ChevronsRight,
-  Plus,
-  Search,
-  Sparkles,
-} from "lucide-react";
+import { Bell, ChevronDown, Plus, Search, Sparkles } from "lucide-react";
 
 import { UserProfileMenu } from "@/modules/user/account/components/UserProfileMenu";
 
 interface UserNavbarProps {
-  onCollapseToggle?: () => void;
-  isSidebarCollapsed?: boolean;
   hasUnreadNotifications?: boolean;
 }
 
-export function UserNavbar({
-  onCollapseToggle,
-  isSidebarCollapsed = false,
-  hasUnreadNotifications = true,
-}: UserNavbarProps) {
+export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
   const avatar = useAppSelector((state) => state.auth.user?.avatar);
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-white/10 bg-black px-4 sm:px-6">
-      <button
-        type="button"
-        onClick={onCollapseToggle}
-        aria-label={
-          isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
-        }
-        className="hidden h-8 w-8 items-center justify-center rounded-[3px] text-gray-400 transition-colors hover:bg-white/5 hover:text-white sm:flex"
-      >
-        {isSidebarCollapsed ? (
-          <ChevronsRight className="h-4 w-4" />
-        ) : (
-          <ChevronsLeft className="h-4 w-4" />
-        )}
-      </button>
-
-      <a href="/" className="flex items-center gap-2">
+    <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-black px-4 sm:px-6">
+      <a href="/" className="flex items-center gap-2 sm:hidden">
         <span className="flex h-7 w-7 items-center justify-center rounded-[3px] bg-amber-500 text-black">
           <Sparkles className="h-4 w-4" strokeWidth={2.5} />
         </span>
-
-        <span className="hidden text-lg font-bold tracking-tight sm:inline">
-          Vurn
-        </span>
+        <span className="text-lg font-bold tracking-tight">Vurn</span>
       </a>
 
       <div className="relative mx-auto w-full max-w-xl">
@@ -93,9 +61,7 @@ export function UserNavbar({
         <div className="relative">
           <button
             type="button"
-            onClick={() =>
-              setIsProfileMenuOpen((previous) => !previous)
-            }
+            onClick={() => setIsProfileMenuOpen((previous) => !previous)}
             aria-label="Account menu"
             aria-expanded={isProfileMenuOpen}
             className="h-10 w-10 overflow-hidden rounded-full border-2 border-[#34343A] bg-white/5 hover:border-white/60"
@@ -109,9 +75,7 @@ export function UserNavbar({
 
           {isProfileMenuOpen && (
             <div className="absolute -right-5 top-full z-50 mt-2.5">
-              <UserProfileMenu
-                onClose={() => setIsProfileMenuOpen(false)}
-              />
+              <UserProfileMenu onClose={() => setIsProfileMenuOpen(false)} />
             </div>
           )}
         </div>
