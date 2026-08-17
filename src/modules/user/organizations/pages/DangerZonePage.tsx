@@ -3,6 +3,7 @@ import { Archive, Trash2 } from "lucide-react";
 import { useModal } from "@/hooks/useModal";
 import { RequestDeleteModal } from "../components/settings/RequestDeleteModal";
 import { ConfirmDeleteModal } from "../components/settings/ConfirmDeleteModal";
+import { ArchiveOrgModal } from "../components/settings/ArchiveOrgModal";
 import { useOrganizationDashboardQuery } from "../api/organizationQueries";
 import { getSubdomain } from "@/utils/subdomain";
 
@@ -49,7 +50,7 @@ export function DangerZonePage() {
             <button
               type="button"
               onClick={archiveModal.openModal}
-              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-[#121215] hover:bg-[#18181c] text-gray-300 hover:text-white border border-white/10 rounded text-xs transition-colors font-medium"
+              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-[#121215] hover:bg-[#18181c] text-gray-300 hover:text-white border border-white/10 rounded-xs text-xs transition-colors font-medium"
             >
               <Archive className="h-3.5 w-3.5 text-gray-400" />
               <span>Archive Organization</span>
@@ -69,7 +70,7 @@ export function DangerZonePage() {
             <button
               type="button"
               onClick={deleteRequestModal.openModal}
-              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-[#121215] hover:bg-[#1c1214] text-[#F87171] border border-[#F87171]/30 hover:border-[#F87171]/50 rounded text-xs transition-colors font-medium"
+              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-[#121215] hover:bg-[#1c1214] text-[#F87171] border border-[#F87171]/30 hover:border-[#F87171]/50 rounded-xs text-xs transition-colors font-medium"
             >
               <Trash2 className="h-3.5 w-3.5 text-[#F87171]" />
               <span>Delete Organization</span>
@@ -77,6 +78,13 @@ export function DangerZonePage() {
           </div>
         </div>
       </div>
+
+      <ArchiveOrgModal
+        isOpen={archiveModal.isOpen}
+        onClose={archiveModal.closeModal}
+        orgName={orgName}
+        slug={slug}
+      />
 
       <RequestDeleteModal
         isOpen={deleteRequestModal.isOpen}
