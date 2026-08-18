@@ -9,6 +9,7 @@ import { BrandingSettingsPage } from "@/modules/user/organizations/pages/Brandin
 import { DangerZonePage } from "@/modules/user/organizations/pages/DangerZonePage";
 import { IntegrationsSettingsPage } from "@/modules/user/organizations/pages/IntegrationsSettingsPage";
 import { BillingSettingsPage } from "@/modules/user/organizations/pages/BillingSettingsPage";
+import { OrganizationPreferencesPage } from "@/modules/user/organizations/pages/OrganizationPreferencesPage";
 
 const subdomain = getSubdomain();
 
@@ -39,6 +40,10 @@ export const OrganizationRoutes: RouteObject[] = subdomain
                   {
                     path: "branding",
                     element: <BrandingSettingsPage />,
+                  },
+                  {
+                    path: "preferences",
+                    element: <OrganizationPreferencesPage />,
                   },
                   {
                     path: "integrations",

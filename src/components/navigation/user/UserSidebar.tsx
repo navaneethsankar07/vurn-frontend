@@ -6,8 +6,10 @@ import {
   Home,
   Mail,
   Settings,
-  Sparkles,
 } from "lucide-react";
+
+import logo from "@/assets/logo.svg";
+import icon from "@/assets/icon.svg";
 
 interface UserSidebarProps {
   isCollapsed?: boolean;
@@ -39,15 +41,13 @@ export function UserSidebar({
           }`}
         >
           <a href="/" className="flex items-center gap-2">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[3px] bg-amber-500 text-black">
-              <Sparkles className="h-4 w-4" strokeWidth={2.5} />
+            <span className="flex items-center justify-center">
+              <object
+                data={isCollapsed ? icon : logo}
+                type="image/svg+xml"
+                className={isCollapsed ? "w-8 pointer-events-none" : "w-2 sm:w-32 pointer-events-none"}
+              />
             </span>
-
-            {!isCollapsed && (
-              <span className="text-lg font-bold tracking-tight text-white">
-                Vurn
-              </span>
-            )}
           </a>
 
           {!isCollapsed && (

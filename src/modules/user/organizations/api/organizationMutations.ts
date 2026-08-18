@@ -5,12 +5,14 @@ import {
   createOrganization,
   requestDeleteOrganization,
   updateOrganizationBranding,
+  updateOrganizationPreferences,
   updateOrganizationSettings,
 } from "./organizationApi";
-import { organizationKeys } from "./organizationQueries";
+import { organizationKeys, preferenceKeys } from "./organizationQueries";
 import type {
   CreateOrganizationPayload,
   UpdateBrandingPayload,
+  UpdateOrganizationPreferencesPayload,
   UpdateSettingsPayload,
 } from "../types";
 
@@ -82,3 +84,18 @@ export function useConfirmDeleteOrgMutation(slug: string) {
     },
   });
 }
+
+export const useUpdateOrganizationPreferencesMutation = (slug: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateOrganizationPreferencesPayload) =>
+      updateOrganizationPreferences(slug, payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(preferenceKeys.detail(slug), data);
+      queryClient.invalidateQueries({
+        queryKey: preferenceKeys.detail(slug),
+      });
+    },
+  });
+};

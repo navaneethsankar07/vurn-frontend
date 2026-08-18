@@ -68,7 +68,6 @@ export function GeneralSettingsPage() {
   }, [orgDetail, authOrg]);
 
   const updateSettingsMutation = useUpdateSettingsMutation(slug);
-console.log(data);
 
   const {
     register,

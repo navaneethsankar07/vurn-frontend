@@ -3,6 +3,7 @@ import {
   fetchOrganizationDashboard,
   fetchOrganizationOptions,
   fetchOrganizations,
+  getOrganizationPreferences,
 } from "./organizationApi";
 import type {
   OrganizationDashboardData,
@@ -19,6 +20,11 @@ export const organizationKeys = {
   dashboards: () => [...organizationKeys.all, "dashboard"] as const,
   dashboard: (slug?: string) =>
     [...organizationKeys.dashboards(), slug] as const,
+};
+
+export const preferenceKeys = {
+  all: ["organization-preferences"] as const,
+  detail: (slug: string) => [...preferenceKeys.all, slug] as const,
 };
 
 export function useOrganizationOptionsQuery() {
@@ -174,3 +180,11 @@ export function useOrganizationDashboardQuery(slug?: string) {
     enabled: Boolean(slug),
   });
 }
+
+export const useOrganizationPreferencesQuery = (subdomain: string) => {
+  return useQuery({
+    queryKey: preferenceKeys.detail(subdomain),
+    queryFn: () => getOrganizationPreferences(subdomain),
+    enabled: Boolean(subdomain),
+  });
+};

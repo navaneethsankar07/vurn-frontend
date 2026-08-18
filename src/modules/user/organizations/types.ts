@@ -158,3 +158,19 @@ export interface OrganizationBranding {
 
 export type UpdateSettingsPayload = Partial<OrganizationSettings>;
 export type UpdateBrandingPayload = FormData | Partial<OrganizationBranding>;
+
+export interface OrganizationPreferences {
+  allow_admin_invitations: boolean;
+  allow_member_invitations: boolean;
+  allow_member_project_creation: boolean;
+  updated_at: string;
+}
+
+export type UpdateOrganizationPreferencesPayload = Partial<
+  Pick<
+    OrganizationPreferences,
+    | "allow_admin_invitations"
+    | "allow_member_invitations"
+    | "allow_member_project_creation"
+  >
+>;

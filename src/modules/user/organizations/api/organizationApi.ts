@@ -5,10 +5,12 @@ import type {
   CreateOrganizationResponse,
   OrganizationBranding,
   OrganizationOptionsResponse,
+  OrganizationPreferences,
   OrganizationQueryParams,
   OrganizationSettings,
   PaginatedOrganizationsResponse,
   UpdateBrandingPayload,
+  UpdateOrganizationPreferencesPayload,
   UpdateSettingsPayload,
 } from "../types";
 
@@ -96,3 +98,23 @@ export async function confirmDeleteOrganization(
 ): Promise<void> {
   await api.post(`/organizations/${slug}/delete/confirm/`, { otp });
 }
+
+export const getOrganizationPreferences = async (
+  slug: string,
+): Promise<OrganizationPreferences> => {
+  const response = await api.get(`/organizations/${slug}/preferences/`);
+  console.log(response.data);
+  
+  return response.data;
+};
+
+export const updateOrganizationPreferences = async (
+  slug: string,
+  payload: UpdateOrganizationPreferencesPayload,
+): Promise<OrganizationPreferences> => {
+  const response = await api.patch(
+    `/organizations/${slug}/preferences/`,
+    payload,
+  );
+  return response.data;
+};
