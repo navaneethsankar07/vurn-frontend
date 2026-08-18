@@ -7,6 +7,8 @@ import { GeneralSettingsPage } from "@/modules/user/organizations/pages/GeneralS
 import { SettingsLayout } from "@/modules/user/organizations/layout/SettingsLayout";
 import { BrandingSettingsPage } from "@/modules/user/organizations/pages/BrandingSettingsPage";
 import { DangerZonePage } from "@/modules/user/organizations/pages/DangerZonePage";
+import { IntegrationsSettingsPage } from "@/modules/user/organizations/pages/IntegrationsSettingsPage";
+import { BillingSettingsPage } from "@/modules/user/organizations/pages/BillingSettingsPage";
 
 const subdomain = getSubdomain();
 
@@ -36,12 +38,20 @@ export const OrganizationRoutes: RouteObject[] = subdomain
                   },
                   {
                     path: "branding",
-                    element: <BrandingSettingsPage/>
+                    element: <BrandingSettingsPage />,
+                  },
+                  {
+                    path: "integrations",
+                    element: <IntegrationsSettingsPage />,
+                  },
+                  {
+                    path: "billing",
+                    element: <BillingSettingsPage />,
                   },
                   {
                     path: "danger-zone",
-                    element: <DangerZonePage/>
-                  }
+                    element: <DangerZonePage />,
+                  },
                 ],
               },
               {

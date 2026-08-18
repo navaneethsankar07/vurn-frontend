@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Sparkles,
   Search,
   Plus,
   Bell,
@@ -11,6 +10,7 @@ import { useAppSelector } from "@/app/hooks";
 import { getSubdomain } from "@/utils/subdomain";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
+import logo from "@/assets/logo.svg";
 
 interface OrganizationSummary {
   name: string;
@@ -68,61 +68,60 @@ export function OrganizationNavbar({
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#030303] font-mono">
-      <div className="flex h-14 items-center justify-between px-4 sm:px-6">
-        <div className="flex items-center gap-4">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+        <div className="flex items-center gap-4 sm:gap-18">
           <button
             type="button"
             onClick={() => handleBaseDomainNavigate("/dashboard")}
             className="flex items-center gap-2 shrink-0 cursor-pointer"
           >
-            <span className="flex h-6 w-6 items-center justify-center rounded bg-amber-500 text-black">
-              <Sparkles className="h-3.5 w-3.5 fill-black" />
-            </span>
-            <span className="text-sm font-bold tracking-tight text-white">
-              Vurn
+            <span className="flex items-center justify-center">
+              <object
+                data={logo}
+                type="image/svg+xml"
+                className="w-2 sm:w-32 pointer-events-none"
+              />
             </span>
           </button>
-
-          <div className="h-4 w-px bg-white/10" />
 
           <div className="relative">
             <button
               type="button"
               onClick={() => setOrgDropdownOpen((prev) => !prev)}
-              className="flex items-center gap-2 rounded border border-white/10 bg-[#09090b] px-2.5 py-1 text-xs text-gray-300 hover:border-white/20 hover:text-white transition-colors cursor-pointer"
+              className="flex items-center justify-between gap-3 bg-[#09090b] px-3.5 py-2 text-sm text-gray-300 hover:text-white transition-colors cursor-pointer border border-white/10 min-w-48 sm:min-w-56"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 {activeOrg?.logo_url ? (
                   <img
                     src={activeOrg.logo_url}
                     alt={activeOrgName}
-                    className="h-4 w-4 rounded object-cover shrink-0"
+                    className="h-5 w-5 object-cover shrink-0"
                   />
                 ) : activeOrg?.icon ? (
                   <span className="shrink-0 flex items-center justify-center">
                     {renderOrgIcon(activeOrg.icon, {
-                      className: "h-3.5 w-3.5 text-amber-500",
+                      className: "h-4 w-4 text-amber-500",
                     })}
                   </span>
                 ) : (
-                  <Building2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <Building2 className="h-4 w-4 text-amber-500 shrink-0" />
                 )}
 
-                <div className="flex flex-col text-left">
-                  <span className="text-[10px] text-gray-500 uppercase leading-none">
+                <div className="flex flex-col text-left justify-center">
+                  <span className="text-[11px] text-gray-500 uppercase leading-none">
                     Organization
                   </span>
-                  <span className="font-semibold text-white leading-tight capitalize">
+                  <span className="font-semibold text-white text-sm leading-tight capitalize pt-0.5">
                     {activeOrgName}
                   </span>
                 </div>
               </div>
-              <ChevronDown className="h-3.5 w-3.5 text-gray-400 ml-1" />
+              <ChevronDown className="h-4 w-4 text-gray-400 shrink-0 ml-1" />
             </button>
 
             {orgDropdownOpen && (
-              <div className="absolute left-0 mt-1 w-56 rounded border border-white/10 bg-[#09090b] py-1 shadow-xl z-50 text-xs">
-                <div className="px-3 py-1.5 text-[10px] uppercase text-gray-500 font-semibold">
+              <div className="absolute left-0 mt-1.5 w-64 bg-[#09090b] py-1.5 shadow-xl z-50 text-sm border border-white/10">
+                <div className="px-3.5 py-1.5 text-[11px] uppercase text-gray-500 font-semibold">
                   Your Organizations
                 </div>
 
@@ -136,7 +135,7 @@ export function OrganizationNavbar({
                         key={org.slug}
                         type="button"
                         onClick={() => handleSwitchOrg(org.slug)}
-                        className={`flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-white/5 transition-colors cursor-pointer ${
+                        className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left hover:bg-white/5 transition-colors cursor-pointer ${
                           isCurrent
                             ? "text-white bg-white/5 font-semibold"
                             : "text-gray-300"
@@ -146,29 +145,29 @@ export function OrganizationNavbar({
                           <img
                             src={org.logo_url}
                             alt={org.name}
-                            className="h-4 w-4 rounded object-cover shrink-0"
+                            className="h-4.5 w-4.5 object-cover shrink-0"
                           />
                         ) : org.icon ? (
                           <span className="shrink-0 flex items-center justify-center">
                             {renderOrgIcon(org.icon, {
-                              className: `h-3.5 w-3.5 ${
+                              className: `h-4 w-4 ${
                                 isCurrent ? "text-amber-500" : "text-gray-500"
                               }`,
                             })}
                           </span>
                         ) : (
                           <Building2
-                            className={`h-3.5 w-3.5 shrink-0 ${
+                            className={`h-4 w-4 shrink-0 ${
                               isCurrent ? "text-amber-500" : "text-gray-500"
                             }`}
                           />
                         )}
-                        <span className="truncate capitalize">{org.name}</span>
+                        <span className="truncate capitalize text-sm">{org.name}</span>
                       </button>
                     );
                   })
                 ) : (
-                  <div className="px-3 py-2 text-gray-500 text-xs">
+                  <div className="px-3.5 py-2 text-gray-500 text-sm">
                     No organizations found
                   </div>
                 )}
@@ -179,7 +178,7 @@ export function OrganizationNavbar({
                     setOrgDropdownOpen(false);
                     handleBaseDomainNavigate("/organizations");
                   }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-amber-500 hover:bg-white/5 transition-colors border-t border-white/5 cursor-pointer"
+                  className="flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-amber-500 hover:bg-white/5 transition-colors border-t border-white/5 cursor-pointer text-sm font-medium"
                 >
                   View All Organizations
                 </button>
@@ -188,42 +187,45 @@ export function OrganizationNavbar({
           </div>
         </div>
 
-        <div className="hidden md:flex flex-1 max-w-md mx-8">
+        <div className="hidden md:flex flex-1 max-w-xl mx-6 sm:mx-10">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search resources, organizations, or members..."
-              className="w-full rounded border border-white/10 bg-[#09090b] pl-9 pr-12 py-1.5 text-xs text-white placeholder-gray-600 outline-none focus:border-white/20 transition-colors"
+              className="w-full bg-[#09090b] pl-10 pr-14 py-2 text-sm text-white placeholder-gray-500 outline-none border border-white/10 focus:border-white/20 transition-colors"
             />
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-500">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-gray-400">
               <span>⌘</span>
               <span>K</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <button
             type="button"
-            className="flex items-center gap-1.5 rounded border border-white/10 bg-[#09090b] px-3 py-1 text-xs font-medium text-white hover:bg-white/5 transition-colors cursor-pointer"
+            className="flex items-center gap-2 border border-white/10 bg-[#09090b] px-3.5 py-2 text-sm font-medium text-white hover:bg-white/5 transition-colors cursor-pointer"
           >
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className="h-4 w-4" />
             <span>New</span>
+            <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
           </button>
 
           <button
             type="button"
-            className="relative p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+            className="relative p-2 text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-500" />
           </button>
+
+          <div className="h-5 w-px bg-white/10 hidden sm:block" />
 
           <button
             type="button"
             onClick={() => handleBaseDomainNavigate("/profile")}
-            className="h-7 w-7 rounded-full bg-linear-to-tr from-amber-500 to-amber-200 p-px cursor-pointer overflow-hidden shrink-0"
+            className="h-8.5 w-8.5 rounded-full bg-linear-to-tr from-amber-500 to-amber-200 p-px cursor-pointer overflow-hidden shrink-0"
             title={user?.full_name || user?.username || "Profile"}
           >
             {user?.avatar ? (
@@ -233,7 +235,7 @@ export function OrganizationNavbar({
                 className="h-full w-full rounded-full object-cover"
               />
             ) : (
-              <div className="h-full w-full rounded-full bg-[#09090b] flex items-center justify-center text-[10px] font-bold text-amber-500">
+              <div className="h-full w-full rounded-full bg-[#09090b] flex items-center justify-center text-xs font-bold text-amber-500">
                 {fallbackInitial}
               </div>
             )}
