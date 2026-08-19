@@ -9,12 +9,14 @@ import type {
   OrganizationPreferences,
   OrganizationQueryParams,
   OrganizationRole,
+  OrganizationRoles,
   OrganizationSettings,
   PaginatedOrganizationsResponse,
   PaginatedRolesResponse,
   RoleQueryParams,
   UpdateBrandingPayload,
   UpdateOrganizationPreferencesPayload,
+  UpdateRolePayload,
   UpdateSettingsPayload,
 } from "../types";
 
@@ -140,6 +142,18 @@ export async function createOrganizationRole(
 ): Promise<OrganizationRole> {
   const response = await api.post<OrganizationRole>(
     `/organizations/${subdomain}/roles/`,
+    payload,
+  );
+  return response.data;
+}
+
+export async function updateOrganizationRole(
+  subdomain: string,
+  roleId: number,
+  payload: UpdateRolePayload,
+): Promise<OrganizationRoles> {
+  const response = await api.patch<OrganizationRoles>(
+    `/organizations/${subdomain}/roles/${roleId}/`,
     payload,
   );
   return response.data;

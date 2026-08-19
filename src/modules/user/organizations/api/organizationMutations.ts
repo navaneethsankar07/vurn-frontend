@@ -7,6 +7,7 @@ import {
   requestDeleteOrganization,
   updateOrganizationBranding,
   updateOrganizationPreferences,
+  updateOrganizationRole,
   updateOrganizationSettings,
 } from "./organizationApi";
 import { organizationKeys, preferenceKeys } from "./organizationQueries";
@@ -14,8 +15,10 @@ import type {
   CreateOrganizationPayload,
   CreateRoleVariables,
   OrganizationRole,
+  OrganizationRoles,
   UpdateBrandingPayload,
   UpdateOrganizationPreferencesPayload,
+  UpdateRoleVariables,
   UpdateSettingsPayload,
 } from "../types";
 
@@ -112,6 +115,23 @@ export const useCreateOrganizationRole = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["organization-roles", variables.subdomain],
+      });
+    },
+  });
+};
+
+export const useUpdateOrganizationRole = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<OrganizationRoles, any, UpdateRoleVariables>({
+    mutationFn: ({ subdomain, roleId, payload }) =>
+      updateOrganizationRole(subdomain, Number(roleId), payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organization-roles", variables.subdomain],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organization-role", variables.subdomain, variables.roleId],
       });
     },
   });

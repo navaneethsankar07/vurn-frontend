@@ -230,3 +230,9 @@ export interface CreateRoleVariables {
   subdomain: string;
   payload: CreateRolePayload;
 }
+
+export interface UpdateRoleVariables {
+  subdomain: string;
+  roleId: string | number;
+  payload: UpdateRolePayload;
+}
