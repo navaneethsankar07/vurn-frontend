@@ -189,6 +189,8 @@ export interface OrganizationRoles {
 export interface RoleQueryParams {
   search?: string;
   ordering?: string;
+  sort?: string;
+  order?: "asc" | "desc";
   page?: number;
   page_size?: number;
 }
@@ -212,4 +214,19 @@ export interface UpdateRolePayload {
   description?: string;
   color?: string;
   permissions?: string[];
+}
+
+export interface PermissionOption {
+  key: string;
+  label: string;
+}
+
+export interface PermissionGroup {
+  category: string;
+  permissions: PermissionOption[];
+}
+
+export interface CreateRoleVariables {
+  subdomain: string;
+  payload: CreateRolePayload;
 }

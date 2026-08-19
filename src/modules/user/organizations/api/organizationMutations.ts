@@ -3,6 +3,7 @@ import {
   archiveOrganization,
   confirmDeleteOrganization,
   createOrganization,
+  createOrganizationRole,
   requestDeleteOrganization,
   updateOrganizationBranding,
   updateOrganizationPreferences,
@@ -11,6 +12,8 @@ import {
 import { organizationKeys, preferenceKeys } from "./organizationQueries";
 import type {
   CreateOrganizationPayload,
+  CreateRoleVariables,
+  OrganizationRole,
   UpdateBrandingPayload,
   UpdateOrganizationPreferencesPayload,
   UpdateSettingsPayload,
@@ -95,6 +98,20 @@ export const useUpdateOrganizationPreferencesMutation = (slug: string) => {
       queryClient.setQueryData(preferenceKeys.detail(slug), data);
       queryClient.invalidateQueries({
         queryKey: preferenceKeys.detail(slug),
+      });
+    },
+  });
+};
+
+export const useCreateOrganizationRole = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<OrganizationRole, any, CreateRoleVariables>({
+    mutationFn: ({ subdomain, payload }) =>
+      createOrganizationRole(subdomain, payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organization-roles", variables.subdomain],
       });
     },
   });

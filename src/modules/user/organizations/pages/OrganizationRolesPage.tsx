@@ -16,10 +16,11 @@ import {
 } from "lucide-react";
 import { getSubdomain } from "@/utils/subdomain";
 import { useOrganizationRolesQuery } from "../api/organizationQueries";
+import { CreateRoleSheet } from "../components/roles/CreateRoleSheet";
 
 const SORT_OPTIONS = [
-  { label: "Date Updated", value: "updated_at" },
-  { label: "Date Created", value: "created_at" },
+  { label: "Date Updated", value: "updated" },
+  { label: "Date Created", value: "created" },
   { label: "Role Name", value: "name" },
 ];
 
@@ -28,13 +29,12 @@ export function OrganizationRolesPage() {
 
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
-  const [sortField, setSortField] = useState("updated_at");
+  const [sortField, setSortField] = useState("updated");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [page, setPage] = useState(1);
   const pageSize = 10;
-
-  const ordering = `${sortOrder === "desc" ? "-" : ""}${sortField}`;
 
   const handleSearchSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -61,7 +61,8 @@ export function OrganizationRolesPage() {
 
   const { data, isLoading, isError } = useOrganizationRolesQuery(subdomain, {
     search: activeSearch || undefined,
-    ordering,
+    sort: sortField,
+    order: sortOrder,
     page,
     page_size: pageSize,
   });
@@ -100,6 +101,7 @@ export function OrganizationRolesPage() {
         </div>
         <button
           type="button"
+          onClick={() => setIsCreateOpen(true)}
           className="flex cursor-pointer items-center justify-center gap-2 rounded-[3px] bg-primary px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-primary/90 self-start sm:self-auto"
         >
           <Plus className="size-4" />
@@ -221,7 +223,10 @@ export function OrganizationRolesPage() {
                           style={{ color: role.color || "var(--primary)" }}
                         />
                       </div>
-                      <h3 className="truncate text-sm font-semibold text-white">
+                      <h3
+                        className="truncate text-sm font-semibold"
+                        style={{ color: role.color || "#ffffff" }}
+                      >
                         {role.name}
                       </h3>
                     </div>
@@ -285,6 +290,12 @@ export function OrganizationRolesPage() {
           )}
         </>
       )}
+
+      <CreateRoleSheet
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        subdomain={subdomain}
+      />
     </div>
   );
 }

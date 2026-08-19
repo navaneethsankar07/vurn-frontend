@@ -3,10 +3,12 @@ import type {
   BackendDashboardResponse,
   CreateOrganizationPayload,
   CreateOrganizationResponse,
+  CreateRolePayload,
   OrganizationBranding,
   OrganizationOptionsResponse,
   OrganizationPreferences,
   OrganizationQueryParams,
+  OrganizationRole,
   OrganizationSettings,
   PaginatedOrganizationsResponse,
   PaginatedRolesResponse,
@@ -128,6 +130,17 @@ export async function fetchOrganizationRoles(
   const response = await api.get<PaginatedRolesResponse>(
     `/organizations/${subdomain}/roles/`,
     { params },
+  );
+  return response.data;
+}
+
+export async function createOrganizationRole(
+  subdomain: string,
+  payload: CreateRolePayload,
+): Promise<OrganizationRole> {
+  const response = await api.post<OrganizationRole>(
+    `/organizations/${subdomain}/roles/`,
+    payload,
   );
   return response.data;
 }
