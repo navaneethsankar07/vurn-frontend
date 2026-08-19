@@ -10,6 +10,7 @@ import { DangerZonePage } from "@/modules/user/organizations/pages/DangerZonePag
 import { IntegrationsSettingsPage } from "@/modules/user/organizations/pages/IntegrationsSettingsPage";
 import { BillingSettingsPage } from "@/modules/user/organizations/pages/BillingSettingsPage";
 import { OrganizationPreferencesPage } from "@/modules/user/organizations/pages/OrganizationPreferencesPage";
+import { OrganizationRolesPage } from "@/modules/user/organizations/pages/OrganizationRolesPage";
 
 const subdomain = getSubdomain();
 
@@ -62,6 +63,10 @@ export const OrganizationRoutes: RouteObject[] = subdomain
               {
                 path: "members",
                 element: <h1>Team Members</h1>,
+              },
+              {
+                path: "roles",
+                element: <OrganizationRolesPage/>,
               },
             ],
           },

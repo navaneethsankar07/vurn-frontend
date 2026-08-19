@@ -2,12 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import {
   fetchOrganizationDashboard,
   fetchOrganizationOptions,
+  fetchOrganizationRoles,
   fetchOrganizations,
   getOrganizationPreferences,
 } from "./organizationApi";
 import type {
   OrganizationDashboardData,
   OrganizationQueryParams,
+  RoleQueryParams,
 } from "../types";
 
 export const organizationKeys = {
@@ -25,6 +27,12 @@ export const organizationKeys = {
 export const preferenceKeys = {
   all: ["organization-preferences"] as const,
   detail: (slug: string) => [...preferenceKeys.all, slug] as const,
+};
+
+export const roleKeys = {
+  all: (subdomain: string) => ["organization-roles", subdomain] as const,
+  list: (subdomain: string, params?: RoleQueryParams) =>
+    [...roleKeys.all(subdomain), "list", params] as const,
 };
 
 export function useOrganizationOptionsQuery() {
@@ -185,6 +193,17 @@ export const useOrganizationPreferencesQuery = (subdomain: string) => {
   return useQuery({
     queryKey: preferenceKeys.detail(subdomain),
     queryFn: () => getOrganizationPreferences(subdomain),
+    enabled: Boolean(subdomain),
+  });
+};
+
+export const useOrganizationRolesQuery = (
+  subdomain: string,
+  params?: RoleQueryParams,
+) => {
+  return useQuery({
+    queryKey: roleKeys.list(subdomain, params),
+    queryFn: () => fetchOrganizationRoles(subdomain, params),
     enabled: Boolean(subdomain),
   });
 };

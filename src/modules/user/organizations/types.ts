@@ -174,3 +174,42 @@ export type UpdateOrganizationPreferencesPayload = Partial<
     | "allow_member_project_creation"
   >
 >;
+
+export interface OrganizationRoles {
+  id: number;
+  name: string;
+  description: string;
+  color: string;
+  permissions: string[];
+  members_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RoleQueryParams {
+  search?: string;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+}
+
+export interface PaginatedRolesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: OrganizationRoles[];
+}
+
+export interface CreateRolePayload {
+  name: string;
+  description?: string;
+  color?: string;
+  permissions: string[];
+}
+
+export interface UpdateRolePayload {
+  name?: string;
+  description?: string;
+  color?: string;
+  permissions?: string[];
+}

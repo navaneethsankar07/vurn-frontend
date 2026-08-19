@@ -9,6 +9,8 @@ import type {
   OrganizationQueryParams,
   OrganizationSettings,
   PaginatedOrganizationsResponse,
+  PaginatedRolesResponse,
+  RoleQueryParams,
   UpdateBrandingPayload,
   UpdateOrganizationPreferencesPayload,
   UpdateSettingsPayload,
@@ -104,7 +106,7 @@ export const getOrganizationPreferences = async (
 ): Promise<OrganizationPreferences> => {
   const response = await api.get(`/organizations/${slug}/preferences/`);
   console.log(response.data);
-  
+
   return response.data;
 };
 
@@ -118,3 +120,14 @@ export const updateOrganizationPreferences = async (
   );
   return response.data;
 };
+
+export async function fetchOrganizationRoles(
+  subdomain: string,
+  params?: RoleQueryParams,
+): Promise<PaginatedRolesResponse> {
+  const response = await api.get<PaginatedRolesResponse>(
+    `/organizations/${subdomain}/roles/`,
+    { params },
+  );
+  return response.data;
+}
