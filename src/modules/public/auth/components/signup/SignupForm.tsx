@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -228,10 +228,20 @@ export function SignupForm({ onOTPSent }: SignupFormProps) {
 
         <Button
           type="submit"
+          disabled={sendOTPMutation.isPending}
           className="h-12 w-full rounded-sm gap-2 bg-primary text-base font-semibold text-black hover:bg-amber-500/90"
         >
-          Create Account
-          <ArrowRight className="h-4 w-4" />
+          {sendOTPMutation.isPending ? (
+            <>
+              Creating Account...
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </>
+          ) : (
+            <>
+              Create Account
+              <ArrowRight className="h-4 w-4" />
+            </>
+          )}
         </Button>
 
         <div className="flex items-center gap-4">

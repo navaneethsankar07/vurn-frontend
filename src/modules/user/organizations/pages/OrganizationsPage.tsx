@@ -60,7 +60,6 @@ export function OrganizationsPage() {
     sort_by: sortOption,
     order: sortOrder,
     page: currentPage,
-    page_size: ITEMS_PER_PAGE,
   };
 
   const { data, isLoading } = useOrganizationsQuery(queryParams);
