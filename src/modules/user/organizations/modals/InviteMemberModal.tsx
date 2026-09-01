@@ -211,7 +211,7 @@ export function InviteMemberModal({
             <Button
               type="submit"
               disabled={createMutation.isPending}
-              className="w-full sm:w-auto h-9 px-4 gap-2 bg-amber-500 text-zinc-950 font-semibold hover:bg-amber-500/90 rounded-md text-xs font-mono transition-colors"
+              className="h-9 px-4 gap-2 bg-transparent border border-primary/80 text-primary hover:text-primary/70 hover:border-primary/60 hover:bg-transparent font-mono font-semibold text-xs rounded w-full sm:w-auto transition-colors"
             >
               {createMutation.isPending ? (
                 <>

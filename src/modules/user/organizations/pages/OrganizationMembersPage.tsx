@@ -5,6 +5,7 @@ import {
   MoreHorizontal,
   ShieldAlert,
   Loader2,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,8 @@ export function OrganizationMembersPage() {
   const canViewMembers = useOrganizationPermission("member.view");
   const canManageMembers = useOrganizationPermission("members.manage");
 
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<
     "all" | "owner" | "admin" | "member"
   >("all");
@@ -35,7 +37,7 @@ export function OrganizationMembersPage() {
 
   const { data: membersData, isLoading } = useOrganizationMembers({
     slug: subdomain,
-    search,
+    search: activeSearch,
     role: roleFilter,
     page,
     page_size: pageSize,
@@ -55,6 +57,19 @@ export function OrganizationMembersPage() {
   const handleInviteAnother = () => {
     successModal.closeModal();
     inviteModal.openModal();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setActiveSearch(searchInput);
+      setPage(1);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setActiveSearch("");
+    setPage(1);
   };
 
   if (!canViewMembers) {
@@ -87,7 +102,7 @@ export function OrganizationMembersPage() {
           {canInviteMembers && (
             <Button
               onClick={inviteModal.openModal}
-              className="h-10 gap-2 bg-amber-500 text-black font-mono font-semibold text-xs hover:bg-amber-500/90 rounded-sm w-full sm:w-auto"
+              className="h-10 gap-2 bg-transparent border border-primary/80 text-primary hover:text-primary/70 hover:border-primary/60 hover:bg-transparent font-mono font-semibold text-xs rounded w-full sm:w-auto"
             >
               <UserPlus className="h-4 w-4" />
               Invite Member
@@ -99,14 +114,21 @@ export function OrganizationMembersPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Search members..."
-              className="pl-9 h-10 border-white/10 bg-[#0C0C0E] text-white placeholder:text-gray-600 rounded-sm font-mono text-xs focus-visible:ring-amber-500/40"
+              className="pl-9 pr-9 h-10 border-white/10 bg-[#0C0C0E] text-white placeholder:text-gray-600 rounded-sm font-mono text-xs focus-visible:ring-amber-500/40"
             />
+            {searchInput && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
           <select
             value={roleFilter}

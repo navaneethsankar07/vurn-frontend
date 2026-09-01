@@ -22,7 +22,6 @@ export function InvitationSuccessModal({
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(invitationUrl);
       } else {
-        // Fallback for non-secure contexts (e.g., HTTP / legacy browsers)
         const textArea = document.createElement("textarea");
         textArea.value = invitationUrl;
         textArea.style.position = "fixed";
@@ -44,7 +43,7 @@ export function InvitationSuccessModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6 overflow-y-auto">
-      <div className="w-full max-w-md rounded-xl border border-white/10 bg-[#0C0C0E] p-5 sm:p-6 shadow-2xl space-y-6 select-none max-h-[90vh] flex flex-col justify-between">
+      <div className="w-full max-w-md rounded-sm border border-white/10 bg-[#0C0C0E] p-5 sm:p-6 shadow-2xl space-y-6 select-none max-h-[90vh] flex flex-col justify-between">
         {/* Header */}
         <div className="flex justify-between items-center border-b border-white/10 pb-4">
           <h2 className="text-base font-mono font-semibold text-white">
@@ -53,7 +52,7 @@ export function InvitationSuccessModal({
           <button
             onClick={onClose}
             type="button"
-            className="text-zinc-400 hover:text-white transition-colors p-1 rounded-md hover:bg-white/5"
+            className="text-zinc-400 hover:text-white transition-colors p-1 rounded-sm hover:bg-white/5"
           >
             <X className="h-4 w-4" />
           </button>
@@ -61,7 +60,7 @@ export function InvitationSuccessModal({
 
         {/* Success Icon & Message */}
         <div className="flex flex-col items-center justify-center text-center space-y-3 py-2">
-          <div className="h-12 w-12 rounded-lg border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+          <div className="h-12 w-12 rounded-sm border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-center text-emerald-500">
             <Check className="h-6 w-6" />
           </div>
           <p className="text-xs font-mono text-zinc-300">
@@ -79,11 +78,11 @@ export function InvitationSuccessModal({
               readOnly
               value={invitationUrl}
               onClick={(e) => (e.target as HTMLInputElement).select()}
-              className="h-10 border-white/10 bg-black/40 text-blue-400 font-mono text-xs rounded-md focus-visible:ring-1 focus-visible:ring-blue-500/50 select-text truncate"
+              className="h-10 border-white/10 bg-black/40 text-blue-400 font-mono text-xs rounded-sm focus-visible:ring-1 focus-visible:ring-primary/50 select-text truncate"
             />
             <Button
               onClick={handleCopy}
-              className="h-10 px-4 gap-2 bg-amber-500 text-zinc-950 font-mono font-semibold hover:bg-amber-500/90 rounded-md shrink-0 text-xs transition-colors"
+              className="h-10 px-4 gap-2 bg-transparent border border-primary/80 text-primary hover:text-primary/70 hover:border-primary/60 hover:bg-transparent font-mono font-semibold text-xs rounded-sm shrink-0 transition-colors"
             >
               {copied ? (
                 <Check className="h-4 w-4 stroke-[2.5]" />
@@ -103,13 +102,13 @@ export function InvitationSuccessModal({
           <Button
             variant="ghost"
             onClick={onClose}
-            className="w-full sm:w-auto h-9 text-zinc-400 hover:text-white hover:bg-white/5 rounded-md font-mono text-xs"
+            className="w-full sm:w-auto h-9 text-zinc-400 hover:text-white hover:bg-white/5 rounded-sm font-mono text-xs"
           >
             Done
           </Button>
           <Button
             onClick={onInviteAnother}
-            className="w-full sm:w-auto h-9 gap-2 bg-amber-500 text-zinc-950 font-semibold hover:bg-amber-500/90 rounded-md font-mono text-xs transition-colors"
+            className="w-full sm:w-auto h-9 gap-2 bg-transparent border border-primary/80 text-primary hover:text-primary/70 hover:border-primary/60 hover:bg-transparent font-mono font-semibold text-xs rounded-sm transition-colors"
           >
             <UserPlus className="h-4 w-4" />
             Invite Another Member
