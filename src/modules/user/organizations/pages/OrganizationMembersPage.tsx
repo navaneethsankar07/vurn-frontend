@@ -7,6 +7,7 @@ import { InviteMemberModal } from "../modals/InviteMemberModal";
 import { InvitationSuccessModal } from "../modals/InvitationSuccessModal";
 import { type CreateInvitationResponse } from "../types";
 import { getSubdomain } from "@/utils/subdomain";
+import { useOrganizationAccess } from "../api/organizationQueries";
 
 const DUMMY_MEMBERS = [
   {
@@ -84,7 +85,10 @@ const DUMMY_MEMBERS = [
 ];
 
 export function OrganizationMembersPage() {
-  const subdomain = getSubdomain();
+  const subdomain = getSubdomain() || "";
+  const { data: accessData } = useOrganizationAccess(subdomain);
+  const canInviteMembers = accessData?.can_invite_members ?? false;
+
   const inviteModal = useModal();
   const successModal = useModal();
   const [createdInvite, setCreatedInvite] =
@@ -104,7 +108,6 @@ export function OrganizationMembersPage() {
   return (
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-mono font-bold">
@@ -114,16 +117,17 @@ export function OrganizationMembersPage() {
               Manage organization members, permissions and access.
             </p>
           </div>
-          <Button
-            onClick={inviteModal.openModal}
-            className="h-10 gap-2 bg-amber-500 text-black font-mono font-semibold text-xs hover:bg-amber-500/90 rounded-sm"
-          >
-            <UserPlus className="h-4 w-4" />
-            Invite Member
-          </Button>
+          {canInviteMembers && (
+            <Button
+              onClick={inviteModal.openModal}
+              className="h-10 gap-2 bg-amber-500 text-black font-mono font-semibold text-xs hover:bg-amber-500/90 rounded-sm"
+            >
+              <UserPlus className="h-4 w-4" />
+              Invite Member
+            </Button>
+          )}
         </div>
 
-        {/* Filters */}
         <div className="flex gap-4 items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -137,7 +141,6 @@ export function OrganizationMembersPage() {
           </select>
         </div>
 
-        {/* Members Table */}
         <div className="border border-white/10 rounded-sm bg-[#0C0C0E] overflow-hidden">
           <table className="w-full text-left font-mono text-xs">
             <thead className="border-b border-white/10 bg-white/5 text-gray-400">
@@ -199,7 +202,7 @@ export function OrganizationMembersPage() {
         </div>
       </div>
 
-      {inviteModal.isOpen && (
+      {canInviteMembers && inviteModal.isOpen && (
         <InviteMemberModal
           slug={subdomain || "default-org"}
           onClose={inviteModal.closeModal}
@@ -207,7 +210,7 @@ export function OrganizationMembersPage() {
         />
       )}
 
-      {successModal.isOpen && createdInvite && (
+      {canInviteMembers && successModal.isOpen && createdInvite && (
         <InvitationSuccessModal
           invitationUrl={createdInvite.invitation_url}
           onClose={successModal.closeModal}

@@ -16,6 +16,7 @@ export interface OrganizationAccess {
   } | null;
   permissions: string[];
   has_full_access: boolean;
+  can_invite_members: boolean;
 }
 
 export interface CreateOrganizationPayload {
