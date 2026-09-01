@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserPlus, Search, MoreHorizontal } from "lucide-react";
+import { UserPlus, Search, MoreHorizontal, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/useModal";
@@ -8,6 +8,7 @@ import { InvitationSuccessModal } from "../modals/InvitationSuccessModal";
 import { type CreateInvitationResponse } from "../types";
 import { getSubdomain } from "@/utils/subdomain";
 import { useOrganizationAccess } from "../api/organizationQueries";
+import { useOrganizationPermission } from "@/hooks/useOrganizationPermission";
 
 const DUMMY_MEMBERS = [
   {
@@ -88,6 +89,7 @@ export function OrganizationMembersPage() {
   const subdomain = getSubdomain() || "";
   const { data: accessData } = useOrganizationAccess(subdomain);
   const canInviteMembers = accessData?.can_invite_members ?? false;
+  const canViewMembers = useOrganizationPermission("member.view");
 
   const inviteModal = useModal();
   const successModal = useModal();
@@ -105,12 +107,27 @@ export function OrganizationMembersPage() {
     inviteModal.openModal();
   };
 
+  if (!canViewMembers) {
+    return (
+      <div className="bg-black text-white p-4 sm:p-8 font-mono flex items-center justify-center min-h-[calc(100vh-5rem)]">
+        <div className="flex flex-col items-center gap-3 p-6 rounded-sm border border-primary/60 text-primary text-xs text-center max-w-md w-full">
+          <ShieldAlert className="h-8 w-8 shrink-0" />
+          <span className="font-semibold text-sm">Access Restricted</span>
+          <span className="text-text-primary">
+            You do not have permission to view organization members. Please
+            contact your organization administrator.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white p-4 sm:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-mono font-bold">
+            <h1 className="text-xl sm:text-2xl font-mono font-bold">
               Organization Members
             </h1>
             <p className="text-xs font-mono text-gray-400 mt-1">
@@ -120,7 +137,7 @@ export function OrganizationMembersPage() {
           {canInviteMembers && (
             <Button
               onClick={inviteModal.openModal}
-              className="h-10 gap-2 bg-amber-500 text-black font-mono font-semibold text-xs hover:bg-amber-500/90 rounded-sm"
+              className="h-10 gap-2 bg-amber-500 text-black font-mono font-semibold text-xs hover:bg-amber-500/90 rounded-sm w-full sm:w-auto"
             >
               <UserPlus className="h-4 w-4" />
               Invite Member
@@ -128,7 +145,7 @@ export function OrganizationMembersPage() {
           )}
         </div>
 
-        <div className="flex gap-4 items-center">
+        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
@@ -141,8 +158,8 @@ export function OrganizationMembersPage() {
           </select>
         </div>
 
-        <div className="border border-white/10 rounded-sm bg-[#0C0C0E] overflow-hidden">
-          <table className="w-full text-left font-mono text-xs">
+        <div className="border border-white/10 rounded-sm bg-[#0C0C0E] overflow-x-auto">
+          <table className="w-full text-left font-mono text-xs min-w-160">
             <thead className="border-b border-white/10 bg-white/5 text-gray-400">
               <tr>
                 <th className="py-3 px-4 font-normal">Name</th>
