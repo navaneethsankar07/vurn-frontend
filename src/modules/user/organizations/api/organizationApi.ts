@@ -1,9 +1,14 @@
 import api from "@/api/axios";
 import type {
+  AcceptInvitationResponse,
   BackendDashboardResponse,
+  CreateInvitationRequest,
+  CreateInvitationResponse,
   CreateOrganizationPayload,
   CreateOrganizationResponse,
   CreateRolePayload,
+  InvitationDetailResponse,
+  OrganizationAccess,
   OrganizationBranding,
   OrganizationOptionsResponse,
   OrganizationPreferences,
@@ -13,6 +18,7 @@ import type {
   OrganizationSettings,
   PaginatedOrganizationsResponse,
   PaginatedRolesResponse,
+  ReceivedInvitation,
   RoleQueryParams,
   UpdateBrandingPayload,
   UpdateOrganizationPreferencesPayload,
@@ -46,6 +52,15 @@ export async function fetchOrganizations(
   );
   return response.data;
 }
+
+export const getOrganizationAccess = async (
+  slug: string,
+): Promise<OrganizationAccess> => {
+  const response = await api.get(`/organizations/${slug}/access/`);
+  console.log(response.data);
+  
+  return response.data;
+};
 
 export async function fetchOrganizationDashboard(
   slug: string,
@@ -158,3 +173,34 @@ export async function updateOrganizationRole(
   );
   return response.data;
 }
+
+export const invitationApi = {
+  createInvitation: async (slug: string, data: CreateInvitationRequest) => {
+    const res = await api.post<CreateInvitationResponse>(
+      `/organizations/${slug}/invitations/`,
+      data,
+    );
+    return res.data;
+  },
+
+  getReceivedInvitations: async () => {
+    const res = await api.get<ReceivedInvitation[]>(
+      `/organizations/invitations/received/`,
+    );
+    return res.data;
+  },
+
+  getInvitationDetail: async (token: string) => {
+    const res = await api.get<InvitationDetailResponse>(
+      `/organizations/invitations/${token}/`,
+    );
+    return res.data;
+  },
+
+  acceptInvitation: async (token: string) => {
+    const res = await api.post<AcceptInvitationResponse>(
+      `/organizations/invitations/${token}/accept/`,
+    );
+    return res.data;
+  },
+};

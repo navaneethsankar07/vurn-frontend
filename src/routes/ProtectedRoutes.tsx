@@ -8,6 +8,8 @@ import SecuritySettingsPage from "@/modules/user/account/pages/SecuritySettingsP
 import DangerZonePage from "@/modules/user/account/pages/DangerZonePage";
 import { CreateOrganizationPage } from "@/modules/user/organizations/pages/CreateOrganizationPage";
 import { OrganizationsPage } from "@/modules/user/organizations/pages/OrganizationsPage";
+import { OrganizationInvitationsPage } from "@/modules/user/organizations/pages/OrganizationInvitationsPage";
+import { AcceptInvitationPage } from "@/modules/user/organizations/pages/AcceptInvitationPage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -31,6 +33,14 @@ export const ProtectedRoutes: RouteObject[] = [
           {
             path: "/organizations/new",
             element: <CreateOrganizationPage />,
+          },
+          {
+            path: "/invitations",
+            element: <OrganizationInvitationsPage />,
+          },
+          {
+            path: "/invitations/:token",
+            element: <AcceptInvitationPage />,
           },
           {
             element: <SettingsLayout />,

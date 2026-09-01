@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "lucide-react";
+import { Link, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import {
   generalSettingsSchema,
@@ -19,6 +19,7 @@ import {
   getOrganizationUrl,
 } from "@/utils/organizationUrl";
 import { formatDate } from "@/utils/date";
+import { useOrganizationPermission } from "@/hooks/useOrganizationPermission";
 
 interface FormOrgData {
   name?: string;
@@ -34,6 +35,11 @@ export function GeneralSettingsPage() {
   const queryClient = useQueryClient();
   const { slug: paramSlug } = useParams<{ slug?: string }>();
   const slug = paramSlug || getSubdomain() || "";
+
+  const canEditSettings = useOrganizationPermission(
+    "organization.settings.update",
+  );
+console.log(canEditSettings);
 
   const { data: orgDetail, isLoading: isOrgLoading } =
     useOrganizationDetailQuery(slug);
@@ -102,6 +108,7 @@ export function GeneralSettingsPage() {
   }, [initialName, initialSlug, initialDescription, reset]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canEditSettings) return;
     const value = e.target.value;
     const generatedSlug = value
       .toLowerCase()
@@ -115,6 +122,11 @@ export function GeneralSettingsPage() {
   };
 
   const onSubmit = (values: GeneralSettingsFormValues) => {
+    if (!canEditSettings) {
+      toast.error("You do not have permission to edit organization settings.");
+      return;
+    }
+
     updateSettingsMutation.mutate(values, {
       onSuccess: (res: any) => {
         const updatedSlug = res?.slug || res?.data?.slug || values.slug || slug;
@@ -127,7 +139,10 @@ export function GeneralSettingsPage() {
         if (updatedSlug.toLowerCase() !== slug.toLowerCase()) {
           setTimeout(() => {
             const baseUrl = getOrganizationUrl(updatedSlug);
-            window.location.href = `${baseUrl.replace(/\/$/, "")}/settings/general`;
+            window.location.href = `${baseUrl.replace(
+              /\/$/,
+              "",
+            )}/settings/general`;
           }, 1200);
         } else {
           reset(values);
@@ -164,7 +179,17 @@ export function GeneralSettingsPage() {
   const projectCount = data.total_projects ?? 0;
 
   return (
-    <div className="w-full max-w-3xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-6 font-mono text-xs">
+    <div className="w-full max-w-3xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-6 font-mono text-xs select-none">
+      {!canEditSettings && (
+        <div className="flex items-center gap-2.5 p-3.5 rounded border border-primary/70 text-primary text-xs">
+          <ShieldAlert className="h-4 w-4 shrink-0" />
+          <span>
+            You have view-only access to organization settings. You do not have
+            permission to make changes.
+          </span>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded border border-white/10 bg-[#09090b] p-4 sm:p-5 space-y-4">
           <div className="border-b border-white/10 pb-3">
@@ -180,12 +205,13 @@ export function GeneralSettingsPage() {
                 Organization Name
               </label>
               <input
+                disabled={!canEditSettings}
                 {...register("name")}
                 onChange={(e) => {
                   register("name").onChange(e);
                   handleNameChange(e);
                 }}
-                className="w-full bg-[#121215] border border-white/10 rounded-xs px-3 py-2 text-white focus:outline-none focus:border-white/30"
+                className="w-full bg-[#121215] border border-white/10 rounded-xs px-3 py-2 text-white focus:outline-none focus:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed select-text"
               />
               {errors.name && (
                 <p className="text-red-400 mt-1">{errors.name.message}</p>
@@ -199,8 +225,9 @@ export function GeneralSettingsPage() {
               <div className="flex rounded-xs border border-white/10 bg-[#121215] overflow-hidden focus-within:border-white/30">
                 <input
                   type="text"
+                  disabled={!canEditSettings}
                   {...register("slug")}
-                  className="w-full bg-transparent px-3 py-2 text-white outline-none min-w-0"
+                  className="w-full bg-transparent px-3 py-2 text-white outline-none min-w-0 disabled:opacity-50 disabled:cursor-not-allowed select-text"
                 />
                 <span className="flex items-center bg-white/5 px-3 text-xs text-gray-500 border-l border-white/10 select-none whitespace-nowrap shrink-0">
                   .{APP_BASE_DOMAIN}
@@ -217,16 +244,17 @@ export function GeneralSettingsPage() {
               Organization Description
             </label>
             <textarea
+              disabled={!canEditSettings}
               {...register("description")}
               rows={3}
-              className="w-full bg-[#121215] border border-white/10 rounded-xs px-3 py-2 text-white focus:outline-none focus:border-white/30 resize-none"
+              className="w-full bg-[#121215] border border-white/10 rounded-xs px-3 py-2 text-white focus:outline-none focus:border-white/30 resize-none disabled:opacity-50 disabled:cursor-not-allowed select-text"
             />
             {errors.description && (
               <p className="text-red-400 mt-1">{errors.description.message}</p>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 rounded-xs border border-white/10 bg-[#08080a] px-3.5 sm:px-4 py-3 text-xs text-gray-400">
+          <div className="flex flex-wrap items-center gap-2 rounded-xs border border-white/10 bg-[#08080a] px-3.5 sm:px-4 py-3 text-xs text-gray-400 select-text">
             <Link className="h-4 w-4 text-gray-500 shrink-0" />
             <span>Workspace URL:</span>
             <span className="text-white font-semibold break-all">
@@ -235,7 +263,7 @@ export function GeneralSettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-xs border border-white/10 bg-[#09090b] p-4 sm:p-5 space-y-3">
+        <div className="rounded-xs border border-white/10 bg-[#09090b] p-4 sm:p-5 space-y-3 select-text">
           <div className="border-b border-white/10 pb-3">
             <h2 className="text-sm font-semibold text-white">Metadata</h2>
             <p className="text-gray-400 text-[11px] mt-0.5">
@@ -260,20 +288,24 @@ export function GeneralSettingsPage() {
             </div>
             <div>
               <span className="text-gray-500 block mb-1">Last Updated At</span>
-              <span className="text-white font-medium">{formatDate(data.updated_at)}</span>
+              <span className="text-white font-medium">
+                {formatDate(data.updated_at)}
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end pt-2">
-          <button
-            type="submit"
-            disabled={!isDirty || updateSettingsMutation.isPending}
-            className="w-full sm:w-auto bg-secondary border-primary border-2 hover:text-primary/70 hover:border-primary/70 disabled:opacity-50 text-primary px-4 py-2 rounded-xs text-xs font-medium transition-colors"
-          >
-            {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
+        {canEditSettings && (
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              disabled={!isDirty || updateSettingsMutation.isPending}
+              className="w-full sm:w-auto bg-secondary border-primary border-2 hover:text-primary/70 hover:border-primary/70 disabled:opacity-50 disabled:cursor-not-allowed text-primary px-4 py-2 rounded-xs text-xs font-medium transition-colors"
+            >
+              {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

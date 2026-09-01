@@ -4,7 +4,9 @@ import {
   fetchOrganizationOptions,
   fetchOrganizationRoles,
   fetchOrganizations,
+  getOrganizationAccess,
   getOrganizationPreferences,
+  invitationApi,
 } from "./organizationApi";
 import type {
   OrganizationDashboardData,
@@ -27,6 +29,11 @@ export const organizationKeys = {
 export const preferenceKeys = {
   all: ["organization-preferences"] as const,
   detail: (slug: string) => [...preferenceKeys.all, slug] as const,
+};
+
+export const INVITATION_KEYS = {
+  received: ["received-invitations"] as const,
+  detail: (token: string) => ["invitation-detail", token] as const,
 };
 
 export const roleKeys = {
@@ -205,5 +212,32 @@ export const useOrganizationRolesQuery = (
     queryKey: roleKeys.list(subdomain, params),
     queryFn: () => fetchOrganizationRoles(subdomain, params),
     enabled: Boolean(subdomain),
+  });
+};
+
+export function useReceivedInvitationsQuery() {
+  return useQuery({
+    queryKey: INVITATION_KEYS.received,
+    queryFn: () => invitationApi.getReceivedInvitations(),
+  });
+}
+
+export function useInvitationDetailQuery(token: string) {
+  return useQuery({
+    queryKey: INVITATION_KEYS.detail(token),
+    queryFn: () => invitationApi.getInvitationDetail(token),
+    enabled: !!token,
+  });
+}
+
+export const useOrganizationAccess = (slug: string) => {
+  return useQuery({
+    queryKey: ["organization-access", slug],
+
+    queryFn: () => getOrganizationAccess(slug),
+
+    enabled: Boolean(slug),
+
+    staleTime: 5 * 60 * 1000,
   });
 };

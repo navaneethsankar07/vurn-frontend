@@ -11,6 +11,7 @@ import { IntegrationsSettingsPage } from "@/modules/user/organizations/pages/Int
 import { BillingSettingsPage } from "@/modules/user/organizations/pages/BillingSettingsPage";
 import { OrganizationPreferencesPage } from "@/modules/user/organizations/pages/OrganizationPreferencesPage";
 import { OrganizationRolesPage } from "@/modules/user/organizations/pages/OrganizationRolesPage";
+import { OrganizationMembersPage } from "@/modules/user/organizations/pages/OrganizationMembersPage";
 
 const subdomain = getSubdomain();
 
@@ -62,7 +63,7 @@ export const OrganizationRoutes: RouteObject[] = subdomain
               },
               {
                 path: "members",
-                element: <h1>Team Members</h1>,
+                element: <OrganizationMembersPage/>,
               },
               {
                 path: "roles",

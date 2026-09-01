@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, Upload } from "lucide-react";
+import { Check, Upload, ShieldAlert } from "lucide-react";
 import {
   brandingSettingsSchema,
   type BrandingSettingsFormValues,
@@ -17,11 +17,16 @@ import {
 import { useUpdateBrandingMutation } from "../api/organizationMutations";
 import { getSubdomain } from "@/utils/subdomain";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
+import { useOrganizationPermission } from "@/hooks/useOrganizationPermission";
 
 export function BrandingSettingsPage() {
   const queryClient = useQueryClient();
   const { slug: paramSlug } = useParams<{ slug?: string }>();
   const slug = paramSlug || getSubdomain() || "";
+
+  const canEditSettings = useOrganizationPermission(
+    "organization.settings.update",
+  );
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -91,6 +96,7 @@ export function BrandingSettingsPage() {
   }, [orgData, reset]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canEditSettings) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -110,6 +116,11 @@ export function BrandingSettingsPage() {
   };
 
   const onSubmit = (values: BrandingSettingsFormValues) => {
+    if (!canEditSettings) {
+      toast.error("You do not have permission to edit branding settings.");
+      return;
+    }
+
     const formData = new FormData();
 
     if (values.accent_color) {
@@ -160,8 +171,18 @@ export function BrandingSettingsPage() {
   }
 
   return (
-    <div className="w- max-w-3xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-4 font-mono text-xs">
+    <div className="w-full max-w-3xl mx-auto pt-4 md:pt-6 pb-12 px-4 sm:px-6 md:px-0 space-y-4 font-mono text-xs select-none">
       <div className="text-gray-400 text-xs">Branding</div>
+
+      {!canEditSettings && (
+        <div className="flex items-center gap-2.5 p-3.5 rounded border border-primary/70 text-primary text-xs">
+          <ShieldAlert className="h-4 w-4 shrink-0" />
+          <span>
+            You have view-only access to branding settings. You do not have
+            permission to make changes.
+          </span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="rounded border border-white/10 bg-[#09090b] p-4 sm:p-5 space-y-4">
@@ -195,7 +216,7 @@ export function BrandingSettingsPage() {
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-xs sm:text-sm font-medium text-white truncate">
+              <h3 className="text-xs sm:text-sm font-medium text-white truncate select-text">
                 {orgData?.name || "Organization Name"}
               </h3>
               <p className="text-[10px] sm:text-[11px] text-gray-500">
@@ -218,6 +239,7 @@ export function BrandingSettingsPage() {
                   <button
                     key={iconName}
                     type="button"
+                    disabled={!canEditSettings}
                     onClick={() => {
                       setPreviewUrl(null);
                       setLogoFile(null);
@@ -230,7 +252,7 @@ export function BrandingSettingsPage() {
                         shouldDirty: true,
                       });
                     }}
-                    className={`flex h-9 sm:h-10 w-full items-center justify-center rounded border transition-all ${
+                    className={`flex h-9 sm:h-10 w-full items-center justify-center rounded border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       isSelected && !previewUrl
                         ? "border-amber-500/60 bg-amber-500/10 text-amber-400"
                         : "border-white/10 bg-[#121215] text-gray-400 hover:border-white/20 hover:text-white"
@@ -261,6 +283,7 @@ export function BrandingSettingsPage() {
                   <button
                     key={color.name}
                     type="button"
+                    disabled={!canEditSettings}
                     onClick={() =>
                       setValue("accent_color", color.value, {
                         shouldValidate: true,
@@ -276,7 +299,7 @@ export function BrandingSettingsPage() {
                           }
                         : {}
                     }
-                    className={`flex items-center gap-1.5 rounded border px-2.5 py-1.5 text-[11px] sm:text-xs transition-all ${
+                    className={`flex items-center gap-1.5 rounded border px-2.5 py-1.5 text-[11px] sm:text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       isSelected
                         ? "font-medium"
                         : "border-white/10 bg-[#121215] text-gray-400 hover:border-white/20 hover:text-white"
@@ -315,6 +338,7 @@ export function BrandingSettingsPage() {
               <input
                 ref={fileInputRef}
                 type="file"
+                disabled={!canEditSettings}
                 accept="image/png,image/jpeg,image/svg+xml"
                 onChange={handleFileChange}
                 onClick={(e) => {
@@ -325,8 +349,9 @@ export function BrandingSettingsPage() {
 
               <button
                 type="button"
+                disabled={!canEditSettings}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 bg-[#121215] hover:bg-[#1a1a1e] border border-white/10 text-gray-300 px-2.5 py-1.5 rounded text-xs transition-colors"
+                className="flex items-center gap-1.5 bg-[#121215] hover:bg-[#1a1a1e] border border-white/10 text-gray-300 px-2.5 py-1.5 rounded text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Upload className="h-3.5 w-3.5" />
                 <span>{logoFile ? logoFile.name : "Choose Logo"}</span>
@@ -344,38 +369,42 @@ export function BrandingSettingsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 pt-1">
-          <span className="text-gray-500 text-[10px] sm:text-[11px] text-center sm:text-left">
-            {isDirty || logoFile ? "Unsaved changes" : "All changes saved."}
-          </span>
-          <div className="flex items-center justify-end gap-2.5 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => {
-                setLogoFile(null);
-                setPreviewUrl(orgData?.logo_url || null);
-                reset({
-                  accent_color: orgData?.accent_color || "#f59e0b",
-                  icon: orgData?.icon || "hexagon",
-                  logo_url: orgData?.logo_url || "",
-                });
-              }}
-              disabled={!isDirty && !logoFile}
-              className="text-gray-400 hover:text-white disabled:opacity-30 text-xs px-2.5 py-1 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={
-                (!isDirty && !logoFile) || updateBrandingMutation.isPending
-              }
-              className="w-full sm:w-auto bg-secondary border-primary border-2 hover:text-primary/70 hover:border-primary/70 disabled:opacity-50 text-primary px-4 py-2 rounded-xs text-xs font-medium transition-colors"
-            >
-              {updateBrandingMutation.isPending ? "Saving..." : "Save Changes"}
-            </button>
+        {canEditSettings && (
+          <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 pt-1">
+            <span className="text-gray-500 text-[10px] sm:text-[11px] text-center sm:text-left">
+              {isDirty || logoFile ? "Unsaved changes" : "All changes saved."}
+            </span>
+            <div className="flex items-center justify-end gap-2.5 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  setLogoFile(null);
+                  setPreviewUrl(orgData?.logo_url || null);
+                  reset({
+                    accent_color: orgData?.accent_color || "#f59e0b",
+                    icon: orgData?.icon || "hexagon",
+                    logo_url: orgData?.logo_url || "",
+                  });
+                }}
+                disabled={!isDirty && !logoFile}
+                className="text-gray-400 hover:text-white disabled:opacity-30 text-xs px-2.5 py-1 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={
+                  (!isDirty && !logoFile) || updateBrandingMutation.isPending
+                }
+                className="w-full sm:w-auto bg-secondary border-primary border-2 hover:text-primary/70 hover:border-primary/70 disabled:opacity-50 text-primary px-4 py-2 rounded-xs text-xs font-medium transition-colors"
+              >
+                {updateBrandingMutation.isPending
+                  ? "Saving..."
+                  : "Save Changes"}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </form>
     </div>
   );

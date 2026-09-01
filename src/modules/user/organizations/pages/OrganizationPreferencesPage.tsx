@@ -1,16 +1,29 @@
 import { useState, useEffect } from "react";
-import { Loader2, ShieldCheck, UserPlus, FolderPlus } from "lucide-react";
+import {
+  Loader2,
+  ShieldCheck,
+  UserPlus,
+  FolderPlus,
+  ShieldAlert,
+} from "lucide-react";
 import { toast } from "sonner";
 import { getSubdomain } from "@/utils/subdomain";
-import { useOrganizationPreferencesQuery } from "../api/organizationQueries";
+import {
+  useOrganizationPreferencesQuery,
+  useOrganizationAccess,
+} from "../api/organizationQueries";
 import { useUpdateOrganizationPreferencesMutation } from "../api/organizationMutations";
 
 export function OrganizationPreferencesPage() {
   const subdomain = getSubdomain() || "";
 
+  const { data: accessData, isLoading: isAccessLoading } =
+    useOrganizationAccess(subdomain);
+  const isOwner = accessData?.role === "owner";
+
   const {
     data: preferences,
-    isLoading,
+    isLoading: isPreferencesLoading,
     isError,
   } = useOrganizationPreferencesQuery(subdomain);
 
@@ -51,6 +64,11 @@ export function OrganizationPreferencesPage() {
   };
 
   const handleSave = () => {
+    if (!isOwner) {
+      toast.error("Only the organization owner can update preferences.");
+      return;
+    }
+
     if (!subdomain) {
       toast.error("Invalid organization subdomain");
       return;
@@ -73,6 +91,8 @@ export function OrganizationPreferencesPage() {
     );
   };
 
+  const isLoading = isPreferencesLoading || isAccessLoading;
+
   if (isLoading) {
     return (
       <div className="flex min-h-100 items-center justify-center p-4">
@@ -90,10 +110,20 @@ export function OrganizationPreferencesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4 sm:space-y-6 px-3 py-4 font-mono text-white sm:px-6 sm:py-6">
+    <div className="mx-auto w-full max-w-3xl space-y-4 sm:space-y-6 px-3 py-4 font-mono text-white sm:px-6 sm:py-6 select-none">
       <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
         Organization Preferences
       </div>
+
+      {!isOwner && (
+        <div className="flex items-center gap-2.5 p-3.5 rounded border border-primary/70 text-primary text-xs">
+          <ShieldAlert className="h-4 w-4 shrink-0" />
+          <span>
+            Only the organization owner can edit governance preferences. You
+            have view-only access.
+          </span>
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-[3px] border border-white/10 bg-[#09090b]">
         <div className="border-b border-white/10 p-4 sm:p-5">
@@ -127,9 +157,10 @@ export function OrganizationPreferencesPage() {
                 id="admin-invites"
                 type="button"
                 role="switch"
+                disabled={!isOwner}
                 aria-checked={allowAdminInvitations}
                 onClick={() => setAllowAdminInvitations((prev) => !prev)}
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
                   allowAdminInvitations ? "bg-amber-500" : "bg-white/10"
                 }`}
               >
@@ -163,9 +194,10 @@ export function OrganizationPreferencesPage() {
                 id="member-invites"
                 type="button"
                 role="switch"
+                disabled={!isOwner}
                 aria-checked={allowMemberInvitations}
                 onClick={() => setAllowMemberInvitations((prev) => !prev)}
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
                   allowMemberInvitations ? "bg-amber-500" : "bg-white/10"
                 }`}
               >
@@ -199,9 +231,10 @@ export function OrganizationPreferencesPage() {
                 id="member-projects"
                 type="button"
                 role="switch"
+                disabled={!isOwner}
                 aria-checked={allowMemberProjectCreation}
                 onClick={() => setAllowMemberProjectCreation((prev) => !prev)}
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
                   allowMemberProjectCreation ? "bg-amber-500" : "bg-white/10"
                 }`}
               >
@@ -218,32 +251,34 @@ export function OrganizationPreferencesPage() {
         </div>
       </div>
 
-      <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pt-2">
-        <span className="text-[11px] text-gray-500 text-center sm:text-left">
-          {hasChanges ? "Unsaved changes pending" : "All changes saved."}
-        </span>
-        <div className="flex items-center justify-end gap-2.5 sm:gap-3 w-full sm:w-auto">
-          <button
-            type="button"
-            onClick={handleReset}
-            disabled={!hasChanges || updateMutation.isPending}
-            className="flex-1 sm:flex-none cursor-pointer px-4 py-2 text-xs font-medium text-gray-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={!hasChanges || updateMutation.isPending}
-            className="flex-1 sm:flex-none flex cursor-pointer items-center justify-center gap-2 rounded-[3px] border border-amber-500/80 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-500 transition-colors hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {updateMutation.isPending && (
-              <Loader2 className="size-3.5 animate-spin" />
-            )}
-            Save Changes
-          </button>
+      {isOwner && (
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pt-2">
+          <span className="text-[11px] text-gray-500 text-center sm:text-left">
+            {hasChanges ? "Unsaved changes pending" : "All changes saved."}
+          </span>
+          <div className="flex items-center justify-end gap-2.5 sm:gap-3 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={!hasChanges || updateMutation.isPending}
+              className="flex-1 sm:flex-none cursor-pointer px-4 py-2 text-xs font-medium text-gray-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={!hasChanges || updateMutation.isPending}
+              className="flex-1 sm:flex-none flex cursor-pointer items-center justify-center gap-2 rounded-[3px] border border-amber-500/80 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-500 transition-colors hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {updateMutation.isPending && (
+                <Loader2 className="size-3.5 animate-spin" />
+              )}
+              Save Changes
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

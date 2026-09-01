@@ -8,6 +8,16 @@ export interface OrganizationOptionsResponse {
   accent_colors: AccentColorOption[];
 }
 
+export interface OrganizationAccess {
+  role: "owner" | "admin" | "member";
+  job_role: {
+    id: number;
+    name: string;
+  } | null;
+  permissions: string[];
+  has_full_access: boolean;
+}
+
 export interface CreateOrganizationPayload {
   name: string;
   slug: string;
@@ -235,4 +245,49 @@ export interface UpdateRoleVariables {
   subdomain: string;
   roleId: string | number;
   payload: UpdateRolePayload;
+}
+
+export interface CreateInvitationRequest {
+  email: string;
+  permission_role?: string;
+  job_role_id?: string;
+  personal_message?: string;
+  send_email?: boolean;
+}
+
+export interface CreateInvitationResponse {
+  id: string;
+  email: string;
+  expires_at: string;
+  invitation_url: string;
+}
+
+export interface ReceivedInvitation {
+  id: number;
+  organization_name: string;
+  organization_slug: string;
+  permission_role: "admin" | "member";
+  job_role_name: string;
+  token: string;
+  personal_message?: string;
+  expires_at: string;
+  created_at: string;
+}
+
+export interface InvitationDetailResponse {
+  organization: {
+    name: string;
+    slug: string;
+    icon?: string;
+  };
+  job_role: {
+    id: string;
+    name: string;
+  } | null;
+  expires_at: string;
+}
+
+export interface AcceptInvitationResponse {
+  message: string;
+  organization_slug: string;
 }

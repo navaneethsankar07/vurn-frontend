@@ -4,14 +4,16 @@ import {
   confirmDeleteOrganization,
   createOrganization,
   createOrganizationRole,
+  invitationApi,
   requestDeleteOrganization,
   updateOrganizationBranding,
   updateOrganizationPreferences,
   updateOrganizationRole,
   updateOrganizationSettings,
 } from "./organizationApi";
-import { organizationKeys, preferenceKeys } from "./organizationQueries";
+import { INVITATION_KEYS, organizationKeys, preferenceKeys } from "./organizationQueries";
 import type {
+  CreateInvitationRequest,
   CreateOrganizationPayload,
   CreateRoleVariables,
   OrganizationRole,
@@ -136,3 +138,20 @@ export const useUpdateOrganizationRole = () => {
     },
   });
 };
+
+export function useCreateInvitationMutation(slug: string) {
+  return useMutation({
+    mutationFn: (data: CreateInvitationRequest) =>
+      invitationApi.createInvitation(slug, data),
+  });
+}
+
+export function useAcceptInvitationMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (token: string) => invitationApi.acceptInvitation(token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: INVITATION_KEYS.received });
+    },
+  });
+}

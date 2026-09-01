@@ -16,7 +16,10 @@ import {
   Pencil,
 } from "lucide-react";
 import { getSubdomain } from "@/utils/subdomain";
-import { useOrganizationRolesQuery } from "../api/organizationQueries";
+import {
+  useOrganizationAccess,
+  useOrganizationRolesQuery,
+} from "../api/organizationQueries";
 import { CreateRoleSheet } from "../components/roles/CreateRoleSheet";
 import { UpdateRoleSheet } from "../components/roles/UpdateRoleSheet";
 import type { OrganizationRoles } from "../types";
@@ -30,13 +33,18 @@ const SORT_OPTIONS = [
 export function OrganizationRolesPage() {
   const subdomain = getSubdomain() || "";
 
+  const { data: accessData } = useOrganizationAccess(subdomain);
+  const isOwner = accessData?.role === "owner";
+
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [sortField, setSortField] = useState("updated");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState<OrganizationRoles | null>(null);
+  const [editingRole, setEditingRole] = useState<OrganizationRoles | null>(
+    null,
+  );
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -73,6 +81,8 @@ export function OrganizationRolesPage() {
   });
 
   const roles = data?.results || [];
+  console.log(roles);
+  
   const totalCount = data?.count || 0;
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -104,14 +114,16 @@ export function OrganizationRolesPage() {
             Manage organization roles and permissions.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setIsCreateOpen(true)}
-          className="flex cursor-pointer items-center justify-center gap-2 rounded-[3px] bg-primary px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-primary/90 self-start sm:self-auto"
-        >
-          <Plus className="size-4" />
-          Create Role
-        </button>
+        {isOwner && (
+          <button
+            type="button"
+            onClick={() => setIsCreateOpen(true)}
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-[3px] bg-primary px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-primary/90 self-start sm:self-auto"
+          >
+            <Plus className="size-4" />
+            Create Role
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -236,41 +248,43 @@ export function OrganizationRolesPage() {
                       </h3>
                     </div>
 
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setActiveMenuId(
-                            activeMenuId === role.id ? null : role.id,
-                          )
-                        }
-                        className="cursor-pointer text-gray-500 hover:text-white transition-colors p-1"
-                      >
-                        <MoreHorizontal className="size-4" />
-                      </button>
+                    {isOwner && (
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveMenuId(
+                              activeMenuId === role.id ? null : role.id,
+                            )
+                          }
+                          className="cursor-pointer text-gray-500 hover:text-white transition-colors p-1"
+                        >
+                          <MoreHorizontal className="size-4" />
+                        </button>
 
-                      {activeMenuId === role.id && (
-                        <>
-                          <div
-                            className="fixed inset-0 z-10"
-                            onClick={() => setActiveMenuId(null)}
-                          />
-                          <div className="absolute right-0 z-20 mt-1 w-32 rounded-[3px] border border-white/10 bg-[#09090b] py-1 shadow-xl">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setEditingRole(role);
-                                setActiveMenuId(null);
-                              }}
-                              className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-gray-300 hover:bg-white/5 hover:text-white transition-colors cursor-pointer"
-                            >
-                              <Pencil className="size-3.5 text-gray-400" />
-                              <span>Edit</span>
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                        {activeMenuId === role.id && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-10"
+                              onClick={() => setActiveMenuId(null)}
+                            />
+                            <div className="absolute right-0 z-20 mt-1 w-32 rounded-[3px] border border-white/10 bg-[#09090b] py-1 shadow-xl">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingRole(role);
+                                  setActiveMenuId(null);
+                                }}
+                                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-gray-300 hover:bg-white/5 hover:text-white transition-colors cursor-pointer"
+                              >
+                                <Pencil className="size-3.5 text-gray-400" />
+                                <span>Edit</span>
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <p className="mt-2 text-xs text-gray-400 line-clamp-2 min-h-8">
@@ -326,18 +340,22 @@ export function OrganizationRolesPage() {
         </>
       )}
 
-      <CreateRoleSheet
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        subdomain={subdomain}
-      />
+      {isOwner && (
+        <>
+          <CreateRoleSheet
+            isOpen={isCreateOpen}
+            onClose={() => setIsCreateOpen(false)}
+            subdomain={subdomain}
+          />
 
-      <UpdateRoleSheet
-        isOpen={!!editingRole}
-        onClose={() => setEditingRole(null)}
-        subdomain={subdomain}
-        role={editingRole}
-      />
+          <UpdateRoleSheet
+            isOpen={!!editingRole}
+            onClose={() => setEditingRole(null)}
+            subdomain={subdomain}
+            role={editingRole}
+          />
+        </>
+      )}
     </div>
   );
 }

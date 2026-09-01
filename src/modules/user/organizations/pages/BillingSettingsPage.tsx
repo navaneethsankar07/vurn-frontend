@@ -1,6 +1,9 @@
 import Coin3Line from "@/utils/icons";
-import { Check, TrendingUp } from "lucide-react";
-          
+import { Check, TrendingUp, ShieldAlert } from "lucide-react";
+import { getSubdomain } from "@/utils/subdomain";
+import { useOrganizationAccess } from "../api/organizationQueries";
+import { useOrganizationPermission } from "@/hooks/useOrganizationPermission";
+
 const TOKEN_PACKS = [
   {
     id: "starter",
@@ -34,12 +37,31 @@ const USAGE_FEATURES = [
 ];
 
 export function BillingSettingsPage() {
+  const subdomain = getSubdomain() || "";
+  const { data: accessData } = useOrganizationAccess(subdomain);
+  const hasBillingPermission = useOrganizationPermission(
+    "organization.billing.manage",
+  );
+
+  const canManageBilling =
+    accessData?.role === "owner" ||
+    accessData?.role === "admin" ||
+    hasBillingPermission;
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6 font-mono text-xs px-4 sm:px-6 py-4">
-      {/* Page Label */}
+    <div className="mx-auto max-w-3xl space-y-6 font-mono text-xs px-4 sm:px-6 py-4 select-none">
       <div className="text-gray-400 text-xs">Billing</div>
 
-      {/* AI Token Balance Card */}
+      {!canManageBilling && (
+        <div className="flex items-center gap-2.5 p-3.5 rounded border border-primary/70 text-primary text-xs">
+          <ShieldAlert className="h-4 w-4 shrink-0" />
+          <span>
+            You have view-only access to billing settings. You do not have
+            permission to purchase tokens.
+          </span>
+        </div>
+      )}
+
       <div className="rounded border border-white/10 bg-[#09090b] shadow-xl">
         <div className="border-b border-white/10 p-5 sm:p-6 space-y-1">
           <h2 className="text-sm font-semibold text-white">AI Token Balance</h2>
@@ -53,7 +75,7 @@ export function BillingSettingsPage() {
             <Coin3Line size="30" />
 
             <div className="space-y-0.5">
-              <div className="text-lg font-bold text-white tracking-tight">
+              <div className="text-lg font-bold text-white tracking-tight select-text">
                 12,480{" "}
                 <span className="text-xs font-normal text-gray-400">
                   AI Tokens
@@ -64,15 +86,9 @@ export function BillingSettingsPage() {
               </p>
             </div>
           </div>
-
-          {/* <div className="flex items-center gap-1.5 self-start sm:self-center shrink-0 rounded border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[11px] text-amber-500">
-            <SparkleIcon className="h-3.5 w-3.5" />
-            <span>AI compute balance</span>
-          </div> */}
         </div>
       </div>
 
-      {/* Usage Statistics Card */}
       <div className="rounded border border-white/10 bg-[#09090b] shadow-xl">
         <div className="border-b border-white/10 p-5 sm:p-6 space-y-1">
           <h2 className="text-sm font-semibold text-white">Usage Statistics</h2>
@@ -84,7 +100,7 @@ export function BillingSettingsPage() {
         <div className="grid grid-cols-1 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0 divide-white/10 p-5 sm:p-6 gap-6 sm:gap-0">
           <div className="sm:pr-6 space-y-1">
             <div className="text-gray-400 text-[11px]">Tokens Used Today</div>
-            <div className="flex items-center gap-2 text-white font-semibold text-base">
+            <div className="flex items-center gap-2 text-white font-semibold text-base select-text">
               <TrendingUp className="h-4 w-4 text-gray-400" />
               482
             </div>
@@ -94,7 +110,7 @@ export function BillingSettingsPage() {
             <div className="text-gray-400 text-[11px]">
               Tokens Used This Month
             </div>
-            <div className="flex items-center gap-2 text-white font-semibold text-base">
+            <div className="flex items-center gap-2 text-white font-semibold text-base select-text">
               <TrendingUp className="h-4 w-4 text-gray-400" />
               8,320
             </div>
@@ -102,7 +118,7 @@ export function BillingSettingsPage() {
 
           <div className="sm:pl-6 pt-4 sm:pt-0 space-y-1">
             <div className="text-gray-400 text-[11px]">Average Daily Usage</div>
-            <div className="flex items-center gap-2 text-white font-semibold text-base">
+            <div className="flex items-center gap-2 text-white font-semibold text-base select-text">
               <TrendingUp className="h-4 w-4 text-gray-400" />
               396
             </div>
@@ -110,7 +126,6 @@ export function BillingSettingsPage() {
         </div>
       </div>
 
-      {/* Purchase Tokens Card */}
       <div className="rounded border border-white/10 bg-[#09090b] shadow-xl">
         <div className="border-b border-white/10 p-5 sm:p-6 space-y-1">
           <h2 className="text-sm font-semibold text-white">Purchase Tokens</h2>
@@ -140,7 +155,7 @@ export function BillingSettingsPage() {
                 </div>
 
                 <div className="space-y-0.5">
-                  <div className="text-lg font-bold text-white tracking-tight">
+                  <div className="text-lg font-bold text-white tracking-tight select-text">
                     {pack.tokens}
                   </div>
                   <div className="text-gray-400 text-[10px]">AI Tokens</div>
@@ -153,7 +168,8 @@ export function BillingSettingsPage() {
 
               <button
                 type="button"
-                className={`w-full rounded py-2 text-xs font-medium transition-colors ${
+                disabled={!canManageBilling}
+                className={`w-full rounded py-2 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   pack.recommended
                     ? "bg-primary text-black hover:bg-primary"
                     : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
@@ -166,7 +182,6 @@ export function BillingSettingsPage() {
         </div>
       </div>
 
-      {/* Usage Information Card */}
       <div className="rounded border border-white/10 bg-[#09090b] shadow-xl">
         <div className="border-b border-white/10 p-5 sm:p-6 space-y-1">
           <h2 className="text-sm font-semibold text-white">
