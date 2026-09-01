@@ -5,10 +5,12 @@ import {
   fetchOrganizationRoles,
   fetchOrganizations,
   getOrganizationAccess,
+  getOrganizationMembers,
   getOrganizationPreferences,
   invitationApi,
 } from "./organizationApi";
 import type {
+  GetOrganizationMembersParams,
   OrganizationDashboardData,
   OrganizationQueryParams,
   RoleQueryParams,
@@ -239,5 +241,15 @@ export const useOrganizationAccess = (slug: string) => {
     enabled: Boolean(slug),
 
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useOrganizationMembers = (
+  params: GetOrganizationMembersParams,
+) => {
+  return useQuery({
+    queryKey: ["organization-members", params],
+    queryFn: () => getOrganizationMembers(params),
+    enabled: Boolean(params.slug),
   });
 };

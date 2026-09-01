@@ -7,9 +7,11 @@ import type {
   CreateOrganizationPayload,
   CreateOrganizationResponse,
   CreateRolePayload,
+  GetOrganizationMembersParams,
   InvitationDetailResponse,
   OrganizationAccess,
   OrganizationBranding,
+  OrganizationMember,
   OrganizationOptionsResponse,
   OrganizationPreferences,
   OrganizationQueryParams,
@@ -17,6 +19,7 @@ import type {
   OrganizationRoles,
   OrganizationSettings,
   PaginatedOrganizationsResponse,
+  PaginatedResponse,
   PaginatedRolesResponse,
   ReceivedInvitation,
   RoleQueryParams,
@@ -58,7 +61,7 @@ export const getOrganizationAccess = async (
 ): Promise<OrganizationAccess> => {
   const response = await api.get(`/organizations/${slug}/access/`);
   console.log(response.data);
-  
+
   return response.data;
 };
 
@@ -203,4 +206,25 @@ export const invitationApi = {
     );
     return res.data;
   },
+};
+
+export const getOrganizationMembers = async ({
+  slug,
+  search,
+  role,
+  page = 1,
+  page_size = 10,
+}: GetOrganizationMembersParams): Promise<
+  PaginatedResponse<OrganizationMember>
+> => {
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+  if (role && role !== "all") params.append("role", role);
+  params.append("page", page.toString());
+  params.append("page_size", page_size.toString());
+
+  const response = await api.get(
+    `/organizations/${slug}/members/?${params.toString()}`,
+  );
+  return response.data;
 };

@@ -292,3 +292,37 @@ export interface AcceptInvitationResponse {
   message: string;
   organization_slug: string;
 }
+
+export interface OrganizationMember {
+  id: number;
+  membership_id: number | null;
+  name: string;
+  email: string;
+  avatar: string | null;
+  role: "owner" | "admin" | "member";
+  job_role: {
+    id: number;
+    name: string;
+  } | null;
+  invited_by: {
+    id: number;
+    name: string;
+  } | null;
+  joined_at: string;
+  project_count: number;
+}
+
+export interface GetOrganizationMembersParams {
+  slug: string;
+  search?: string;
+  role?: "all" | "owner" | "admin" | "member";
+  page?: number;
+  page_size?: number;
+}
+
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
