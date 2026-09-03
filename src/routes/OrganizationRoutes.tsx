@@ -12,6 +12,8 @@ import { BillingSettingsPage } from "@/modules/user/organizations/pages/BillingS
 import { OrganizationPreferencesPage } from "@/modules/user/organizations/pages/OrganizationPreferencesPage";
 import { OrganizationRolesPage } from "@/modules/user/organizations/pages/OrganizationRolesPage";
 import { OrganizationMembersPage } from "@/modules/user/organizations/pages/OrganizationMembersPage";
+import { ProjectsPage } from "@/modules/user/projects/pages/ProjectsPage";
+import { CreateProjectPage } from "@/modules/user/projects/pages/CreateProjectPage";
 
 const subdomain = getSubdomain();
 
@@ -29,7 +31,11 @@ export const OrganizationRoutes: RouteObject[] = subdomain
               },
               {
                 path: "projects",
-                element: <h1>Projects List</h1>,
+                element: <ProjectsPage/>,
+              },
+              {
+                path: "projects/create",
+                element: <CreateProjectPage/>,
               },
               {
                 path: "settings",
