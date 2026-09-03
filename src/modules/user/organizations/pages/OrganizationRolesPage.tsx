@@ -81,7 +81,6 @@ export function OrganizationRolesPage() {
   });
 
   const roles = data?.results || [];
-  console.log(roles);
   
   const totalCount = data?.count || 0;
   const totalPages = Math.ceil(totalCount / pageSize);

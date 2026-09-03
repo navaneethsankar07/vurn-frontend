@@ -17,6 +17,7 @@ export interface OrganizationAccess {
   permissions: string[];
   has_full_access: boolean;
   can_invite_members: boolean;
+  can_create_projects: boolean;
 }
 
 export interface CreateOrganizationPayload {

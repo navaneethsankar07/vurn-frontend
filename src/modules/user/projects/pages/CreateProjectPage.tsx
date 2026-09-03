@@ -120,10 +120,20 @@ export function CreateProjectPage() {
         navigate("/projects");
       },
       onError: (err: any) => {
+        const backendData = err?.response?.data;
+
         const errorMsg =
-          err?.response?.data?.detail ||
-          err?.response?.data?.key?.[0] ||
+          backendData?.error ||
+          backendData?.detail ||
+          (typeof backendData === "string" ? backendData : null) ||
+          (Array.isArray(backendData?.non_field_errors)
+            ? backendData.non_field_errors[0]
+            : null) ||
+          (backendData && typeof backendData === "object"
+            ? Object.values(backendData).flat()[0]
+            : null) ||
           "Failed to create project.";
+
         toast.error(errorMsg);
       },
     });
