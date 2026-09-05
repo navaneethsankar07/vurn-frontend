@@ -12,8 +12,7 @@ import { BillingSettingsPage } from "@/modules/user/organizations/pages/BillingS
 import { OrganizationPreferencesPage } from "@/modules/user/organizations/pages/OrganizationPreferencesPage";
 import { OrganizationRolesPage } from "@/modules/user/organizations/pages/OrganizationRolesPage";
 import { OrganizationMembersPage } from "@/modules/user/organizations/pages/OrganizationMembersPage";
-import { ProjectsPage } from "@/modules/user/projects/pages/ProjectsPage";
-import { CreateProjectPage } from "@/modules/user/projects/pages/CreateProjectPage";
+import { projectRoutes } from "./projectRoutes";
 
 const subdomain = getSubdomain();
 
@@ -29,14 +28,7 @@ export const OrganizationRoutes: RouteObject[] = subdomain
                 index: true,
                 element: <OrganizationDashboard />,
               },
-              {
-                path: "projects",
-                element: <ProjectsPage/>,
-              },
-              {
-                path: "projects/create",
-                element: <CreateProjectPage/>,
-              },
+              ...projectRoutes,
               {
                 path: "settings",
                 element: <SettingsLayout />,
