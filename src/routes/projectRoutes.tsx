@@ -1,8 +1,9 @@
-import type { RouteObject } from "react-router-dom";
+import { Navigate, type RouteObject } from "react-router-dom";
 import { ProjectsPage } from "@/modules/user/projects/pages/ProjectsPage";
 import { CreateProjectPage } from "@/modules/user/projects/pages/CreateProjectPage";
 import { ProjectLayout } from "@/layouts/ProjectLayout";
 import { ProjectOverviewPage } from "@/modules/user/projects/pages/ProjectOverviewPage";
+import { ProjectSettingsLayout } from "@/modules/user/projects/layout/ProjectSettingsLayout";
 
 export const projectRoutes: RouteObject[] = [
   {
@@ -74,11 +75,37 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "settings",
-            element: (
-              <div className="p-4 text-xs text-gray-400">
-                Project Settings (Coming Soon)
-              </div>
-            ),
+            element: <ProjectSettingsLayout />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="general" replace />,
+              },
+              {
+                path: "general",
+                element: (
+                  <div className="p-4 text-xs text-gray-400">
+                    General Settings (Component)
+                  </div>
+                ),
+              },
+              {
+                path: "github",
+                element: (
+                  <div className="p-4 text-xs text-gray-400">
+                    GitHub Integration (Component)
+                  </div>
+                ),
+              },
+              {
+                path: "danger-zone",
+                element: (
+                  <div className="p-4 text-xs text-gray-400">
+                    Danger Zone (Component)
+                  </div>
+                ),
+              },
+            ],
           },
         ],
       },
