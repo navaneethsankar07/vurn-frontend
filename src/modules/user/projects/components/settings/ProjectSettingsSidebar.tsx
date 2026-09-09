@@ -39,7 +39,10 @@ export function ProjectSettingsSidebar() {
                   "flex items-center gap-3 px-3 py-2.5 rounded-xs text-xs font-medium transition-all duration-150";
 
                 if (isActive) {
-                  return `${baseClasses} bg-neutral-800/80 text-white shadow-sm border border-neutral-700/50`;
+                  const activeTextColor = item.isDanger
+                    ? "text-red-400"
+                    : "text-text-primary";
+                  return `${baseClasses} bg-neutral-800/80 ${activeTextColor} shadow-sm`;
                 }
 
                 if (item.isDanger) {
@@ -49,8 +52,22 @@ export function ProjectSettingsSidebar() {
                 return `${baseClasses} text-neutral-400 hover:text-white hover:bg-neutral-900/60`;
               }}
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              <span>{item.label}</span>
+              {({ isActive }) => (
+                <>
+                  <Icon
+                    className={`h-4 w-4 shrink-0 transition-colors ${
+                      isActive
+                        ? item.isDanger
+                          ? "text-red-400"
+                          : "text-primary"
+                        : item.isDanger
+                          ? "text-red-400"
+                          : "text-neutral-400"
+                    }`}
+                  />
+                  <span>{item.label}</span>
+                </>
+              )}
             </NavLink>
           );
         })}

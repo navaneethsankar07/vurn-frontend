@@ -4,6 +4,8 @@ import { CreateProjectPage } from "@/modules/user/projects/pages/CreateProjectPa
 import { ProjectLayout } from "@/layouts/ProjectLayout";
 import { ProjectOverviewPage } from "@/modules/user/projects/pages/ProjectOverviewPage";
 import { ProjectSettingsLayout } from "@/modules/user/projects/layout/ProjectSettingsLayout";
+import { GeneralSettingsPage } from "@/modules/user/projects/pages/GeneralSettingsPage";
+
 
 export const projectRoutes: RouteObject[] = [
   {
@@ -83,11 +85,7 @@ export const projectRoutes: RouteObject[] = [
               },
               {
                 path: "general",
-                element: (
-                  <div className="p-4 text-xs text-gray-400">
-                    General Settings (Component)
-                  </div>
-                ),
+                element: <GeneralSettingsPage/>,
               },
               {
                 path: "github",

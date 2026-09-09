@@ -72,7 +72,6 @@ export function ProjectsPage() {
     }
   };
 
-  // Function to extract backend response error message dynamically
   const getErrorMessage = () => {
     if (!error) return "Failed to load projects. Please try again later.";
 
@@ -264,17 +263,25 @@ export function ProjectsPage() {
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className="h-9 w-9 rounded-sm flex items-center justify-center border border-white/10 shrink-0"
-                        style={{
-                          backgroundColor: `${project.accent_color || "#F59E0B"}15`,
-                          color: project.accent_color || "#F59E0B",
-                        }}
-                      >
-                        {renderOrgIcon(project.icon || "", {
-                          className: "h-5 w-5",
-                        })}
-                      </div>
+                      {project.logo_url ? (
+                        <img
+                          src={project.logo_url}
+                          alt={project.name}
+                          className="h-9 w-9 rounded-sm object-cover border border-white/10 shrink-0"
+                        />
+                      ) : (
+                        <div
+                          className="h-9 w-9 rounded-sm flex items-center justify-center border border-white/10 shrink-0"
+                          style={{
+                            backgroundColor: `${project.accent_color || "#F59E0B"}15`,
+                            color: project.accent_color || "#F59E0B",
+                          }}
+                        >
+                          {renderOrgIcon(project.icon || "", {
+                            className: "h-5 w-5",
+                          })}
+                        </div>
+                      )}
                       <div className="min-w-0">
                         <h3 className="text-sm font-semibold text-white truncate group-hover:text-primary transition-colors">
                           {project.name}
@@ -348,17 +355,25 @@ export function ProjectsPage() {
                 className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/2 transition-colors group"
               >
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <div
-                    className="h-9 w-9 rounded-sm flex items-center justify-center border border-white/10 shrink-0"
-                    style={{
-                      backgroundColor: `${project.accent_color || "#F59E0B"}15`,
-                      color: project.accent_color || "#F59E0B",
-                    }}
-                  >
-                    {renderOrgIcon(project.icon || "", {
-                      className: "h-5 w-5",
-                    })}
-                  </div>
+                  {project.logo_url ? (
+                    <img
+                      src={project.logo_url}
+                      alt={project.name}
+                      className="h-9 w-9 rounded-sm object-cover border border-white/10 shrink-0"
+                    />
+                  ) : (
+                    <div
+                      className="h-9 w-9 rounded-sm flex items-center justify-center border border-white/10 shrink-0"
+                      style={{
+                        backgroundColor: `${project.accent_color || "#F59E0B"}15`,
+                        color: project.accent_color || "#F59E0B",
+                      }}
+                    >
+                      {renderOrgIcon(project.icon || "", {
+                        className: "h-5 w-5",
+                      })}
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-semibold text-white truncate group-hover:text-primary transition-colors">

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProjectOptions, getProjects } from "./projectApi";
-import type { ProjectListParams } from "../types";
+import { getProjectOptions, getProjects, getProjectSettings } from "./projectApi";
+import type { ProjectDetail, ProjectListParams } from "../types";
 
 export const useProjectOptions = () => {
   return useQuery({
@@ -17,3 +17,11 @@ export const useProjects = (subdomain: string, params?: ProjectListParams) => {
     staleTime: 60 * 1000,
   });
 };
+
+export function useProjectSettings(subdomain: string, projectSlug: string) {
+  return useQuery<ProjectDetail>({
+    queryKey: ["project-settings", subdomain, projectSlug],
+    queryFn: () => getProjectSettings(subdomain, projectSlug),
+    enabled: Boolean(subdomain && projectSlug),
+  });
+}

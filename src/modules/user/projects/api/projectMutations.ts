@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createProject } from "./projectApi";
-import type { CreateProjectPayload } from "../types";
+import { createProject, updateProjectSettings } from "./projectApi";
+import type { CreateProjectPayload, ProjectUpdateRequest } from "../types";
 
 export const useCreateProjectMutation = (slug: string) => {
   const queryClient = useQueryClient();
@@ -14,3 +14,29 @@ export const useCreateProjectMutation = (slug: string) => {
     },
   });
 };
+
+interface UseUpdateProjectSettingsProps {
+  subdomain: string;
+  projectSlug: string;
+}
+
+export function useUpdateProjectSettings({
+  subdomain,
+  projectSlug,
+}: UseUpdateProjectSettingsProps) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: ProjectUpdateRequest) =>
+      updateProjectSettings(subdomain, projectSlug, data),
+    onSuccess: (updatedProject) => {
+      queryClient.invalidateQueries({
+        queryKey: ["project", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["projects", subdomain],
+      });
+      return updatedProject;
+    },
+  });
+}

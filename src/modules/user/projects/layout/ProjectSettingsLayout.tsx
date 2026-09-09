@@ -10,7 +10,6 @@ export function ProjectSettingsLayout() {
       <div className="flex flex-col md:flex-row gap-8 items-start">
         <ProjectSettingsSidebar />
 
-        {/* Main Settings Content Area */}
         <main className="flex-1 w-full min-w-0">
           <Outlet />
         </main>

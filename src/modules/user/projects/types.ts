@@ -71,3 +71,31 @@ export interface PaginatedProjectsResponse {
   previous: string | null;
   results: ProjectListItem[];
 }
+
+export type ProjectStatus = "active" | "archived" | "completed";
+
+export interface ProjectUpdateRequest {
+  name?: string;
+  key?: string;
+  description?: string;
+  status?: ProjectStatus;
+  icon?: string;
+  accent_color?: string;
+  logo?: File | null;
+}
+
+export interface ProjectDetail {
+  id: string;
+  name: string;
+  key: string;
+  slug: string;
+  description?: string;
+  status: ProjectStatus;
+  icon?: string;
+  accent_color?: string;
+  logo_url?: string;
+  created_by_name?: string;
+  created_at?: string;
+  updated_at?: string;
+  message?: string;
+}

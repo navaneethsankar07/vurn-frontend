@@ -2,9 +2,11 @@ import api from "@/api/axios";
 import type {
   CreateProjectPayload,
   PaginatedProjectsResponse,
+  ProjectDetail,
   ProjectListParams,
   ProjectOptionsResponse,
   ProjectResponse,
+  ProjectUpdateRequest,
 } from "../types";
 
 export const getProjectOptions = async (): Promise<ProjectOptionsResponse> => {
@@ -30,3 +32,46 @@ export const getProjects = async (
   );
   return response.data;
 };
+
+export async function getProjectSettings(
+  subdomain: string,
+  projectSlug: string,
+): Promise<ProjectDetail> {
+  const response = await api.get<ProjectDetail>(
+    `/organizations/${subdomain}/projects/${projectSlug}/settings/`,
+  );
+  return response.data;
+}
+
+export async function updateProjectSettings(
+  subdomain: string,
+  projectSlug: string,
+  data: ProjectUpdateRequest,
+): Promise<ProjectDetail> {
+  const formData = new FormData();
+
+  if (data.name !== undefined) formData.append("name", data.name);
+  if (data.key !== undefined) formData.append("key", data.key);
+  if (data.description !== undefined)
+    formData.append("description", data.description);
+  if (data.status !== undefined) formData.append("status", data.status);
+  if (data.icon !== undefined) formData.append("icon", data.icon);
+  if (data.accent_color !== undefined)
+    formData.append("accent_color", data.accent_color);
+
+  if (data.logo instanceof File) {
+    formData.append("logo", data.logo);
+  }
+
+  const response = await api.patch<ProjectDetail>(
+    `/organizations/${subdomain}/projects/${projectSlug}/settings/`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+
+  return response.data;
+}
