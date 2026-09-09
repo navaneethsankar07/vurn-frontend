@@ -94,8 +94,12 @@ export interface ProjectDetail {
   icon?: string;
   accent_color?: string;
   logo_url?: string;
-  created_by_name?: string;
+  created_by?: string;
   created_at?: string;
   updated_at?: string;
   message?: string;
+}
+
+export interface ProjectDeleteRequest {
+  confirmation: string;
 }

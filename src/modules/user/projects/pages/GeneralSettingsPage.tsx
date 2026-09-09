@@ -156,7 +156,7 @@ export function GeneralSettingsPage() {
 
   if (isLoadingSettings) {
     return (
-      <div className="max-w-4xl border border-white/10 bg-[#0C0C0E] rounded-sm p-12 flex items-center justify-center text-xs font-mono text-neutral-400">
+      <div className="max-w-4xl border border-white/10 bg-[#0C0C0E] rounded-xs p-12 flex items-center justify-center text-xs font-mono text-neutral-400">
         <Loader2 className="h-5 w-5 animate-spin mr-2 text-primary" />
         Loading project settings...
       </div>
@@ -165,7 +165,7 @@ export function GeneralSettingsPage() {
 
   if (isError || !projectData) {
     return (
-      <div className="max-w-4xl border border-red-500/20 bg-red-500/5 rounded-sm p-6 text-xs font-mono text-red-400">
+      <div className="max-w-4xl border border-red-500/20 bg-red-500/5 rounded-xs p-6 text-xs font-mono text-red-400">
         {getLoadErrorMessage()}
       </div>
     );
@@ -173,7 +173,7 @@ export function GeneralSettingsPage() {
 
   return (
     <div className="max-w-4xl space-y-6 font-mono text-white">
-      <div className="border border-white/10 bg-[#0C0C0E] rounded-sm p-6 space-y-6">
+      <div className="border border-white/10 bg-[#0C0C0E] rounded-xs p-6 space-y-6">
         <div>
           <h2 className="text-base font-semibold text-white">General</h2>
           <p className="text-xs text-neutral-400 mt-1">
@@ -190,7 +190,7 @@ export function GeneralSettingsPage() {
               {...register("name")}
               type="text"
               placeholder="e.g. Authentication"
-              className="w-full bg-black/40 border border-white/10 rounded-sm px-3.5 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+              className="w-full bg-black/40 border border-white/10 rounded-xs px-3.5 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
             />
             {errors.name && (
               <p className="text-xs text-red-400">{errors.name.message}</p>
@@ -206,7 +206,7 @@ export function GeneralSettingsPage() {
               type="text"
               placeholder="AUTH"
               maxLength={10}
-              className="w-full bg-black/40 border border-white/10 rounded-sm px-3.5 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary transition-colors uppercase"
+              className="w-full bg-black/40 border border-white/10 rounded-xs px-3.5 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary transition-colors uppercase"
             />
             <p className="text-[11px] text-neutral-500">
               The project key is used when generating issue IDs (e.g. AUTH-142).
@@ -224,7 +224,7 @@ export function GeneralSettingsPage() {
               {...register("description")}
               rows={4}
               placeholder="What is this project about?"
-              className="w-full bg-black/40 border border-white/10 rounded-sm p-3.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary transition-colors resize-none leading-relaxed"
+              className="w-full bg-black/40 border border-white/10 rounded-xs p-3.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-primary transition-colors resize-none leading-relaxed"
             />
           </div>
 
@@ -234,7 +234,7 @@ export function GeneralSettingsPage() {
             </label>
             <select
               {...register("status")}
-              className="w-full bg-black/40 border border-white/10 rounded-sm px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+              className="w-full bg-black/40 border border-white/10 rounded-xs px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
             >
               <option value="active" className="bg-[#0C0C0E]">
                 Active
@@ -250,10 +250,10 @@ export function GeneralSettingsPage() {
 
           <div className="space-y-3 pt-2">
             <label className="text-xs text-neutral-400 uppercase tracking-wider font-semibold">
-              Project Identity Visual
+              Project Identity
             </label>
 
-            <div className="flex items-center gap-4 border-b border-white/10 pb-3">
+            <div className="flex items-center gap-4 border-b border-white/10 pb-3 pt-3">
               <button
                 type="button"
                 onClick={() => setAssetType("icon")}
@@ -290,7 +290,7 @@ export function GeneralSettingsPage() {
                       Loading options...
                     </div>
                   ) : (
-                    <div className="flex flex-wrap gap-2 p-2.5 border border-white/5 rounded-sm bg-black/20">
+                    <div className="flex flex-wrap gap-2 p-2.5 border border-white/5 rounded-xs bg-black/20">
                       {iconsList.map((iconKey) => {
                         const isSelected = selectedIcon === iconKey;
                         return (
@@ -301,7 +301,7 @@ export function GeneralSettingsPage() {
                               setValue("icon", iconKey, { shouldDirty: true })
                             }
                             title={iconKey}
-                            className={`h-9 w-9 rounded-sm border flex items-center justify-center transition-all ${
+                            className={`h-9 w-9 rounded-xs border flex items-center justify-center transition-all ${
                               isSelected
                                 ? "border-primary bg-primary/10 text-primary scale-105"
                                 : "border-white/10 bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5"
@@ -319,7 +319,7 @@ export function GeneralSettingsPage() {
                   <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold block">
                     Accent Color
                   </span>
-                  <div className="flex items-center gap-2.5 flex-wrap p-2.5 border border-white/5 rounded-sm bg-black/20 min-h-14">
+                  <div className="flex items-center gap-2.5 flex-wrap p-2.5 border border-white/5 rounded-xs bg-black/20 min-h-14">
                     {PROJECT_ACCENT_COLORS.map((hex) => (
                       <button
                         key={hex}
@@ -328,18 +328,18 @@ export function GeneralSettingsPage() {
                           setValue("accent_color", hex, { shouldDirty: true })
                         }
                         style={{ backgroundColor: hex }}
-                        className={`h-7 w-7 rounded-sm transition-transform ${
+                        className={`h-7 w-7 rounded-xs transition-transform ${
                           selectedColor === hex
                             ? "ring-2 ring-white scale-110"
                             : "opacity-80 hover:opacity-100"
                         }`}
                       />
                     ))}
-                    <div className="relative flex items-center">
+                    <div className="relative flex pt-3 items-center">
                       <label
                         title="Custom Color Picker"
                         className={cn(
-                          "h-7 px-2.5 flex items-center gap-2 border border-white/20 bg-black/60 hover:bg-white/10 rounded-sm cursor-pointer text-xs text-neutral-300 hover:text-white transition-all shadow-sm",
+                          "h-7 px-2.5 flex items-center gap-2 border border-white/20 bg-black/60 hover:bg-white/10 rounded-xs cursor-pointer text-xs text-neutral-300 hover:text-white transition-all shadow-sm",
                           isCustomColor &&
                             "ring-2 ring-white border-transparent text-white bg-black/80",
                         )}
@@ -390,7 +390,7 @@ export function GeneralSettingsPage() {
 
                 <div className="flex items-center gap-4">
                   {logoPreview ? (
-                    <div className="relative group w-16 h-16 rounded-sm border border-white/10 bg-black/40 overflow-hidden flex items-center justify-center">
+                    <div className="relative group w-16 h-16 rounded-xs border border-white/10 bg-black/40 overflow-hidden flex items-center justify-center">
                       <img
                         src={logoPreview}
                         alt="Project Logo Preview"
@@ -405,7 +405,7 @@ export function GeneralSettingsPage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-16 h-16 rounded-sm border border-dashed border-white/10 bg-black/40 flex flex-col items-center justify-center text-neutral-500">
+                    <div className="w-16 h-16 rounded-xs border border-dashed border-white/10 bg-black/40 flex flex-col items-center justify-center text-neutral-500">
                       <ImageIcon className="h-5 w-5 mb-1" />
                     </div>
                   )}
@@ -413,7 +413,7 @@ export function GeneralSettingsPage() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-2 px-3 py-2 bg-black/40 border border-white/10 hover:border-white/20 rounded-sm text-xs text-neutral-300 hover:text-white transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-black/40 border border-white/10 hover:border-white/20 rounded-xs text-xs text-neutral-300 hover:text-white transition-colors"
                   >
                     <Upload className="h-3.5 w-3.5" />
                     <span>Upload icon</span>
@@ -426,13 +426,13 @@ export function GeneralSettingsPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border border-white/10 bg-black/40 p-4 rounded-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border border-white/10 bg-black/40 p-4 rounded-xs">
             <div>
               <span className="text-[11px] text-neutral-500 block">
                 Created By
               </span>
               <span className="text-xs font-medium text-neutral-300">
-                {projectData.created_by_name || "N/A"}
+                {projectData.created_by || "N/A"}
               </span>
             </div>
             <div>
@@ -462,14 +462,14 @@ export function GeneralSettingsPage() {
               type="button"
               onClick={() => reset()}
               disabled={!isDirty}
-              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white text-xs font-semibold rounded-sm transition-colors disabled:opacity-40"
+              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white text-xs font-semibold rounded-xs transition-colors disabled:opacity-40"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isPending || !isDirty}
-              className="px-4 py-2 bg-primary hover:opacity-90 disabled:opacity-50 text-black text-xs font-semibold rounded-sm transition-opacity flex items-center justify-center min-w-24"
+              className="px-4 py-2 bg-primary hover:opacity-90 disabled:opacity-50 text-black text-xs font-semibold rounded-xs transition-opacity flex items-center justify-center min-w-24"
             >
               {isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

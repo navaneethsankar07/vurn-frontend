@@ -1,6 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createProject, updateProjectSettings } from "./projectApi";
-import type { CreateProjectPayload, ProjectUpdateRequest } from "../types";
+import {
+  archiveProject,
+  createProject,
+  deleteProject,
+  updateProjectSettings,
+} from "./projectApi";
+import type {
+  CreateProjectPayload,
+  ProjectDeleteRequest,
+  ProjectUpdateRequest,
+} from "../types";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export const useCreateProjectMutation = (slug: string) => {
   const queryClient = useQueryClient();
@@ -15,7 +26,7 @@ export const useCreateProjectMutation = (slug: string) => {
   });
 };
 
-interface UseUpdateProjectSettingsProps {
+interface ProjectMutationProps {
   subdomain: string;
   projectSlug: string;
 }
@@ -23,7 +34,7 @@ interface UseUpdateProjectSettingsProps {
 export function useUpdateProjectSettings({
   subdomain,
   projectSlug,
-}: UseUpdateProjectSettingsProps) {
+}: ProjectMutationProps) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -37,6 +48,60 @@ export function useUpdateProjectSettings({
         queryKey: ["projects", subdomain],
       });
       return updatedProject;
+    },
+  });
+}
+
+export function useArchiveProject({
+  subdomain,
+  projectSlug,
+}: ProjectMutationProps) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: () => archiveProject(subdomain, projectSlug),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-settings", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["projects", subdomain],
+      });
+      toast.success("Project archived successfully.");
+      navigate("/projects");
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.detail || "Failed to archive project.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useDeleteProject({
+  subdomain,
+  projectSlug,
+}: ProjectMutationProps) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: ProjectDeleteRequest) =>
+      deleteProject(subdomain, projectSlug, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["projects", subdomain],
+      });
+      toast.success("Project deleted successfully.");
+      navigate("/projects");
+    },
+    onError: (error: any) => {
+      const message =
+        error.response?.data?.confirmation?.[0] ||
+        error.response?.data?.detail ||
+        "Failed to delete project.";
+      toast.error(message);
     },
   });
 }

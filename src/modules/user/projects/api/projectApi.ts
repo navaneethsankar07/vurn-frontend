@@ -2,6 +2,7 @@ import api from "@/api/axios";
 import type {
   CreateProjectPayload,
   PaginatedProjectsResponse,
+  ProjectDeleteRequest,
   ProjectDetail,
   ProjectListParams,
   ProjectOptionsResponse,
@@ -74,4 +75,24 @@ export async function updateProjectSettings(
   );
 
   return response.data;
+}
+
+export async function archiveProject(
+  subdomain: string,
+  projectSlug: string,
+): Promise<ProjectDetail> {
+  const response = await api.post<ProjectDetail>(
+    `/organizations/${subdomain}/projects/${projectSlug}/archive/`,
+  );
+  return response.data;
+}
+
+export async function deleteProject(
+  subdomain: string,
+  projectSlug: string,
+  data: ProjectDeleteRequest,
+): Promise<void> {
+  await api.delete(`/organizations/${subdomain}/projects/${projectSlug}/`, {
+    data,
+  });
 }

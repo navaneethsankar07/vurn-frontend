@@ -5,6 +5,7 @@ import { ProjectLayout } from "@/layouts/ProjectLayout";
 import { ProjectOverviewPage } from "@/modules/user/projects/pages/ProjectOverviewPage";
 import { ProjectSettingsLayout } from "@/modules/user/projects/layout/ProjectSettingsLayout";
 import { GeneralSettingsPage } from "@/modules/user/projects/pages/GeneralSettingsPage";
+import { DangerZoneSection } from "@/modules/user/projects/pages/DangerZonePage";
 
 
 export const projectRoutes: RouteObject[] = [
@@ -97,11 +98,7 @@ export const projectRoutes: RouteObject[] = [
               },
               {
                 path: "danger-zone",
-                element: (
-                  <div className="p-4 text-xs text-gray-400">
-                    Danger Zone (Component)
-                  </div>
-                ),
+                element: <DangerZoneSection/>,
               },
             ],
           },
