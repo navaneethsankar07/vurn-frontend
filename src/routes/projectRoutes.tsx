@@ -6,6 +6,7 @@ import { ProjectOverviewPage } from "@/modules/user/projects/pages/ProjectOvervi
 import { ProjectSettingsLayout } from "@/modules/user/projects/layout/ProjectSettingsLayout";
 import { GeneralSettingsPage } from "@/modules/user/projects/pages/GeneralSettingsPage";
 import { DangerZoneSection } from "@/modules/user/projects/pages/DangerZonePage";
+import { ProjectMembersPage } from "@/modules/user/projects/pages/ProjectMembersPage";
 
 
 export const projectRoutes: RouteObject[] = [
@@ -70,11 +71,7 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "members",
-            element: (
-              <div className="p-4 text-xs text-gray-400">
-                Members View (Coming Soon)
-              </div>
-            ),
+            element: <ProjectMembersPage/>,
           },
           {
             path: "settings",

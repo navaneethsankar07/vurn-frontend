@@ -8,3 +8,13 @@ export const PROJECT_ACCENT_COLORS = [
   "#6366F1",
   "#14B8A6",
 ];
+
+export const PROJECT_ROLE_EXAMPLES = [
+  "Frontend Developer",
+  "Backend Developer",
+  "Fullstack Engineer",
+  "DevOps Engineer",
+  "UI/UX Designer",
+  "QA Engineer",
+  "Product Manager",
+];

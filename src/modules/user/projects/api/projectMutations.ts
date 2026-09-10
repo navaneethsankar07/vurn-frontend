@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  addProjectMember,
   archiveProject,
   createProject,
   deleteProject,
   updateProjectSettings,
 } from "./projectApi";
 import type {
+  AddProjectMemberPayload,
   CreateProjectPayload,
   ProjectDeleteRequest,
   ProjectUpdateRequest,
@@ -105,3 +107,17 @@ export function useDeleteProject({
     },
   });
 }
+
+export const useAddProjectMember = (orgSlug: string, projectSlug: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: AddProjectMemberPayload) =>
+      addProjectMember({ orgSlug, projectSlug, payload }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-members", orgSlug, projectSlug],
+      });
+    },
+  });
+};

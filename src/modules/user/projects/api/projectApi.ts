@@ -1,10 +1,14 @@
 import api from "@/api/axios";
 import type {
+  AddProjectMemberPayload,
+  AddProjectMemberResponse,
   CreateProjectPayload,
+  GetProjectMembersParams,
   PaginatedProjectsResponse,
   ProjectDeleteRequest,
   ProjectDetail,
   ProjectListParams,
+  ProjectMemberListResponse,
   ProjectOptionsResponse,
   ProjectResponse,
   ProjectUpdateRequest,
@@ -95,4 +99,32 @@ export async function deleteProject(
   await api.delete(`/organizations/${subdomain}/projects/${projectSlug}/`, {
     data,
   });
+}
+
+export const getProjectMembers = async (
+  orgSlug: string,
+  projectSlug: string,
+  params?: GetProjectMembersParams,
+): Promise<ProjectMemberListResponse> => {
+  const response = await api.get<ProjectMemberListResponse>(
+    `/organizations/${orgSlug}/projects/${projectSlug}/members/`,
+    { params },
+  );
+  return response.data;
+};
+
+export async function addProjectMember({
+  orgSlug,
+  projectSlug,
+  payload,
+}: {
+  orgSlug: string;
+  projectSlug: string;
+  payload: AddProjectMemberPayload;
+}): Promise<AddProjectMemberResponse> {
+  const response = await api.post<AddProjectMemberResponse>(
+    `/organizations/${orgSlug}/projects/${projectSlug}/members/`,
+    payload,
+  );
+  return response.data;
 }

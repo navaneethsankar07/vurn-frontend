@@ -103,3 +103,40 @@ export interface ProjectDetail {
 export interface ProjectDeleteRequest {
   confirmation: string;
 }
+
+export interface ProjectMember {
+  id: number;
+  user_id: number;
+  full_name: string;
+  email: string;
+  avatar: string | null;
+  project_role: string;
+  joined_at: string;
+}
+
+export interface ProjectMemberListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ProjectMember[];
+}
+
+export interface GetProjectMembersParams {
+  orgSlug: string;
+  projectSlug: string;
+  search?: string;
+  role?: string;
+  sort?: string;
+  ordering?: string;
+  page?: number;
+  page_size?: number;
+}
+
+export interface AddProjectMemberPayload {
+  user_id: number;
+  project_role?: string;
+}
+
+export interface AddProjectMemberResponse {
+  message: string;
+}

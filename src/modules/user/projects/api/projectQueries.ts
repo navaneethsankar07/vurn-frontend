@@ -1,6 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProjectOptions, getProjects, getProjectSettings } from "./projectApi";
-import type { ProjectDetail, ProjectListParams } from "../types";
+import {
+  getProjectMembers,
+  getProjectOptions,
+  getProjects,
+  getProjectSettings,
+} from "./projectApi";
+import type {
+  GetProjectMembersParams,
+  ProjectDetail,
+  ProjectListParams,
+} from "../types";
 
 export const useProjectOptions = () => {
   return useQuery({
@@ -25,3 +34,20 @@ export function useProjectSettings(subdomain: string, projectSlug: string) {
     enabled: Boolean(subdomain && projectSlug),
   });
 }
+
+export const useProjectMembers = ({
+  orgSlug,
+  projectSlug,
+  ...queryParams
+}: GetProjectMembersParams) => {
+  return useQuery({
+    queryKey: ["project-members", orgSlug, projectSlug, queryParams],
+    queryFn: () =>
+      getProjectMembers(orgSlug, projectSlug, {
+        orgSlug,
+        projectSlug,
+        ...queryParams,
+      }),
+    enabled: Boolean(orgSlug && projectSlug),
+  });
+};
