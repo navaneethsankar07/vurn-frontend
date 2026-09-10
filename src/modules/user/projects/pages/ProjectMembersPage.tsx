@@ -8,6 +8,7 @@ import {
   ChevronRight,
   MoreHorizontal,
   Users,
+  X,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -37,19 +38,20 @@ export function ProjectMembersPage() {
   } = useModal();
 
   const [searchInput, setSearchInput] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
   const [sortFilter, setSortFilter] = useState("name_asc");
-  const [roleFilter, setRoleFilter] = useState("all");
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isError } = useProjectMembers({
-    orgSlug: subdomain,
+  const { data, isLoading, isError } = useProjectMembers(
+    subdomain,
     projectSlug,
-    search: searchInput,
-    role: roleFilter !== "all" ? roleFilter : undefined,
-    ordering: sortFilter,
-    page,
-    page_size: 10,
-  });
+    {
+      search: appliedSearch || undefined,
+      sort: sortFilter || undefined,
+      page,
+      page_size: 10,
+    },
+  );
 
   const projectMembers = data?.results || [];
   const totalCount = data?.count || projectMembers.length;
@@ -58,6 +60,19 @@ export function ProjectMembersPage() {
   const existingUserIds = projectMembers.map((member: any) =>
     Number(member.user_id ?? member.user?.id ?? member.id),
   );
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setAppliedSearch(searchInput.trim());
+      setPage(1);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setAppliedSearch("");
+    setPage(1);
+  };
 
   return (
     <div className="bg-black text-white p-4 sm:p-6 lg:p-8 font-mono">
@@ -87,44 +102,23 @@ export function ProjectMembersPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
               <Input
                 value={searchInput}
-                onChange={(e) => {
-                  setSearchInput(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Search members..."
-                className="pl-9 h-10 border-white/10 bg-black text-white placeholder:text-zinc-600 rounded-xs text-xs focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40"
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search members (Press Enter)..."
+                className="pl-9 pr-9 h-10 border-white/10 bg-black text-white placeholder:text-zinc-600 rounded-xs text-xs focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40"
               />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <Select
-                value={roleFilter}
-                onValueChange={(val) => {
-                  if (val) {
-                    setRoleFilter(val);
-                    setPage(1);
-                  }
-                }}
-              >
-                <SelectTrigger className="w-36 h-10 border-white/10 bg-black text-xs text-white rounded-xs">
-                  <SelectValue
-                    className="rounded-none"
-                    placeholder="All Roles"
-                  />
-                </SelectTrigger>
-                <SelectContent className="bg-[#0C0C0E] rounded-none border-white/10 text-white text-xs">
-                  <SelectItem className="rounded-none" value="all">
-                    All Roles
-                  </SelectItem>
-                  <SelectItem className="rounded-none" value="developer">
-                    Developer
-                  </SelectItem>
-                  <SelectItem className="rounded-none" value="lead">
-                    Project Lead
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-
               <Select
                 value={sortFilter}
                 onValueChange={(val) => {

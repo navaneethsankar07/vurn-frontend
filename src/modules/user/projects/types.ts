@@ -122,12 +122,9 @@ export interface ProjectMemberListResponse {
 }
 
 export interface GetProjectMembersParams {
-  orgSlug: string;
-  projectSlug: string;
   search?: string;
   role?: string;
   sort?: string;
-  ordering?: string;
   page?: number;
   page_size?: number;
 }

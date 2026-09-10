@@ -35,19 +35,14 @@ export function useProjectSettings(subdomain: string, projectSlug: string) {
   });
 }
 
-export const useProjectMembers = ({
-  orgSlug,
-  projectSlug,
-  ...queryParams
-}: GetProjectMembersParams) => {
+export const useProjectMembers = (
+  orgSlug: string,
+  projectSlug: string,
+  params?: GetProjectMembersParams,
+) => {
   return useQuery({
-    queryKey: ["project-members", orgSlug, projectSlug, queryParams],
-    queryFn: () =>
-      getProjectMembers(orgSlug, projectSlug, {
-        orgSlug,
-        projectSlug,
-        ...queryParams,
-      }),
+    queryKey: ["project-members", orgSlug, projectSlug, params],
+    queryFn: () => getProjectMembers(orgSlug, projectSlug, params),
     enabled: Boolean(orgSlug && projectSlug),
   });
 };
