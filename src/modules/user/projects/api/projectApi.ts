@@ -12,6 +12,8 @@ import type {
   ProjectOptionsResponse,
   ProjectResponse,
   ProjectUpdateRequest,
+  RemoveProjectMemberParams,
+  RemoveProjectMemberResponse,
 } from "../types";
 
 export const getProjectOptions = async (): Promise<ProjectOptionsResponse> => {
@@ -128,3 +130,14 @@ export async function addProjectMember({
   );
   return response.data;
 }
+
+export const removeProjectMember = async ({
+  orgSlug,
+  projectSlug,
+  memberId,
+}: RemoveProjectMemberParams): Promise<RemoveProjectMemberResponse> => {
+  const response = await api.delete<RemoveProjectMemberResponse>(
+    `/organizations/${orgSlug}/projects/${projectSlug}/members/${memberId}/`,
+  );
+  return response.data;
+};

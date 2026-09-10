@@ -137,3 +137,14 @@ export interface AddProjectMemberPayload {
 export interface AddProjectMemberResponse {
   message: string;
 }
+
+export interface RemoveProjectMemberParams {
+  orgSlug: string;
+  projectSlug: string;
+  memberId: number | string;
+}
+
+export interface RemoveProjectMemberResponse {
+  message?: string;
+  detail?: string;
+}

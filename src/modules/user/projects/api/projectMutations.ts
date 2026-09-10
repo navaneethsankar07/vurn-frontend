@@ -4,6 +4,7 @@ import {
   archiveProject,
   createProject,
   deleteProject,
+  removeProjectMember,
   updateProjectSettings,
 } from "./projectApi";
 import type {
@@ -114,6 +115,23 @@ export const useAddProjectMember = (orgSlug: string, projectSlug: string) => {
   return useMutation({
     mutationFn: (payload: AddProjectMemberPayload) =>
       addProjectMember({ orgSlug, projectSlug, payload }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-members", orgSlug, projectSlug],
+      });
+    },
+  });
+};
+
+export const useRemoveProjectMember = (
+  orgSlug: string,
+  projectSlug: string,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (memberId: number | string) =>
+      removeProjectMember({ orgSlug, projectSlug, memberId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["project-members", orgSlug, projectSlug],

@@ -9,6 +9,7 @@ import {
   MoreHorizontal,
   Users,
   X,
+  UserX,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -19,13 +20,25 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getSubdomain } from "@/utils/subdomain";
 import { useModal } from "@/hooks/useModal";
 import { AddProjectMemberModal } from "../components/modals/AddProjectMemberModal";
+import { ConfirmRemoveMemberModal } from "../components/modals/ConfirmRemoveMemberModal";
 import { useProjectMembers } from "../api/projectQueries";
+
+const SORT_OPTIONS: Record<string, string> = {
+  name_asc: "Name (A-Z)",
+  name_desc: "Name (Z-A)",
+  recently_joined: "Recently Joined",
+};
 
 export function ProjectMembersPage() {
   const { projectSlug = "" } = useParams<{ projectSlug: string }>();
@@ -36,6 +49,15 @@ export function ProjectMembersPage() {
     openModal: openAddModal,
     closeModal: closeAddModal,
   } = useModal();
+
+  const {
+    isOpen: isRemoveModalOpen,
+    openModal: openRemoveModal,
+    closeModal: closeRemoveModal,
+  } = useModal();
+
+  const [selectedMemberToRemove, setSelectedMemberToRemove] =
+    useState<any>(null);
 
   const [searchInput, setSearchInput] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
@@ -72,6 +94,16 @@ export function ProjectMembersPage() {
     setSearchInput("");
     setAppliedSearch("");
     setPage(1);
+  };
+
+  const handleOpenRemoveModal = (member: any) => {
+    setSelectedMemberToRemove(member);
+    openRemoveModal();
+  };
+
+  const handleCloseRemoveModal = () => {
+    closeRemoveModal();
+    setSelectedMemberToRemove(null);
   };
 
   return (
@@ -129,7 +161,7 @@ export function ProjectMembersPage() {
                 }}
               >
                 <SelectTrigger className="w-40 h-10 border-white/10 bg-black text-xs text-white rounded-xs">
-                  <SelectValue placeholder="Sort By" />
+                  <span>{SORT_OPTIONS[sortFilter] || "Sort By"}</span>
                 </SelectTrigger>
                 <SelectContent className="bg-[#0C0C0E] rounded-none border-white/10 text-white text-xs">
                   <SelectItem className="rounded-none" value="name_asc">
@@ -206,13 +238,23 @@ export function ProjectMembersPage() {
                           : "—"}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-zinc-400 hover:text-text-primary hover:bg-white/10 rounded-xs"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger className="h-7 w-7 inline-flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 rounded-none border-none outline-none focus:outline-none focus-visible:ring-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="bg-[#09090B] border border-white/10 text-white rounded-none p-1 min-w-37.5 shadow-xl"
+                          >
+                            <DropdownMenuItem
+                              onClick={() => handleOpenRemoveModal(member)}
+                              className="rounded-none w-40 text-red-400 focus:bg-red-500/10 focus:text-red-300 data-highlighted:bg-red-500/10 data-highlighted:text-red-300 cursor-pointer flex items-center gap-2 text-xs font-mono py-2 px-3 transition-colors"
+                            >
+                              <UserX className="h-3.5 w-3.5" />
+                              Remove Member
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   ))}
@@ -262,6 +304,14 @@ export function ProjectMembersPage() {
         subdomain={subdomain}
         projectSlug={projectSlug}
         existingUserIds={existingUserIds}
+      />
+
+      <ConfirmRemoveMemberModal
+        isOpen={isRemoveModalOpen}
+        onClose={handleCloseRemoveModal}
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        member={selectedMemberToRemove}
       />
     </div>
   );
