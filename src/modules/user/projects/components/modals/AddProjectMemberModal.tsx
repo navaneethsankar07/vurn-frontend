@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Search, Check, UserPlus, Users } from "lucide-react";
+import { Loader2, Search, Check, UserPlus, Users, X } from "lucide-react";
 
 import {
   Dialog,
@@ -37,12 +37,13 @@ export function AddProjectMemberModal({
   projectSlug,
   existingUserIds = [],
 }: AddProjectMemberModalProps) {
-  const [memberSearch, setMemberSearch] = useState("");
+  const [memberSearchInput, setMemberSearchInput] = useState("");
+  const [appliedMemberSearch, setAppliedMemberSearch] = useState("");
 
   const { data: orgMembersData, isLoading: isLoadingOrgMembers } =
     useOrganizationMembers({
       slug: subdomain,
-      search: memberSearch,
+      search: appliedMemberSearch,
       page: 1,
       page_size: 100,
     });
@@ -100,14 +101,28 @@ export function AddProjectMemberModal({
   useEffect(() => {
     if (isOpen) {
       reset();
-      setMemberSearch("");
+      setMemberSearchInput("");
+      setAppliedMemberSearch("");
     }
   }, [isOpen, reset]);
 
   const handleClose = () => {
     reset();
-    setMemberSearch("");
+    setMemberSearchInput("");
+    setAppliedMemberSearch("");
     onClose();
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setAppliedMemberSearch(memberSearchInput.trim());
+    }
+  };
+
+  const handleClearSearch = () => {
+    setMemberSearchInput("");
+    setAppliedMemberSearch("");
   };
 
   const onSubmit = (data: AddProjectMemberFormValues) => {
@@ -183,13 +198,23 @@ export function AddProjectMemberModal({
             </label>
 
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500 pointer-events-none" />
               <Input
-                value={memberSearch}
-                onChange={(e) => setMemberSearch(e.target.value)}
-                placeholder="Search organization members..."
-                className="pl-9 h-9 border-white/10 bg-black text-white text-xs rounded-xs placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40"
+                value={memberSearchInput}
+                onChange={(e) => setMemberSearchInput(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Search organization members (Press Enter)..."
+                className="pl-9 pr-9 h-9 border-white/10 bg-black text-white text-xs rounded-xs placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40"
               />
+              {memberSearchInput && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
 
             <Controller
