@@ -7,6 +7,7 @@ import { ProjectSettingsLayout } from "@/modules/user/projects/layout/ProjectSet
 import { GeneralSettingsPage } from "@/modules/user/projects/pages/GeneralSettingsPage";
 import { DangerZoneSection } from "@/modules/user/projects/pages/DangerZonePage";
 import { ProjectMembersPage } from "@/modules/user/projects/pages/ProjectMembersPage";
+import { ProjectWorkflowPage } from "@/modules/user/projects/pages/ProjectWorkflowPage";
 
 
 export const projectRoutes: RouteObject[] = [
@@ -55,11 +56,7 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "workflow",
-            element: (
-              <div className="p-4 text-xs text-gray-400">
-                Workflow View (Coming Soon)
-              </div>
-            ),
+            element: <ProjectWorkflowPage/>,
           },
           {
             path: "repository",

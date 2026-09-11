@@ -14,6 +14,7 @@ import type {
   ProjectUpdateRequest,
   RemoveProjectMemberParams,
   RemoveProjectMemberResponse,
+  WorkflowOverviewResponse,
 } from "../types";
 
 export const getProjectOptions = async (): Promise<ProjectOptionsResponse> => {
@@ -138,6 +139,16 @@ export const removeProjectMember = async ({
 }: RemoveProjectMemberParams): Promise<RemoveProjectMemberResponse> => {
   const response = await api.delete<RemoveProjectMemberResponse>(
     `/organizations/${orgSlug}/projects/${projectSlug}/members/${memberId}/`,
+  );
+  return response.data;
+};
+
+export const getProjectWorkflow = async (
+  orgSlug: string,
+  projectSlug: string,
+): Promise<WorkflowOverviewResponse> => {
+  const response = await api.get<WorkflowOverviewResponse>(
+    `/organizations/${orgSlug}/projects/${projectSlug}/workflow/`,
   );
   return response.data;
 };

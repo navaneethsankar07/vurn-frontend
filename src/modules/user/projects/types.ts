@@ -148,3 +148,28 @@ export interface RemoveProjectMemberResponse {
   message?: string;
   detail?: string;
 }
+
+export interface WorkflowStatus {
+  id: number | string;
+  name: string;
+  category:
+    "backlog" | "unstarted" | "started" | "completed" | "canceled" | string;
+  color: string;
+  icon: string;
+  position: number;
+  is_default: boolean;
+  is_archived: boolean;
+  allow_from_backlog: boolean;
+  allow_incoming: boolean;
+  allow_outgoing: boolean;
+  description?: string;
+  issue_count?: number;
+}
+
+export interface WorkflowOverviewResponse {
+  id?: number | string;
+  name?: string;
+  description?: string;
+  statuses: WorkflowStatus[];
+  archived_statuses?: WorkflowStatus[];
+}

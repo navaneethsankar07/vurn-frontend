@@ -4,6 +4,7 @@ import {
   getProjectOptions,
   getProjects,
   getProjectSettings,
+  getProjectWorkflow,
 } from "./projectApi";
 import type {
   GetProjectMembersParams,
@@ -43,6 +44,14 @@ export const useProjectMembers = (
   return useQuery({
     queryKey: ["project-members", orgSlug, projectSlug, params],
     queryFn: () => getProjectMembers(orgSlug, projectSlug, params),
+    enabled: Boolean(orgSlug && projectSlug),
+  });
+};
+
+export const useProjectWorkflow = (orgSlug: string, projectSlug: string) => {
+  return useQuery({
+    queryKey: ["project-workflow", orgSlug, projectSlug],
+    queryFn: () => getProjectWorkflow(orgSlug, projectSlug),
     enabled: Boolean(orgSlug && projectSlug),
   });
 };
