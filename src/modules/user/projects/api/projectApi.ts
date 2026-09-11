@@ -3,6 +3,7 @@ import type {
   AddProjectMemberPayload,
   AddProjectMemberResponse,
   CreateProjectPayload,
+  CreateWorkflowStatusParams,
   GetProjectMembersParams,
   PaginatedProjectsResponse,
   ProjectDeleteRequest,
@@ -15,6 +16,7 @@ import type {
   RemoveProjectMemberParams,
   RemoveProjectMemberResponse,
   WorkflowOverviewResponse,
+  WorkflowStatus,
 } from "../types";
 
 export const getProjectOptions = async (): Promise<ProjectOptionsResponse> => {
@@ -149,6 +151,18 @@ export const getProjectWorkflow = async (
 ): Promise<WorkflowOverviewResponse> => {
   const response = await api.get<WorkflowOverviewResponse>(
     `/organizations/${orgSlug}/projects/${projectSlug}/workflow/`,
+  );
+  return response.data;
+};
+
+export const createWorkflowStatus = async ({
+  orgSlug,
+  projectSlug,
+  payload,
+}: CreateWorkflowStatusParams): Promise<WorkflowStatus> => {
+  const response = await api.post<WorkflowStatus>(
+    `/organizations/${orgSlug}/projects/${projectSlug}/workflow/statuses/`,
+    payload,
   );
   return response.data;
 };

@@ -3,6 +3,7 @@ import {
   addProjectMember,
   archiveProject,
   createProject,
+  createWorkflowStatus,
   deleteProject,
   removeProjectMember,
   updateProjectSettings,
@@ -10,6 +11,7 @@ import {
 import type {
   AddProjectMemberPayload,
   CreateProjectPayload,
+  CreateWorkflowStatusPayload,
   ProjectDeleteRequest,
   ProjectUpdateRequest,
 } from "../types";
@@ -135,6 +137,23 @@ export const useRemoveProjectMember = (
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["project-members", orgSlug, projectSlug],
+      });
+    },
+  });
+};
+
+export const useCreateWorkflowStatus = (
+  orgSlug: string,
+  projectSlug: string,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateWorkflowStatusPayload) =>
+      createWorkflowStatus({ orgSlug, projectSlug, payload }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-workflow", orgSlug, projectSlug],
       });
     },
   });

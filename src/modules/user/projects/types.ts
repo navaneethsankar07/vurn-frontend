@@ -173,3 +173,21 @@ export interface WorkflowOverviewResponse {
   statuses: WorkflowStatus[];
   archived_statuses?: WorkflowStatus[];
 }
+
+export interface CreateWorkflowStatusPayload {
+  name: string;
+  category: string;
+  color: string;
+  icon?: string | null;
+  position: number;
+  is_default?: boolean;
+  allow_from_backlog?: boolean;
+  allow_incoming?: boolean;
+  allow_outgoing?: boolean;
+}
+
+export interface CreateWorkflowStatusParams {
+  orgSlug: string;
+  projectSlug: string;
+  payload: CreateWorkflowStatusPayload;
+}

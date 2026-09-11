@@ -18,3 +18,34 @@ export const PROJECT_ROLE_EXAMPLES = [
   "QA Engineer",
   "Product Manager",
 ];
+
+export const STATUS_CATEGORY_OPTIONS = [
+  { value: "backlog", label: "Backlog" },
+  { value: "todo", label: "To Do" },
+  { value: "in_progress", label: "In Progress" },
+  { value: "done", label: "Done" },
+];
+
+export const PRESET_WORKFLOW_COLORS = [
+  "#6B7280",
+  "#3B82F6",
+  "#F59E0B",
+  "#10B981",
+  "#EF4444",
+  "#8B5CF6",
+  "#EC4899",
+  "#06B6D4",
+];
+
+export const PRESET_WORKFLOW_ICONS = [
+  "circle",
+  "circle-dot",
+  "clock",
+  "check-circle",
+  "x-circle",
+  "alert-circle",
+  "git-pull-request",
+  "play",
+  "pause",
+  "archive",
+];

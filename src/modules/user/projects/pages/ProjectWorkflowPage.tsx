@@ -11,9 +11,11 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
 import { useProjectWorkflow } from "../api/projectQueries";
+import { CreateWorkflowStatusModal } from "../components/modals/CreateWorkflowStatusModal";
 import type { WorkflowStatus } from "../types";
 
 export function ProjectWorkflowPage() {
@@ -21,6 +23,7 @@ export function ProjectWorkflowPage() {
   const subdomain = getSubdomain() || "";
 
   const [searchQuery, setSearchQuery] = useState("");
+  const createStatusModal = useModal();
 
   const {
     data: workflowData,
@@ -29,6 +32,11 @@ export function ProjectWorkflowPage() {
   } = useProjectWorkflow(subdomain, projectSlug);
 
   const rawStatuses = workflowData?.statuses || [];
+
+  const nextPosition = useMemo(() => {
+    if (rawStatuses.length === 0) return 0;
+    return Math.max(...rawStatuses.map((s) => s.position ?? 0)) + 1;
+  }, [rawStatuses]);
 
   const displayedStatuses = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -66,7 +74,10 @@ export function ProjectWorkflowPage() {
             </p>
           </div>
 
-          <Button className="h-9 gap-2 bg-primary text-black hover:bg-primary/90 font-semibold text-xs rounded-none w-full sm:w-auto transition-all shadow-sm">
+          <Button
+            onClick={createStatusModal.openModal}
+            className="h-9 gap-2 bg-primary text-black hover:bg-primary/90 font-semibold text-xs rounded-none w-full sm:w-auto transition-all shadow-sm"
+          >
             <Plus className="h-4 w-4" />
             Create Status
           </Button>
@@ -130,7 +141,7 @@ export function ProjectWorkflowPage() {
                         </div>
 
                         <p className="text-[11px] text-zinc-400 font-sans line-clamp-2 leading-relaxed">
-                          {status.description || "No description specified."}
+                          {status.category || "No description specified."}
                         </p>
                       </div>
 
@@ -186,6 +197,14 @@ export function ProjectWorkflowPage() {
             ))}
           </div>
         </div>
+
+        <CreateWorkflowStatusModal
+          isOpen={createStatusModal.isOpen}
+          onClose={createStatusModal.closeModal}
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          nextPosition={nextPosition}
+        />
       </div>
     </div>
   );
