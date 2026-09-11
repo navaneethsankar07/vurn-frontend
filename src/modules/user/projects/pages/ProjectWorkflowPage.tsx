@@ -7,15 +7,24 @@ import {
   MoreHorizontal,
   ChevronRight,
   GitCommit,
+  Pencil,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
 import { useProjectWorkflow } from "../api/projectQueries";
 import { CreateWorkflowStatusModal } from "../components/modals/CreateWorkflowStatusModal";
+import { EditWorkflowStatusModal } from "../components/modals/EditWorkflowStatusModal";
 import type { WorkflowStatus } from "../types";
 
 export function ProjectWorkflowPage() {
@@ -24,6 +33,11 @@ export function ProjectWorkflowPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const createStatusModal = useModal();
+  const editStatusModal = useModal();
+
+  const [selectedStatus, setSelectedStatus] = useState<WorkflowStatus | null>(
+    null,
+  );
 
   const {
     data: workflowData,
@@ -57,6 +71,11 @@ export function ProjectWorkflowPage() {
   const previewStatuses = useMemo(() => {
     return [...rawStatuses].sort((a, b) => a.position - b.position);
   }, [rawStatuses]);
+
+  const handleEditClick = (status: WorkflowStatus) => {
+    setSelectedStatus(status);
+    editStatusModal.openModal();
+  };
 
   return (
     <div className="bg-black text-white p-4 sm:p-6 lg:p-8 font-mono">
@@ -135,9 +154,23 @@ export function ProjectWorkflowPage() {
                             </span>
                           </div>
 
-                          <button className="text-zinc-500 hover:text-white p-0.5 transition-colors">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger className="text-zinc-500 hover:text-white p-0.5 transition-colors focus:outline-none">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="bg-[#09090B] border-white/10 text-white font-mono min-w-28 rounded-none"
+                            >
+                              <DropdownMenuItem
+                                onClick={() => handleEditClick(status)}
+                                className="text-xs cursor-pointer focus:bg-white/10 focus:text-white flex items-center gap-2"
+                              >
+                                <Pencil className="h-3.5 w-3.5 text-zinc-400" />
+                                Edit
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
 
                         <p className="text-[11px] text-zinc-400 font-sans line-clamp-2 leading-relaxed">
@@ -204,6 +237,17 @@ export function ProjectWorkflowPage() {
           subdomain={subdomain}
           projectSlug={projectSlug}
           nextPosition={nextPosition}
+        />
+
+        <EditWorkflowStatusModal
+          isOpen={editStatusModal.isOpen}
+          onClose={() => {
+            editStatusModal.closeModal();
+            setSelectedStatus(null);
+          }}
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          status={selectedStatus}
         />
       </div>
     </div>

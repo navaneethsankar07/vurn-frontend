@@ -15,6 +15,7 @@ import type {
   ProjectUpdateRequest,
   RemoveProjectMemberParams,
   RemoveProjectMemberResponse,
+  UpdateWorkflowStatusPayload,
   WorkflowOverviewResponse,
   WorkflowStatus,
 } from "../types";
@@ -166,3 +167,16 @@ export const createWorkflowStatus = async ({
   );
   return response.data;
 };
+
+export async function updateWorkflowStatus(
+  subdomain: string,
+  projectSlug: string,
+  statusId: string,
+  payload: UpdateWorkflowStatusPayload,
+): Promise<WorkflowStatus> {
+  const response = await api.patch<WorkflowStatus>(
+    `/organizations/${subdomain}/projects/${projectSlug}/workflow/statuses/${statusId}/`,
+    payload,
+  );
+  return response.data;
+}

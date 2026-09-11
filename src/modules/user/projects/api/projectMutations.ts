@@ -7,6 +7,7 @@ import {
   deleteProject,
   removeProjectMember,
   updateProjectSettings,
+  updateWorkflowStatus,
 } from "./projectApi";
 import type {
   AddProjectMemberPayload,
@@ -14,6 +15,7 @@ import type {
   CreateWorkflowStatusPayload,
   ProjectDeleteRequest,
   ProjectUpdateRequest,
+  UpdateWorkflowStatusPayload,
 } from "../types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -158,3 +160,35 @@ export const useCreateWorkflowStatus = (
     },
   });
 };
+
+interface UseUpdateWorkflowStatusParams {
+  subdomain: string;
+  projectSlug: string;
+  statusId: string;
+}
+
+export function useUpdateWorkflowStatus({
+  subdomain,
+  projectSlug,
+  statusId,
+}: UseUpdateWorkflowStatusParams) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateWorkflowStatusPayload) =>
+      updateWorkflowStatus(subdomain, projectSlug, statusId, payload),
+    onSuccess: () => {
+      toast.success("Workflow status updated successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["project-workflow", subdomain, projectSlug],
+      });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update status.";
+      toast.error(errorMessage);
+    },
+  });
+}

@@ -191,3 +191,16 @@ export interface CreateWorkflowStatusParams {
   projectSlug: string;
   payload: CreateWorkflowStatusPayload;
 }
+
+export interface UpdateWorkflowStatusPayload {
+  name?: string;
+  category?: string;
+  color?: string;
+  icon?: string | null;
+  position?: number;
+  is_default?: boolean;
+  is_archived?: boolean;
+  allow_from_backlog?: boolean;
+  allow_incoming?: boolean;
+  allow_outgoing?: boolean;
+}

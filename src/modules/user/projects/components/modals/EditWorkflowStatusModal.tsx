@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Loader2, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -22,62 +22,63 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
-import { useCreateWorkflowStatus } from "../../api/projectMutations";
+import { useUpdateWorkflowStatus } from "../../api/projectMutations";
 import {
   PRESET_WORKFLOW_COLORS,
   PRESET_WORKFLOW_ICONS,
   STATUS_CATEGORY_OPTIONS,
 } from "../../constants";
+import type { WorkflowStatus } from "../../types";
 
-interface CreateWorkflowStatusModalProps {
+interface EditWorkflowStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
   subdomain: string;
   projectSlug: string;
-  nextPosition?: number;
+  status: WorkflowStatus | null;
 }
 
-export function CreateWorkflowStatusModal({
+export function EditWorkflowStatusModal({
   isOpen,
   onClose,
   subdomain,
   projectSlug,
-  nextPosition = 0,
-}: CreateWorkflowStatusModalProps) {
+  status,
+}: EditWorkflowStatusModalProps) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("backlog");
   const [color, setColor] = useState("#3B82F6");
   const [selectedIcon, setSelectedIcon] = useState<string>("circle");
-  const [position, setPosition] = useState<number>(nextPosition);
+  const [position, setPosition] = useState<number>(0);
   const [isDefault, setIsDefault] = useState(false);
   const [allowFromBacklog, setAllowFromBacklog] = useState(true);
   const [allowIncoming, setAllowIncoming] = useState(true);
   const [allowOutgoing, setAllowOutgoing] = useState(true);
 
-  const { mutate: createStatus, isPending } = useCreateWorkflowStatus(
+  const { mutate: updateStatus, isPending } = useUpdateWorkflowStatus({
     subdomain,
     projectSlug,
-  );
+    statusId: status?.id ? String(status.id) : "",
+  });
 
-  const resetForm = () => {
-    setName("");
-    setCategory("backlog");
-    setColor("#3B82F6");
-    setSelectedIcon("circle");
-    setPosition(nextPosition);
-    setIsDefault(false);
-    setAllowFromBacklog(true);
-    setAllowIncoming(true);
-    setAllowOutgoing(true);
-  };
-
-  const handleClose = () => {
-    resetForm();
-    onClose();
-  };
+  useEffect(() => {
+    if (status) {
+      setName(status.name || "");
+      setCategory(status.category || "backlog");
+      setColor(status.color || "#3B82F6");
+      setSelectedIcon(status.icon || "circle");
+      setPosition(status.position ?? 0);
+      setIsDefault(status.is_default ?? false);
+      setAllowFromBacklog(status.allow_from_backlog ?? true);
+      setAllowIncoming(status.allow_incoming ?? true);
+      setAllowOutgoing(status.allow_outgoing ?? true);
+    }
+  }, [status]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!status) return;
 
     if (!name.trim()) {
       toast.error("Status name cannot be empty.");
@@ -90,7 +91,7 @@ export function CreateWorkflowStatusModal({
       return;
     }
 
-    createStatus(
+    updateStatus(
       {
         name: name.trim(),
         category,
@@ -105,9 +106,9 @@ export function CreateWorkflowStatusModal({
       {
         onSuccess: (data: any) => {
           toast.success(
-            data?.message || "Workflow status created successfully",
+            data?.message || "Workflow status updated successfully",
           );
-          handleClose();
+          onClose();
         },
         onError: (error: any) => {
           const errorMessage =
@@ -118,7 +119,7 @@ export function CreateWorkflowStatusModal({
             error?.response?.data?.message ||
             error?.response?.data?.detail ||
             error?.message ||
-            "Failed to create workflow status";
+            "Failed to update workflow status";
 
           toast.error(errorMessage);
         },
@@ -129,16 +130,16 @@ export function CreateWorkflowStatusModal({
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open) => !open && !isPending && handleClose()}
+      onOpenChange={(open) => !open && !isPending && onClose()}
     >
       <DialogContent className="bg-[#09090B] w-full sm:max-w-lg border border-white/10 text-white rounded-none font-mono p-6 shadow-2xl space-y-0">
         <DialogHeader className="space-y-1 border-b border-white/10 pb-4">
           <DialogTitle className="text-sm font-bold tracking-tight text-white uppercase flex items-center gap-2">
-            <Plus className="h-4 w-4 text-primary" />
-            Create Workflow Status
+            <Pencil className="h-4 w-4 text-primary" />
+            Edit Workflow Status
           </DialogTitle>
           <DialogDescription className="text-xs text-zinc-400 font-sans">
-            Add a new status step to your project issue pipeline.
+            Update status configuration and transition settings.
           </DialogDescription>
         </DialogHeader>
 
@@ -245,13 +246,13 @@ export function CreateWorkflowStatusModal({
           <div className="space-y-2 border-t border-white/10 pt-3">
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="is_default"
+                id="edit_is_default"
                 checked={isDefault}
                 onCheckedChange={(checked) => setIsDefault(Boolean(checked))}
                 className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:text-black [&>span]:text-black rounded-none"
               />
               <label
-                htmlFor="is_default"
+                htmlFor="edit_is_default"
                 className="text-xs text-zinc-300 cursor-pointer"
               >
                 Set as default status for new issues
@@ -260,7 +261,7 @@ export function CreateWorkflowStatusModal({
 
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="allow_from_backlog"
+                id="edit_allow_from_backlog"
                 checked={allowFromBacklog}
                 onCheckedChange={(checked) =>
                   setAllowFromBacklog(Boolean(checked))
@@ -268,7 +269,7 @@ export function CreateWorkflowStatusModal({
                 className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:text-black [&>span]:text-black rounded-none"
               />
               <label
-                htmlFor="allow_from_backlog"
+                htmlFor="edit_allow_from_backlog"
                 className="text-xs text-zinc-300 cursor-pointer"
               >
                 Allow transition directly from backlog
@@ -278,7 +279,7 @@ export function CreateWorkflowStatusModal({
             <div className="grid grid-cols-2 gap-2 pt-1">
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="allow_incoming"
+                  id="edit_allow_incoming"
                   checked={allowIncoming}
                   onCheckedChange={(checked) =>
                     setAllowIncoming(Boolean(checked))
@@ -286,7 +287,7 @@ export function CreateWorkflowStatusModal({
                   className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:text-black [&>span]:text-black rounded-none"
                 />
                 <label
-                  htmlFor="allow_incoming"
+                  htmlFor="edit_allow_incoming"
                   className="text-xs text-zinc-300 cursor-pointer"
                 >
                   Allow incoming transitions
@@ -295,7 +296,7 @@ export function CreateWorkflowStatusModal({
 
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="allow_outgoing"
+                  id="edit_allow_outgoing"
                   checked={allowOutgoing}
                   onCheckedChange={(checked) =>
                     setAllowOutgoing(Boolean(checked))
@@ -303,7 +304,7 @@ export function CreateWorkflowStatusModal({
                   className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:text-black [&>span]:text-black rounded-none"
                 />
                 <label
-                  htmlFor="allow_outgoing"
+                  htmlFor="edit_allow_outgoing"
                   className="text-xs text-zinc-300 cursor-pointer"
                 >
                   Allow outgoing transitions
@@ -316,7 +317,7 @@ export function CreateWorkflowStatusModal({
             <Button
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={onClose}
               disabled={isPending}
               className="h-8 px-4 border-white/10 bg-black text-zinc-300 hover:bg-white/5 hover:text-white text-xs rounded-none"
             >
@@ -328,7 +329,7 @@ export function CreateWorkflowStatusModal({
               className="h-8 px-4 bg-primary text-black hover:bg-primary/90 text-xs font-semibold rounded-none gap-2 disabled:opacity-40"
             >
               {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              Create Status
+              Save Changes
             </Button>
           </DialogFooter>
         </form>

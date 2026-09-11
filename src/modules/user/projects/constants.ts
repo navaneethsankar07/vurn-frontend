@@ -38,6 +38,7 @@ export const PRESET_WORKFLOW_COLORS = [
 ];
 
 export const PRESET_WORKFLOW_ICONS = [
+  "inbox",
   "circle",
   "circle-dot",
   "clock",
