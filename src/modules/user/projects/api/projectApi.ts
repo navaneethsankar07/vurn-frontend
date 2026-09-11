@@ -180,3 +180,13 @@ export async function updateWorkflowStatus(
   );
   return response.data;
 }
+
+export async function deleteWorkflowStatus(
+  subdomain: string,
+  projectSlug: string,
+  statusId: string,
+): Promise<void> {
+  await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/workflow/statuses/${statusId}/`,
+  );
+}

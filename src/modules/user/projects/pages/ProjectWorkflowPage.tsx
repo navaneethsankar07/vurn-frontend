@@ -8,6 +8,7 @@ import {
   ChevronRight,
   GitCommit,
   Pencil,
+  Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import { renderOrgIcon } from "@/utils/renderOrgIcon";
 import { useProjectWorkflow } from "../api/projectQueries";
 import { CreateWorkflowStatusModal } from "../components/modals/CreateWorkflowStatusModal";
 import { EditWorkflowStatusModal } from "../components/modals/EditWorkflowStatusModal";
+import { DeleteWorkflowStatusModal } from "../components/modals/DeleteWorkflowStatusModal";
 import type { WorkflowStatus } from "../types";
 
 export function ProjectWorkflowPage() {
@@ -34,6 +36,7 @@ export function ProjectWorkflowPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const createStatusModal = useModal();
   const editStatusModal = useModal();
+  const deleteStatusModal = useModal();
 
   const [selectedStatus, setSelectedStatus] = useState<WorkflowStatus | null>(
     null,
@@ -75,6 +78,11 @@ export function ProjectWorkflowPage() {
   const handleEditClick = (status: WorkflowStatus) => {
     setSelectedStatus(status);
     editStatusModal.openModal();
+  };
+
+  const handleDeleteClick = (status: WorkflowStatus) => {
+    setSelectedStatus(status);
+    deleteStatusModal.openModal();
   };
 
   return (
@@ -164,10 +172,17 @@ export function ProjectWorkflowPage() {
                             >
                               <DropdownMenuItem
                                 onClick={() => handleEditClick(status)}
-                                className="text-xs cursor-pointer focus:bg-white/10 focus:text-white flex items-center gap-2"
+                                className="text-xs rounded-none cursor-pointer focus:bg-white/10 focus:text-white flex items-center gap-2"
                               >
                                 <Pencil className="h-3.5 w-3.5 text-zinc-400" />
                                 Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteClick(status)}
+                                className="text-xs rounded-none cursor-pointer focus:bg-red-500/10 focus:text-red-400 text-red-400 flex items-center gap-2"
+                              >
+                                <Trash2 className="h-3.5 w-3.5 text-red-400" />
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -243,6 +258,17 @@ export function ProjectWorkflowPage() {
           isOpen={editStatusModal.isOpen}
           onClose={() => {
             editStatusModal.closeModal();
+            setSelectedStatus(null);
+          }}
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          status={selectedStatus}
+        />
+
+        <DeleteWorkflowStatusModal
+          isOpen={deleteStatusModal.isOpen}
+          onClose={() => {
+            deleteStatusModal.closeModal();
             setSelectedStatus(null);
           }}
           subdomain={subdomain}

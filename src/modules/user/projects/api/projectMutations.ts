@@ -5,6 +5,7 @@ import {
   createProject,
   createWorkflowStatus,
   deleteProject,
+  deleteWorkflowStatus,
   removeProjectMember,
   updateProjectSettings,
   updateWorkflowStatus,
@@ -188,6 +189,37 @@ export function useUpdateWorkflowStatus({
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to update status.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+interface UseDeleteWorkflowStatusParams {
+  subdomain: string;
+  projectSlug: string;
+  statusId: string;
+}
+
+export function useDeleteWorkflowStatus({
+  subdomain,
+  projectSlug,
+  statusId,
+}: UseDeleteWorkflowStatusParams) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteWorkflowStatus(subdomain, projectSlug, statusId),
+    onSuccess: () => {
+      toast.success("Workflow status deleted successfully.");
+      queryClient.invalidateQueries({
+        queryKey: ["project-workflow", subdomain, projectSlug],
+      });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to delete status.";
       toast.error(errorMessage);
     },
   });
