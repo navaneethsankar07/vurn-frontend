@@ -8,6 +8,7 @@ import { GeneralSettingsPage } from "@/modules/user/projects/pages/GeneralSettin
 import { DangerZoneSection } from "@/modules/user/projects/pages/DangerZonePage";
 import { ProjectMembersPage } from "@/modules/user/projects/pages/ProjectMembersPage";
 import { ProjectWorkflowPage } from "@/modules/user/projects/pages/ProjectWorkflowPage";
+import { ProjectSprintsPage } from "@/modules/user/sprints/pages/ProjectSprintsPage";
 
 
 export const projectRoutes: RouteObject[] = [
@@ -40,11 +41,7 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "sprints",
-            element: (
-              <div className="p-4 text-xs text-gray-400">
-                Sprints View (Coming Soon)
-              </div>
-            ),
+            element: <ProjectSprintsPage/>,
           },
           {
             path: "issues",
