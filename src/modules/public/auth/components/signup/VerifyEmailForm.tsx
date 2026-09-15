@@ -109,8 +109,6 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
   }
 
   function onSubmit(data: OTPFormData) {
-    console.log("Form Submitted");
-    console.log(data);
     const payload: VerifyOTPRequest = {
       email,
       otp: data.otp,
@@ -125,11 +123,43 @@ export function VerifyEmailForm({ email, onBack }: VerifyEmailFormProps) {
           }),
         );
         navigate("/dashboard");
-        toast.success(response.message)
+        toast.success(response.message);
       },
 
-      onError: (error) => {
-        console.error(error);
+      onError: (error: any) => {
+        const data = error?.response?.data;
+
+        if (data) {
+          if (typeof data === "string") {
+            toast.error(data);
+            return;
+          }
+
+          if (data.error) {
+            toast.error(data.error);
+            return;
+          }
+
+          if (data.detail) {
+            toast.error(data.detail);
+            return;
+          }
+
+          const firstKey = Object.keys(data)[0];
+          if (firstKey) {
+            const fieldError = data[firstKey];
+            if (Array.isArray(fieldError) && fieldError.length > 0) {
+              toast.error(fieldError[0]);
+              return;
+            }
+            if (typeof fieldError === "string") {
+              toast.error(fieldError);
+              return;
+            }
+          }
+        }
+
+        toast.error(error?.message || "An unexpected error occurred.");
       },
     });
   }

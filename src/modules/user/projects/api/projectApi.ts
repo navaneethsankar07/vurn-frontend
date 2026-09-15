@@ -18,6 +18,8 @@ import type {
   UpdateWorkflowStatusPayload,
   WorkflowOverviewResponse,
   WorkflowStatus,
+  WorkflowTransition,
+  WorkflowTransitionPayload,
 } from "../types";
 
 export const getProjectOptions = async (): Promise<ProjectOptionsResponse> => {
@@ -190,3 +192,33 @@ export async function deleteWorkflowStatus(
     `/organizations/${subdomain}/projects/${projectSlug}/workflow/statuses/${statusId}/`,
   );
 }
+
+export async function createWorkflowTransition(
+  subdomain: string,
+  projectSlug: string,
+  payload: WorkflowTransitionPayload,
+): Promise<WorkflowTransition> {
+  const response = await api.post<WorkflowTransition>(
+    `/organizations/${subdomain}/projects/${projectSlug}/workflow/transitions/`,
+    payload,
+  );
+  return response.data;
+}
+
+export const updateWorkflowStatusPosition = async ({
+  subdomain,
+  projectSlug,
+  statusId,
+  position,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  statusId: number;
+  position: number;
+}) => {
+  const response = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/workflow/statuses/${statusId}/position/`,
+    { position },
+  );
+  return response.data;
+};

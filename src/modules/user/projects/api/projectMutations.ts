@@ -4,11 +4,13 @@ import {
   archiveProject,
   createProject,
   createWorkflowStatus,
+  createWorkflowTransition,
   deleteProject,
   deleteWorkflowStatus,
   removeProjectMember,
   updateProjectSettings,
   updateWorkflowStatus,
+  updateWorkflowStatusPosition,
 } from "./projectApi";
 import type {
   AddProjectMemberPayload,
@@ -17,6 +19,7 @@ import type {
   ProjectDeleteRequest,
   ProjectUpdateRequest,
   UpdateWorkflowStatusPayload,
+  WorkflowTransitionPayload,
 } from "../types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -224,3 +227,49 @@ export function useDeleteWorkflowStatus({
     },
   });
 }
+
+export function useCreateWorkflowTransition(
+  subdomain: string,
+  projectSlug: string,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: WorkflowTransitionPayload) =>
+      createWorkflowTransition(subdomain, projectSlug, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-workflow", subdomain, projectSlug],
+      });
+    },
+  });
+}
+
+
+export const useUpdateWorkflowStatusPosition = (
+  subdomain: string,
+  projectSlug: string,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      statusId,
+      position,
+    }: {
+      statusId: number;
+      position: number;
+    }) =>
+      updateWorkflowStatusPosition({
+        subdomain,
+        projectSlug,
+        statusId,
+        position,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-workflow", subdomain, projectSlug],
+      });
+    },
+  });
+};

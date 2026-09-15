@@ -166,12 +166,20 @@ export interface WorkflowStatus {
   issue_count?: number;
 }
 
+export interface WorkflowTransition {
+  id: number;
+  from_status_id: number;
+  to_status_id: number;
+  name?: string;
+}
+
 export interface WorkflowOverviewResponse {
   id?: number | string;
   name?: string;
   description?: string;
   statuses: WorkflowStatus[];
   archived_statuses?: WorkflowStatus[];
+  transitions: WorkflowTransition[];
 }
 
 export interface CreateWorkflowStatusPayload {
@@ -204,3 +212,21 @@ export interface UpdateWorkflowStatusPayload {
   allow_incoming?: boolean;
   allow_outgoing?: boolean;
 }
+
+export interface WorkflowTransitionPayload {
+  from_status_id: number;
+  to_status_id: number;
+  name?: string;
+}
+
+export interface UpdateStatusPositionPayload {
+  position: number;
+}
+
+export interface UpdateStatusPositionParams {
+  subdomain: string;
+  projectSlug: string;
+  statusId: number;
+  position: number;
+}
+ 
