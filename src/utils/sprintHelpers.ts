@@ -1,4 +1,5 @@
-import { type SprintStatus } from "@/modules/user/sprints/types";
+import { format, differenceInSeconds, parseISO } from "date-fns";
+import type { SprintStatus } from "@/modules/user/sprints/types";
 
 export function calculateSprintProgress(
   startDateStr: string | null,
@@ -10,7 +11,7 @@ export function calculateSprintProgress(
 
   const start = new Date(startDateStr).getTime();
   const end = new Date(endDateStr).getTime();
-  const now = new Date().getTime();
+  const now = Date.now();
 
   if (now <= start) return 0;
   if (now >= end) return 100;
@@ -27,26 +28,23 @@ export function formatSprintDates(
 ): string {
   if (!startDateStr || !endDateStr) return "Dates TBD";
 
-  const start = new Date(startDateStr);
-  const end = new Date(endDateStr);
+  const start = parseISO(startDateStr);
+  const end = parseISO(endDateStr);
 
-  const startMonth = start.toLocaleDateString("en-US", { month: "short" });
-  const startDay = start.getDate();
-  const endMonth = end.toLocaleDateString("en-US", { month: "short" });
-  const endDay = end.getDate();
+  const startMonth = format(start, "MMM");
+  const endMonth = format(end, "MMM");
 
   if (startMonth === endMonth) {
-    return `${startMonth} ${startDay} - ${endDay}`;
+    return `${format(start, "MMM d")} - ${format(end, "d")}`;
   }
 
-  return `${startMonth} ${startDay} - ${endMonth} ${endDay}`;
+  return `${format(start, "MMM d")} - ${format(end, "MMM d")}`;
 }
 
 export function formatRelativeTime(dateStr: string): string {
   if (!dateStr) return "";
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const date = parseISO(dateStr);
+  const diffInSeconds = Math.abs(differenceInSeconds(new Date(), date));
 
   if (diffInSeconds < 60) return "Updated just now";
   const minutes = Math.floor(diffInSeconds / 60);

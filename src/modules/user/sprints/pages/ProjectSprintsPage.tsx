@@ -12,9 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
 import { useProjectSprints } from "../api/sprintQueries";
 import { SprintCard } from "../components/SprintCard";
+import { CreateSprintModal } from "../components/modals/CreateSprintModal";
 import type { Sprint } from "../types";
 
 export function ProjectSprintsPage() {
@@ -24,6 +26,8 @@ export function ProjectSprintsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
+
+  const createSprintModal = useModal();
 
   const {
     data: sprints = [],
@@ -49,6 +53,7 @@ export function ProjectSprintsPage() {
 
           <Button
             type="button"
+            onClick={createSprintModal.openModal}
             className="h-9 gap-2 bg-amber-500 text-black hover:bg-amber-400 font-semibold text-xs rounded-none transition-all shadow-sm shrink-0"
           >
             <Plus className="h-4 w-4" />
@@ -126,6 +131,13 @@ export function ProjectSprintsPage() {
             ))}
           </div>
         )}
+
+        <CreateSprintModal
+          isOpen={createSprintModal.isOpen}
+          onClose={createSprintModal.closeModal}
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+        />
       </div>
     </div>
   );
