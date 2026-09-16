@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Search, Plus, Loader2, Layers } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,11 @@ import { SprintCard } from "../components/SprintCard";
 import { CreateSprintModal } from "../components/modals/CreateSprintModal";
 import type { Sprint } from "../types";
 
+
 export function ProjectSprintsPage() {
   const { projectSlug = "" } = useParams<{ projectSlug: string }>();
   const subdomain = getSubdomain() || "";
-
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
@@ -124,7 +125,9 @@ export function ProjectSprintsPage() {
               <SprintCard
                 key={sprint.id}
                 sprint={sprint}
-                onOpenSprint={(s) => console.log("Open sprint:", s)}
+                onOpenSprint={(sprint) => {
+                  navigate(`/projects/${projectSlug}/sprints/${sprint.id}`);
+                }}
                 onEditSprint={(s) => console.log("Edit sprint:", s)}
                 onDeleteSprint={(s) => console.log("Delete sprint:", s)}
               />

@@ -1,5 +1,6 @@
 import { Calendar, Clock, MoreHorizontal, ExternalLink } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,8 @@ export function SprintCard({
   onEditSprint,
   onDeleteSprint,
 }: SprintCardProps) {
+  const navigate = useNavigate();
+
   const progressPercent = calculateSprintProgress(
     sprint.start_date,
     sprint.end_date,
@@ -42,6 +45,14 @@ export function SprintCard({
       case "planned":
       default:
         return "bg-zinc-500/10 text-zinc-400 border-zinc-500/20";
+    }
+  };
+
+  const handleOpenSprint = () => {
+    if (onOpenSprint) {
+      onOpenSprint(sprint);
+    } else if (sprint.id) {
+      navigate(`${sprint.id}`);
     }
   };
 
@@ -95,8 +106,8 @@ export function SprintCard({
             className="bg-[#09090B] border-white/10 text-text-primary/80 font-mono text-xs min-w-38 rounded-xs p-1"
           >
             <DropdownMenuItem
-              onClick={() => onOpenSprint?.(sprint)}
-              className=" rounded-xs focus:bg-white/10 focus:text-white flex items-center justify-between"
+              onClick={handleOpenSprint}
+              className="cursor-pointer rounded-xs focus:bg-white/10 focus:text-white flex items-center justify-between"
             >
               <span>View Sprint</span>
               <ExternalLink className="h-3 w-3 text-zinc-400" />

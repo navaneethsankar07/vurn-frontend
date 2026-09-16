@@ -7,10 +7,13 @@ export function calculateSprintProgress(
   status: SprintStatus,
 ): number {
   if (status === "completed") return 100;
-  if (status === "planned" || !startDateStr || !endDateStr) return 0;
+  if (!startDateStr || !endDateStr) return 0;
 
-  const start = new Date(startDateStr).getTime();
-  const end = new Date(endDateStr).getTime();
+  const start = parseISO(startDateStr).getTime();
+  const end = parseISO(endDateStr).getTime();
+
+  if (isNaN(start) || isNaN(end) || end <= start) return 0;
+
   const now = Date.now();
 
   if (now <= start) return 0;

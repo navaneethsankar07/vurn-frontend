@@ -9,7 +9,7 @@ import { DangerZoneSection } from "@/modules/user/projects/pages/DangerZonePage"
 import { ProjectMembersPage } from "@/modules/user/projects/pages/ProjectMembersPage";
 import { ProjectWorkflowPage } from "@/modules/user/projects/pages/ProjectWorkflowPage";
 import { ProjectSprintsPage } from "@/modules/user/sprints/pages/ProjectSprintsPage";
-
+import { SprintDetailPage } from "@/modules/user/sprints/pages/SprintDetailPage";
 
 export const projectRoutes: RouteObject[] = [
   {
@@ -41,7 +41,16 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "sprints",
-            element: <ProjectSprintsPage/>,
+            children: [
+              {
+                index: true,
+                element: <ProjectSprintsPage />,
+              },
+              {
+                path: ":sprintId",
+                element: <SprintDetailPage />,
+              },
+            ],
           },
           {
             path: "issues",
@@ -53,7 +62,7 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "workflow",
-            element: <ProjectWorkflowPage/>,
+            element: <ProjectWorkflowPage />,
           },
           {
             path: "repository",
@@ -65,7 +74,7 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "members",
-            element: <ProjectMembersPage/>,
+            element: <ProjectMembersPage />,
           },
           {
             path: "settings",
@@ -77,7 +86,7 @@ export const projectRoutes: RouteObject[] = [
               },
               {
                 path: "general",
-                element: <GeneralSettingsPage/>,
+                element: <GeneralSettingsPage />,
               },
               {
                 path: "github",
@@ -89,7 +98,7 @@ export const projectRoutes: RouteObject[] = [
               },
               {
                 path: "danger-zone",
-                element: <DangerZoneSection/>,
+                element: <DangerZoneSection />,
               },
             ],
           },
