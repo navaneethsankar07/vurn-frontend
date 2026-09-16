@@ -5,12 +5,21 @@ import { SprintHeader } from "../components/SprintHeader";
 import { SprintOverviewSection } from "../components/SprintOverviewSection";
 import { SprintIssuesTable } from "../components/SprintIssuesTable";
 import { SprintSidebar } from "../components/SprintSidebar";
+import { EditSprintModal } from "../components/modals/EditSprintModal";
+import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
+import { calculateSprintProgress } from "@/utils/sprintHelpers";
 
 export function SprintDetailPage() {
-  const {projectSlug = "", sprintId = "" } = useParams();
+  const { projectSlug = "", sprintId = "" } = useParams();
   const navigate = useNavigate();
   const subdomain = getSubdomain() || "";
+
+  const {
+    isOpen: isEditOpen,
+    openModal: openEditModal,
+    closeModal: closeEditModal,
+  } = useModal();
 
   const {
     data: sprint,
@@ -44,13 +53,13 @@ export function SprintDetailPage() {
         goal={sprint.goal}
         startDate={sprint.start_date}
         endDate={sprint.end_date}
-        completionPercentage={sprint.completionPercentage}
-        onBack={() =>
-          navigate(
-            `/projects/${projectSlug}/sprints`,
-          )
-        }
-        onEdit={() => {}}
+        completionPercentage={calculateSprintProgress(
+          sprint.start_date,
+          sprint.end_date,
+          sprint.status,
+        )}
+        onBack={() => navigate(`/projects/${projectSlug}/sprints`)}
+        onEdit={openEditModal}
         onStart={() => {}}
       />
 
@@ -84,6 +93,14 @@ export function SprintDetailPage() {
           />
         </div>
       </div>
+
+      <EditSprintModal
+        isOpen={isEditOpen}
+        onClose={closeEditModal}
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        sprint={sprint}
+      />
     </div>
   );
 }

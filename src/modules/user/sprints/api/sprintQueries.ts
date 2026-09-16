@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchProjectSprints, fetchSprintDetail, sprintQueryKeys } from "./sprintApi";
+import { fetchProjectSprints, fetchSprintDetail } from "./sprintApi";
 
 export function useProjectSprints(subdomain: string, projectSlug: string) {
   return useQuery({
@@ -15,7 +15,7 @@ export function useSprintDetail(
   sprintId: string | number,
 ) {
   return useQuery({
-    queryKey: sprintQueryKeys.detail(subdomain, projectSlug, sprintId),
+    queryKey: ["sprint-detail", subdomain, projectSlug, sprintId],
     queryFn: () => fetchSprintDetail(subdomain, projectSlug, sprintId),
     enabled: Boolean(subdomain && projectSlug && sprintId),
   });

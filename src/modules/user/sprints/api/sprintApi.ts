@@ -4,8 +4,9 @@ import type {
   SprintDetailAPIResponse,
   SprintDetailExtended,
 } from "../types";
-import type { CreateSprintInput } from "../schemas/sprintSchema";
+import type { CreateSprintInput } from "../schemas/createSprintSchema";
 import { DUMMY_SPRINT_EXTENDED } from "../constants";
+import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
 
 export async function fetchProjectSprints(
   subdomain: string,
@@ -31,17 +32,6 @@ export async function createProjectSprint(
   return response.data;
 }
 
-export const sprintQueryKeys = {
-  detail: (subdomain: string, projectSlug: string, sprintId: string | number) =>
-    [
-      "organization",
-      subdomain,
-      "project",
-      projectSlug,
-      "sprint",
-      String(sprintId),
-    ] as const,
-};
 
 export async function fetchSprintDetail(
   subdomain: string,
@@ -56,4 +46,17 @@ export async function fetchSprintDetail(
     ...data,
     ...DUMMY_SPRINT_EXTENDED,
   };
+}
+
+export async function updateProjectSprint(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+  data: UpdateSprintInput,
+) {
+  const response = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/sprints/${sprintId}/`,
+    data,
+  );
+  return response.data;
 }

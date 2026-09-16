@@ -72,3 +72,9 @@ export interface SprintDetailExtended extends SprintDetailAPIResponse {
   completedIssuesCount: number;
   remainingIssuesCount: number;
 }
+
+export interface UseUpdateProjectSprintParams {
+  subdomain: string;
+  projectSlug: string;
+  sprintId: string | number;
+}

@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format, parseISO, startOfToday, isBefore } from "date-fns";
+import { format, parseISO, isBefore, addDays, startOfDay } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import {
   X,
@@ -26,29 +26,50 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { useUpdateProjectSprint } from "../../api/sprintMutations";
 import {
-  createSprintSchema,
-  type CreateSprintInput,
-} from "../../schemas/createSprintSchema";
-import { useCreateProjectSprint } from "../../api/sprintMutations";
+  updateSprintSchema,
+  type UpdateSprintInput,
+} from "../../schemas/updateSprintSchema";
+import { useQueryClient } from "@tanstack/react-query";
 
-interface CreateSprintModalProps {
+export interface SprintDetails {
+  id: string | number;
+  name: string;
+  goal?: string;
+  description?: string;
+  start_date: string;
+  end_date: string;
+  status?: "planned" | "active" | "completed" | string;
+}
+
+interface EditSprintModalProps {
   isOpen: boolean;
   onClose: () => void;
   subdomain: string;
   projectSlug: string;
+  sprint: SprintDetails | null;
 }
 
-export function CreateSprintModal({
+export function EditSprintModal({
   isOpen,
   onClose,
   subdomain,
   projectSlug,
-}: CreateSprintModalProps) {
+  sprint,
+}: EditSprintModalProps) {
+  const queryClient = useQueryClient();
   const [goalTab, setGoalTab] = useState<"edit" | "preview">("edit");
   const [descTab, setDescTab] = useState<"edit" | "preview">("edit");
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const status = sprint?.status?.toLowerCase();
+  const isCompleted = status === "completed";
+  const isActive = status === "active";
+  const isStartDateDisabled = isCompleted || isActive;
+  const isEndDateDisabled = isCompleted;
 
   const {
     register,
@@ -58,16 +79,22 @@ export function CreateSprintModal({
     control,
     reset,
     formState: { errors },
-  } = useForm<CreateSprintInput>({
-    resolver: zodResolver(createSprintSchema),
-    defaultValues: {
-      name: "",
-      goal: "",
-      description: "",
-      start_date: "",
-      end_date: "",
-    },
+  } = useForm<UpdateSprintInput>({
+    resolver: zodResolver(updateSprintSchema),
   });
+
+  useEffect(() => {
+    if (sprint && isOpen) {
+      reset({
+        name: sprint.name || "",
+        goal: sprint.goal || "",
+        description: sprint.description || "",
+        start_date: sprint.start_date || "",
+        end_date: sprint.end_date || "",
+      });
+      setApiError(null);
+    }
+  }, [sprint, isOpen, reset]);
 
   const { ref: descriptionFormRef, ...descriptionRegister } =
     register("description");
@@ -76,18 +103,13 @@ export function CreateSprintModal({
   const goalValue = watch("goal") || "";
   const descValue = watch("description") || "";
 
-  const { mutate: createSprint, isPending } = useCreateProjectSprint(
+  const { mutate: updateSprint, isPending } = useUpdateProjectSprint({
     subdomain,
     projectSlug,
-    {
-      onSuccess: () => {
-        reset();
-        onClose();
-      },
-    },
-  );
+    sprintId: sprint?.id ?? "",
+  });
 
-  if (!isOpen) return null;
+  if (!isOpen || !sprint) return null;
 
   const handleMarkdownAction = (prefix: string, suffix: string = "") => {
     const textarea = descriptionRef.current;
@@ -123,8 +145,31 @@ export function CreateSprintModal({
     }, 0);
   };
 
-  const onSubmit = (data: CreateSprintInput) => {
-    createSprint(data);
+  const onSubmit = (data: UpdateSprintInput) => {
+    setApiError(null);
+    updateSprint(data, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["project-sprints", subdomain, projectSlug],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [
+            "sprint-detail",
+            subdomain,
+            projectSlug,
+            String(sprint.id),
+          ],
+        });
+        onClose();
+      },
+      onError: (err: any) => {
+        setApiError(
+          err?.response?.data?.detail ||
+            err?.message ||
+            "Failed to update sprint",
+        );
+      },
+    });
   };
 
   return (
@@ -133,10 +178,10 @@ export function CreateSprintModal({
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#09090B]">
           <div className="space-y-0.5">
             <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-              Create Sprint
+              Edit Sprint
             </h2>
             <p className="text-xs text-zinc-400 font-sans">
-              Plan and organize work for the upcoming sprint.
+              Update details and duration for this sprint.
             </p>
           </div>
           <button
@@ -149,6 +194,12 @@ export function CreateSprintModal({
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
+          {apiError && (
+            <div className="p-3 border border-red-500/20 bg-red-500/10 text-red-400 text-xs rounded-xs font-sans">
+              {apiError}
+            </div>
+          )}
+
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-zinc-300 flex items-center justify-between">
               <span>
@@ -178,11 +229,12 @@ export function CreateSprintModal({
                 name="start_date"
                 render={({ field }) => (
                   <Popover>
-                    <PopoverTrigger>
+                    <PopoverTrigger disabled={isStartDateDisabled}>
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full h-9 border-white/10 bg-black text-white text-xs justify-start rounded-xs font-mono hover:bg-zinc-900 hover:text-white hover:border-white/20 transition-colors"
+                        disabled={isStartDateDisabled}
+                        className="w-full h-9 border-white/10 bg-black text-white text-xs justify-start rounded-xs font-mono hover:bg-zinc-900 hover:text-white hover:border-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <CalendarIcon className="mr-2 h-3.5 w-3.5 text-zinc-400 shrink-0" />
                         <span className="truncate">
@@ -201,10 +253,32 @@ export function CreateSprintModal({
                         selected={
                           field.value ? parseISO(field.value) : undefined
                         }
-                        onSelect={(date) =>
-                          field.onChange(date ? format(date, "yyyy-MM-dd") : "")
+                        onSelect={(date) => {
+                          if (!date) return;
+                          const formattedStartDate = format(date, "yyyy-MM-dd");
+                          field.onChange(formattedStartDate);
+
+                          const minEndDate = addDays(date, 1);
+                          const currentEndDate = watch("end_date")
+                            ? parseISO(watch("end_date"))
+                            : null;
+
+                          if (
+                            !currentEndDate ||
+                            isBefore(currentEndDate, minEndDate)
+                          ) {
+                            setValue(
+                              "end_date",
+                              format(minEndDate, "yyyy-MM-dd"),
+                              {
+                                shouldValidate: true,
+                              },
+                            );
+                          }
+                        }}
+                        disabled={(date) =>
+                          isBefore(startOfDay(date), startOfDay(new Date()))
                         }
-                        disabled={(date) => isBefore(date, startOfToday())}
                         className="bg-[#09090B] text-white rounded-xs p-3 [&_.rdp-day_selected]:bg-amber-500 [&_.rdp-day_selected]:text-black! [&_.rdp-day_selected]:font-bold [&_.rdp-day]:hover:bg-white/10 [&_.rdp-day]:hover:text-white [&_.rdp-day]:rounded-xs"
                       />
                     </PopoverContent>
@@ -228,11 +302,12 @@ export function CreateSprintModal({
                 name="end_date"
                 render={({ field }) => (
                   <Popover>
-                    <PopoverTrigger>
+                    <PopoverTrigger disabled={isEndDateDisabled}>
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full h-9 border-white/10 bg-black text-white text-xs justify-start rounded-xs font-mono hover:bg-zinc-900 hover:text-white hover:border-white/20 transition-colors"
+                        disabled={isEndDateDisabled}
+                        className="w-full h-9 border-white/10 bg-black text-white text-xs justify-start rounded-xs font-mono hover:bg-zinc-900 hover:text-white hover:border-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <CalendarIcon className="mr-2 h-3.5 w-3.5 text-zinc-400 shrink-0" />
                         <span className="truncate">
@@ -255,10 +330,20 @@ export function CreateSprintModal({
                           field.onChange(date ? format(date, "yyyy-MM-dd") : "")
                         }
                         disabled={(date) => {
-                          const minDate = startDateWatch
-                            ? parseISO(startDateWatch)
-                            : startOfToday();
-                          return isBefore(date, minDate);
+                          const today = startOfDay(new Date());
+                          if (isBefore(startOfDay(date), today)) return true;
+
+                          if (startDateWatch) {
+                            const minEndDate = addDays(
+                              parseISO(startDateWatch),
+                              1,
+                            );
+                            return isBefore(
+                              startOfDay(date),
+                              startOfDay(minEndDate),
+                            );
+                          }
+                          return false;
                         }}
                         className="bg-[#09090B] text-white rounded-xs p-3 [&_.rdp-day_selected]:bg-amber-500 [&_.rdp-day_selected]:text-black! [&_.rdp-day_selected]:font-bold [&_.rdp-day]:hover:bg-white/10 [&_.rdp-day]:hover:text-white [&_.rdp-day]:rounded-xs"
                       />
@@ -436,7 +521,7 @@ export function CreateSprintModal({
               {isPending && (
                 <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
               )}
-              Create Sprint
+              Save Changes
             </Button>
           </div>
         </form>

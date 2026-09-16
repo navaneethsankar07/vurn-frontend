@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { createProjectSprint } from "./sprintApi";
-import type { CreateSprintInput } from "../schemas/sprintSchema";
+import { createProjectSprint, updateProjectSprint } from "./sprintApi";
+import type { CreateSprintInput } from "../schemas/createSprintSchema";
+import type { UseUpdateProjectSprintParams } from "../types";
+import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
 
 export function useCreateProjectSprint(
   subdomain: string,
@@ -27,6 +29,35 @@ export function useCreateProjectSprint(
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to create sprint.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+export function useUpdateProjectSprint({
+  subdomain,
+  projectSlug,
+  sprintId,
+}: UseUpdateProjectSprintParams) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateSprintInput) =>
+      updateProjectSprint(subdomain, projectSlug, sprintId, data),
+    onSuccess: (res) => {
+      toast.success(res.message);
+      queryClient.invalidateQueries({
+        queryKey: ["project-sprints", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["sprint-detail", subdomain, projectSlug, sprintId],
+      });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update sprint.";
       toast.error(errorMessage);
     },
   });
