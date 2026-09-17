@@ -1,4 +1,12 @@
-import { ArrowLeft, Sparkles, Edit3, Play, MoreHorizontal } from "lucide-react";
+import {
+  ArrowLeft,
+  Sparkles,
+  Edit3,
+  Play,
+  CheckCircle2,
+  MoreHorizontal,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SprintStatus } from "../types";
 
@@ -9,9 +17,11 @@ interface SprintHeaderProps {
   startDate: string;
   endDate: string;
   completionPercentage: number;
+  isStarting?: boolean;
   onBack: () => void;
   onEdit: () => void;
   onStart: () => void;
+  onComplete?: () => void;
 }
 
 export function SprintHeader({
@@ -21,9 +31,11 @@ export function SprintHeader({
   startDate,
   endDate,
   completionPercentage,
+  isStarting = false,
   onBack,
   onEdit,
   onStart,
+  onComplete,
 }: SprintHeaderProps) {
   const getBadgeStyle = (s: SprintStatus) => {
     switch (s) {
@@ -88,14 +100,34 @@ export function SprintHeader({
               <Edit3 className="h-3.5 w-3.5" />
               Edit Sprint
             </Button>
-            <Button
-              size="sm"
-              onClick={onStart}
-              className="h-8 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs gap-1.5"
-            >
-              <Play className="h-3.5 w-3.5 fill-current" />
-              Start Sprint
-            </Button>
+
+            {status === "planned" && (
+              <Button
+                size="sm"
+                onClick={onStart}
+                disabled={isStarting}
+                className="h-8 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs gap-1.5 disabled:opacity-50"
+              >
+                {isStarting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                )}
+                Start Sprint
+              </Button>
+            )}
+
+            {status === "active" && (
+              <Button
+                size="sm"
+                onClick={onComplete}
+                className="h-8 text-xs bg-emerald-500 text-black hover:bg-emerald-400 font-semibold rounded-xs gap-1.5"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Complete Sprint
+              </Button>
+            )}
+
             <Button
               variant="outline"
               size="icon"

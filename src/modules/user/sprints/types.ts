@@ -78,3 +78,14 @@ export interface UseUpdateProjectSprintParams {
   projectSlug: string;
   sprintId: string | number;
 }
+
+export interface StartSprintParams {
+  subdomain: string;
+  projectSlug: string;
+  sprintId: string | number;
+}
+
+export interface StartSprintResponse {
+  id: string | number;
+  message: string;
+}

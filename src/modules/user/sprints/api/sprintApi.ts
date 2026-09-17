@@ -3,6 +3,8 @@ import type {
   Sprint,
   SprintDetailAPIResponse,
   SprintDetailExtended,
+  StartSprintParams,
+  StartSprintResponse,
 } from "../types";
 import type { CreateSprintInput } from "../schemas/createSprintSchema";
 import { DUMMY_SPRINT_EXTENDED } from "../constants";
@@ -32,7 +34,6 @@ export async function createProjectSprint(
   return response.data;
 }
 
-
 export async function fetchSprintDetail(
   subdomain: string,
   projectSlug: string,
@@ -60,3 +61,14 @@ export async function updateProjectSprint(
   );
   return response.data;
 }
+
+export const startProjectSprint = async ({
+  subdomain,
+  projectSlug,
+  sprintId,
+}: StartSprintParams): Promise<StartSprintResponse> => {
+  const response = await api.post<StartSprintResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/sprints/${sprintId}/start/`,
+  );
+  return response.data;
+};

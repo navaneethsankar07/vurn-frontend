@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useSprintDetail } from "../api/sprintQueries";
+import { useStartProjectSprint } from "../api/sprintMutations";
 import { SprintHeader } from "../components/SprintHeader";
 import { SprintOverviewSection } from "../components/SprintOverviewSection";
 import { SprintIssuesTable } from "../components/SprintIssuesTable";
@@ -26,6 +27,18 @@ export function SprintDetailPage() {
     isLoading,
     isError,
   } = useSprintDetail(subdomain, projectSlug, sprintId);
+
+  const { mutate: startSprint, isPending: isStarting } =
+    useStartProjectSprint();
+
+  const handleStartSprint = () => {
+    if (!sprintId) return;
+    startSprint({
+      subdomain,
+      projectSlug,
+      sprintId,
+    });
+  };
 
   if (isLoading) {
     return (
@@ -58,9 +71,11 @@ export function SprintDetailPage() {
           sprint.end_date,
           sprint.status,
         )}
+        isStarting={isStarting}
         onBack={() => navigate(`/projects/${projectSlug}/sprints`)}
         onEdit={openEditModal}
-        onStart={() => {}}
+        onStart={handleStartSprint}
+        onComplete={() => {}}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

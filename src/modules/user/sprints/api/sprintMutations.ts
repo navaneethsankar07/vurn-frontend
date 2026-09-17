@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { createProjectSprint, updateProjectSprint } from "./sprintApi";
+import { createProjectSprint, startProjectSprint, updateProjectSprint } from "./sprintApi";
 import type { CreateSprintInput } from "../schemas/createSprintSchema";
-import type { UseUpdateProjectSprintParams } from "../types";
+import type { StartSprintParams, StartSprintResponse, UseUpdateProjectSprintParams } from "../types";
 import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
 
 export function useCreateProjectSprint(
@@ -62,3 +62,36 @@ export function useUpdateProjectSprint({
     },
   });
 }
+
+export const useStartProjectSprint = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<StartSprintResponse, Error, StartSprintParams>({
+    mutationFn: startProjectSprint,
+    onSuccess: (res, variables) => {
+      toast.success(res.message);
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-sprints",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "sprint-detail",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.sprintId),
+        ],
+      });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to start sprint.";
+      toast.error(errorMessage);
+    },
+  });
+};
