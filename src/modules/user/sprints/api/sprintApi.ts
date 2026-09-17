@@ -1,5 +1,6 @@
 import api from "@/api/axios";
 import type {
+  ProjectSprintsQueryParams,
   Sprint,
   SprintDetailAPIResponse,
   SprintDetailExtended,
@@ -13,10 +14,28 @@ import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
 export async function fetchProjectSprints(
   subdomain: string,
   projectSlug: string,
+  params?: ProjectSprintsQueryParams,
 ): Promise<Sprint[]> {
+  const queryParams: Record<string, string | number> = {};
+
+  if (params?.search?.trim()) {
+    queryParams.search = params.search.trim();
+  }
+  if (params?.status) {
+    queryParams.status = params.status;
+  }
+  if (params?.sort) {
+    queryParams.sort = params.sort;
+  }
+  if (params?.page) {
+    queryParams.page = params.page;
+  }
+
   const response = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/sprints/`,
+    { params: queryParams },
   );
+
   return Array.isArray(response.data)
     ? response.data
     : response.data.results || [];

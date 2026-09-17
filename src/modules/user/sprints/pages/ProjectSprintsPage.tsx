@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Search, Plus, Loader2, Layers } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Loader2,
+  Layers,
+  X,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,24 +25,50 @@ import { getSubdomain } from "@/utils/subdomain";
 import { useProjectSprints } from "../api/sprintQueries";
 import { SprintCard } from "../components/SprintCard";
 import { CreateSprintModal } from "../components/modals/CreateSprintModal";
-import type { Sprint } from "../types";
-
+import type { Sprint, SprintStatus, SprintSortOption } from "../types";
 
 export function ProjectSprintsPage() {
   const { projectSlug = "" } = useParams<{ projectSlug: string }>();
   const subdomain = getSubdomain() || "";
-  const navigate = useNavigate()
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sortOrder, setSortOrder] = useState("newest");
+  const navigate = useNavigate();
+
+  const [searchInput, setSearchInput] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortField, setSortField] = useState<string>("created");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const createSprintModal = useModal();
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setActiveSearch(searchInput.trim());
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setActiveSearch("");
+  };
+
+  const toggleSortDirection = () => {
+    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+  };
+
+  const sortOrder: SprintSortOption =
+    `${sortField}_${sortDirection}` as SprintSortOption;
+
+  const queryParams = {
+    search: activeSearch || undefined,
+    status: statusFilter !== "all" ? (statusFilter as SprintStatus) : undefined,
+    sort: sortOrder,
+  };
 
   const {
     data: sprints = [],
     isLoading,
     isError,
-  } = useProjectSprints(subdomain, projectSlug);
+  } = useProjectSprints(subdomain, projectSlug, queryParams);
 
   return (
     <div className="bg-black text-white p-4 sm:p-6 lg:p-8 font-mono">
@@ -66,11 +100,21 @@ export function ProjectSprintsPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
             <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search sprints..."
-              className="pl-9 h-9 border-white/10 bg-black text-white placeholder:text-zinc-600 rounded-none text-xs focus-visible:ring-1 focus-visible:ring-amber-500/50"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search sprints and press Enter..."
+              className="pl-9 pr-9 h-9 border-white/10 bg-black text-white placeholder:text-zinc-600 rounded-none text-xs focus-visible:ring-1 focus-visible:ring-amber-500/50"
             />
+            {searchInput && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -89,18 +133,35 @@ export function ProjectSprintsPage() {
               </SelectContent>
             </Select>
 
-            <Select
-              value={sortOrder}
-              onValueChange={(value) => setSortOrder(value ?? "newest")}
-            >
-              <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none">
-                <SelectValue placeholder="Sort: Newest" />
-              </SelectTrigger>
-              <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs">
-                <SelectItem value="newest">Sort: Newest</SelectItem>
-                <SelectItem value="oldest">Sort: Oldest</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-1">
+              <Select
+                value={sortField}
+                onValueChange={(value) => setSortField(value ?? "created")}
+              >
+                <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs">
+                  <SelectItem value="created">Created</SelectItem>
+                  <SelectItem value="name">Name</SelectItem>
+                  <SelectItem value="start_date">Start date</SelectItem>
+                  <SelectItem value="end_date">End date</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={toggleSortDirection}
+                className="h-9 w-9 p-0 border-white/10 bg-black text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-none shrink-0"
+              >
+                {sortDirection === "asc" ? (
+                  <ArrowUp className="h-4 w-4 text-amber-500" />
+                ) : (
+                  <ArrowDown className="h-4 w-4 text-amber-500" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -116,7 +177,7 @@ export function ProjectSprintsPage() {
         ) : sprints.length === 0 ? (
           <div className="min-h-64 flex flex-col items-center justify-center text-center p-6 space-y-2 border border-dashed border-white/10 bg-[#09090B]">
             <p className="text-xs font-medium text-zinc-400">
-              No sprints found for this project.
+              No sprints found matching criteria.
             </p>
           </div>
         ) : (

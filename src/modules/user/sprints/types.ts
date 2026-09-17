@@ -89,3 +89,20 @@ export interface StartSprintResponse {
   id: string | number;
   message: string;
 }
+
+export type SprintSortOption =
+  | "name_asc"
+  | "name_desc"
+  | "start_date_asc"
+  | "start_date_desc"
+  | "end_date_asc"
+  | "end_date_desc"
+  | "created_asc"
+  | "created_desc";
+
+export interface ProjectSprintsQueryParams {
+  search?: string;
+  status?: SprintStatus;
+  sort?: SprintSortOption;
+  page?: number;
+}

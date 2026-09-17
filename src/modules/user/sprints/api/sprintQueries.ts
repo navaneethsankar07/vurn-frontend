@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchProjectSprints, fetchSprintDetail } from "./sprintApi";
+import type { ProjectSprintsQueryParams } from "../types";
 
-export function useProjectSprints(subdomain: string, projectSlug: string) {
+export function useProjectSprints(
+  subdomain: string,
+  projectSlug: string,
+  params?: ProjectSprintsQueryParams,
+) {
   return useQuery({
-    queryKey: ["project-sprints", subdomain, projectSlug],
-    queryFn: () => fetchProjectSprints(subdomain, projectSlug),
+    queryKey: ["project-sprints", subdomain, projectSlug, params],
+    queryFn: () => fetchProjectSprints(subdomain, projectSlug, params),
     enabled: Boolean(subdomain && projectSlug),
   });
 }
