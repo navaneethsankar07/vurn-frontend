@@ -13,6 +13,7 @@ import { formatRelativeTime } from "@/utils/sprintHelpers";
 
 interface KanbanCardProps {
   issue: KanbanIssue;
+  index: number;
 }
 
 const getPriorityIcon = (priority: IssuePriority) => {
@@ -44,9 +45,26 @@ const getTypeIcon = (type: IssueType) => {
   }
 };
 
-export function KanbanCard({ issue }: KanbanCardProps) {
+export function KanbanCard({ issue, index }: KanbanCardProps) {
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({
+        issueId: issue.id,
+        fromStatusId: issue.status_id,
+        currentIndex: index,
+      }),
+    );
+    e.dataTransfer.effectAllowed = "move";
+  };
+
   return (
-    <div className="bg-[#09090B] border border-white/10 hover:border-white/20 p-3 rounded-xs space-y-2.5 transition-all text-xs cursor-pointer group">
+    <div
+      draggable
+      onDragStart={handleDragStart}
+      data-issue-index={index}
+      className="bg-[#09090B] border border-white/10 hover:border-white/20 p-3 rounded-xs space-y-2.5 transition-all text-xs cursor-grab active:cursor-grabbing group active:opacity-40"
+    >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
           {getTypeIcon(issue.issue_type)}

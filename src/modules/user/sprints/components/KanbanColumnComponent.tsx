@@ -1,6 +1,11 @@
+import { useState } from "react";
 import { Plus, MoreHorizontal, Loader2 } from "lucide-react";
 import type { KanbanColumn, KanbanColumnIssuesParams } from "../types";
 import { useColumnIssues } from "../api/sprintQueries";
+import {
+  useMoveIssueStatus,
+  useUpdateIssuePosition,
+} from "../api/sprintMutations";
 import { KanbanCard } from "./KanbanCard";
 
 interface KanbanColumnProps {
@@ -18,6 +23,8 @@ export function KanbanColumnComponent({
   filters,
   onAddIssue,
 }: KanbanColumnProps) {
+  const [isDragOver, setIsDragOver] = useState(false);
+
   const { data, isLoading, isError } = useColumnIssues(
     subdomain,
     projectSlug,
@@ -25,10 +32,65 @@ export function KanbanColumnComponent({
     filters,
   );
 
+  const { mutate: moveStatus } = useMoveIssueStatus();
+  const { mutate: updatePosition } = useUpdateIssuePosition();
+
   const issues = data?.results || [];
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    const rawData = e.dataTransfer.getData("application/json");
+    if (!rawData) return;
+
+    const { issueId, fromStatusId, currentIndex } = JSON.parse(rawData);
+
+    if (fromStatusId !== column.id) {
+      moveStatus({
+        subdomain,
+        projectSlug,
+        issueId,
+        status_id: column.id,
+        from_status_id: fromStatusId,
+      });
+      return;
+    }
+
+    const dropTarget = (e.target as HTMLElement).closest("[data-issue-index]");
+    if (dropTarget) {
+      const targetIndex = Number(dropTarget.getAttribute("data-issue-index"));
+      if (!isNaN(targetIndex) && targetIndex !== currentIndex) {
+        updatePosition({
+          subdomain,
+          projectSlug,
+          issueId,
+          status_id: column.id,
+          position: targetIndex,
+        });
+      }
+    }
+  };
+
   return (
-    <div className="flex-1 min-w-70 max-w-85 flex flex-col bg-black/40 border border-white/10 rounded-xs font-mono select-none">
+    <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={`flex-1 min-w-70 max-w-85 flex flex-col bg-black/40 border rounded-xs font-mono select-none transition-colors ${
+        isDragOver ? "border-amber-500/50 bg-amber-500/5" : "border-white/10"
+      }`}
+    >
       <div className="flex items-center justify-between p-3 border-b border-white/10 bg-[#09090B]">
         <div className="flex items-center gap-2 min-w-0">
           <span
@@ -65,7 +127,9 @@ export function KanbanColumnComponent({
             No issues
           </div>
         ) : (
-          issues.map((issue) => <KanbanCard key={issue.id} issue={issue} />)
+          issues.map((issue, idx) => (
+            <KanbanCard key={issue.id} issue={issue} index={idx} />
+          ))
         )}
       </div>
 
@@ -73,7 +137,7 @@ export function KanbanColumnComponent({
         <button
           type="button"
           onClick={() => onAddIssue?.(column.id)}
-          className="w-full flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white hover:bg-white/5 p-1.5 rounded-xs transition-colors"
+          className="w-full flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white hover:bg-white/10 p-1.5 rounded-xs transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Add issue</span>

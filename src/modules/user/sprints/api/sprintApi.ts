@@ -3,12 +3,16 @@ import type {
   KanbanBoardResponse,
   KanbanColumnIssuesParams,
   KanbanColumnIssuesResponse,
+  MoveIssueStatusPayload,
+  MoveIssueStatusResponse,
   ProjectSprintsQueryParams,
   Sprint,
   SprintDetailAPIResponse,
   SprintDetailExtended,
   StartSprintParams,
   StartSprintResponse,
+  UpdateIssuePositionPayload,
+  UpdateIssuePositionResponse,
 } from "../types";
 import type { CreateSprintInput } from "../schemas/createSprintSchema";
 import { DUMMY_SPRINT_EXTENDED } from "../constants";
@@ -114,6 +118,32 @@ export async function fetchColumnIssues(
   const response = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/board/columns/${statusId}/issues/`,
     { params },
+  );
+  return response.data;
+}
+
+export async function moveIssueStatus({
+  subdomain,
+  projectSlug,
+  issueId,
+  status_id,
+}: MoveIssueStatusPayload): Promise<MoveIssueStatusResponse> {
+  const response = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/board/issues/${issueId}/status/`,
+    { status_id },
+  );
+  return response.data;
+}
+
+export async function updateIssuePosition({
+  subdomain,
+  projectSlug,
+  issueId,
+  position,
+}: UpdateIssuePositionPayload): Promise<UpdateIssuePositionResponse> {
+  const response = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/board/issues/${issueId}/position/`,
+    { position },
   );
   return response.data;
 }

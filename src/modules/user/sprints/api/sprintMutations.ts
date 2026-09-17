@@ -1,8 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { createProjectSprint, startProjectSprint, updateProjectSprint } from "./sprintApi";
+import {
+  createProjectSprint,
+  moveIssueStatus,
+  startProjectSprint,
+  updateIssuePosition,
+  updateProjectSprint,
+} from "./sprintApi";
 import type { CreateSprintInput } from "../schemas/createSprintSchema";
-import type { StartSprintParams, StartSprintResponse, UseUpdateProjectSprintParams } from "../types";
+import type {
+  MoveIssueStatusPayload,
+  MoveIssueStatusResponse,
+  StartSprintParams,
+  StartSprintResponse,
+  UpdateIssuePositionPayload,
+  UpdateIssuePositionResponse,
+  UseUpdateProjectSprintParams,
+} from "../types";
 import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
 
 export function useCreateProjectSprint(
@@ -95,3 +109,58 @@ export const useStartProjectSprint = () => {
     },
   });
 };
+
+export function useMoveIssueStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation<MoveIssueStatusResponse, any, MoveIssueStatusPayload>({
+    mutationFn: moveIssueStatus,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "kanban-column-issues",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      toast.success(data.message || "Issue status updated.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to move issue.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useUpdateIssuePosition() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    UpdateIssuePositionResponse,
+    any,
+    UpdateIssuePositionPayload
+  >({
+    mutationFn: updateIssuePosition,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "kanban-column-issues",
+          variables.subdomain,
+          variables.projectSlug,
+          variables.status_id,
+        ],
+      });
+      toast.success(data.message || "Issue position updated.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update issue position.";
+      toast.error(message);
+    },
+  });
+}

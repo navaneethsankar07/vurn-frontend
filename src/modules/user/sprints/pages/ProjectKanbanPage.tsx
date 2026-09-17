@@ -142,7 +142,9 @@ export function ProjectKanbanPage() {
 
           <Select
             value={sortOption}
-            onValueChange={(val) => setSortOption(val as KanbanSortOption)}
+            onValueChange={(val) =>
+              setSortOption((val as KanbanSortOption) ?? "position")
+            }
           >
             <SelectTrigger className="w-44 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
               <SelectValue placeholder="Sort" />

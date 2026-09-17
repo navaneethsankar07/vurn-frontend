@@ -165,3 +165,80 @@ export interface KanbanColumnIssuesParams {
   page?: number;
   page_size?: number;
 }
+
+export interface KanbanColumn {
+  id: number;
+  name: string;
+  category: "backlog" | "todo" | "in_progress" | "done" | string;
+  color: string;
+  icon: string;
+  position: number;
+}
+
+export interface KanbanBoardResponse {
+  columns: KanbanColumn[];
+}
+
+export interface KanbanIssue {
+  id: number;
+  key: string;
+  title: string;
+  issue_type: IssueType;
+  status_id: number;
+  sprint_id: number | null;
+  priority: IssuePriority;
+  assignee_id: number | null;
+  position: number;
+  labels?: string[];
+  story_points?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KanbanColumnIssuesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: KanbanIssue[];
+}
+
+export interface KanbanColumnIssuesParams {
+  search?: string;
+  sprint_id?: number | string;
+  issue_type?: IssueType;
+  assignee_id?: number | string;
+  priority?: IssuePriority;
+  sort?: KanbanSortOption;
+  page?: number;
+  page_size?: number;
+}
+
+export interface MoveIssueStatusPayload {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  status_id: number;
+  from_status_id?: number;
+}
+
+export interface MoveIssueStatusResponse {
+  id: number;
+  status_id: number;
+  position: number;
+  message: string;
+}
+
+export interface UpdateIssuePositionPayload {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  status_id: number;
+  position: number;
+}
+
+export interface UpdateIssuePositionResponse {
+  id: number;
+  status_id: number;
+  position: number;
+  message: string;
+}
