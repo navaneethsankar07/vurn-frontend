@@ -10,6 +10,7 @@ import { ProjectMembersPage } from "@/modules/user/projects/pages/ProjectMembers
 import { ProjectWorkflowPage } from "@/modules/user/projects/pages/ProjectWorkflowPage";
 import { ProjectSprintsPage } from "@/modules/user/sprints/pages/ProjectSprintsPage";
 import { SprintDetailPage } from "@/modules/user/sprints/pages/SprintDetailPage";
+import { ProjectKanbanPage } from "@/modules/user/sprints/pages/ProjectKanbanPage";
 
 export const projectRoutes: RouteObject[] = [
   {
@@ -33,11 +34,7 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "board",
-            element: (
-              <div className="p-4 text-xs text-gray-400">
-                Board View (Coming Soon)
-              </div>
-            ),
+            element: <ProjectKanbanPage/>,
           },
           {
             path: "sprints",

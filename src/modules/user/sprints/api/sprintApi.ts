@@ -1,5 +1,8 @@
 import api from "@/api/axios";
 import type {
+  KanbanBoardResponse,
+  KanbanColumnIssuesParams,
+  KanbanColumnIssuesResponse,
   ProjectSprintsQueryParams,
   Sprint,
   SprintDetailAPIResponse,
@@ -91,3 +94,26 @@ export const startProjectSprint = async ({
   );
   return response.data;
 };
+
+export async function fetchKanbanBoard(
+  subdomain: string,
+  projectSlug: string,
+): Promise<KanbanBoardResponse> {
+  const response = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/board/`,
+  );
+  return response.data;
+}
+
+export async function fetchColumnIssues(
+  subdomain: string,
+  projectSlug: string,
+  statusId: number | string,
+  params?: KanbanColumnIssuesParams,
+): Promise<KanbanColumnIssuesResponse> {
+  const response = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/board/columns/${statusId}/issues/`,
+    { params },
+  );
+  return response.data;
+}

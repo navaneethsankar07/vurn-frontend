@@ -106,3 +106,62 @@ export interface ProjectSprintsQueryParams {
   sort?: SprintSortOption;
   page?: number;
 }
+
+export type IssueType = "epic" | "story" | "task" | "bug" | "subtask";
+export type IssuePriority = "urgent" | "high" | "medium" | "low";
+
+export type KanbanSortOption =
+  | "position"
+  | "priority_asc"
+  | "priority_desc"
+  | "created_asc"
+  | "created_desc"
+  | "updated_asc"
+  | "updated_desc";
+
+export interface KanbanColumn {
+  id: number;
+  name: string;
+  category: "backlog" | "todo" | "in_progress" | "done" | string;
+  color: string;
+  icon: string;
+  position: number;
+}
+
+export interface KanbanBoardResponse {
+  columns: KanbanColumn[];
+}
+
+export interface KanbanIssue {
+  id: number;
+  key: string;
+  title: string;
+  issue_type: IssueType;
+  status_id: number;
+  sprint_id: number | null;
+  priority: IssuePriority;
+  assignee_id: number | null;
+  position: number;
+  labels?: string[];
+  story_points?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KanbanColumnIssuesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: KanbanIssue[];
+}
+
+export interface KanbanColumnIssuesParams {
+  search?: string;
+  sprint_id?: number | string;
+  issue_type?: IssueType;
+  assignee_id?: number | string;
+  priority?: IssuePriority;
+  sort?: KanbanSortOption;
+  page?: number;
+  page_size?: number;
+}
