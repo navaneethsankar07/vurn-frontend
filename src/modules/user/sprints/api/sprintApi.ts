@@ -1,5 +1,6 @@
 import api from "@/api/axios";
 import type {
+  BoardSprintOption,
   KanbanBoardResponse,
   KanbanColumnIssuesParams,
   KanbanColumnIssuesResponse,
@@ -144,6 +145,16 @@ export async function updateIssuePosition({
   const response = await api.patch(
     `/organizations/${subdomain}/projects/${projectSlug}/board/issues/${issueId}/position/`,
     { position },
+  );
+  return response.data;
+}
+
+export async function fetchBoardSprints(
+  subdomain: string,
+  projectSlug: string,
+): Promise<BoardSprintOption[]> {
+  const response = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/board/sprints/`,
   );
   return response.data;
 }

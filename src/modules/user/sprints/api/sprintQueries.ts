@@ -1,6 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchColumnIssues, fetchKanbanBoard, fetchProjectSprints, fetchSprintDetail } from "./sprintApi";
-import type { KanbanColumnIssuesParams, ProjectSprintsQueryParams } from "../types";
+import {
+  fetchBoardSprints,
+  fetchColumnIssues,
+  fetchKanbanBoard,
+  fetchProjectSprints,
+  fetchSprintDetail,
+} from "./sprintApi";
+import type {
+  KanbanColumnIssuesParams,
+  ProjectSprintsQueryParams,
+} from "../types";
 
 export function useProjectSprints(
   subdomain: string,
@@ -50,5 +59,13 @@ export function useColumnIssues(
     ],
     queryFn: () => fetchColumnIssues(subdomain, projectSlug, statusId, params),
     enabled: Boolean(subdomain && projectSlug && statusId),
+  });
+}
+
+export function useBoardSprints(subdomain: string, projectSlug: string) {
+  return useQuery({
+    queryKey: ["kanban-board-sprints", subdomain, projectSlug],
+    queryFn: () => fetchBoardSprints(subdomain, projectSlug),
+    enabled: Boolean(subdomain && projectSlug),
   });
 }

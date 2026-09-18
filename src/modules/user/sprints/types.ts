@@ -242,3 +242,8 @@ export interface UpdateIssuePositionResponse {
   position: number;
   message: string;
 }
+
+export interface BoardSprintOption {
+  id: number;
+  name: string;
+}

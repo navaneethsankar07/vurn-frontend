@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Search, Plus, Loader2, LayoutDashboard, X } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Loader2,
+  LayoutDashboard,
+  X,
+  Layers,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +20,7 @@ import {
 } from "@/components/ui/select";
 
 import { getSubdomain } from "@/utils/subdomain";
-import { useKanbanBoard } from "../api/sprintQueries";
+import { useKanbanBoard, useBoardSprints } from "../api/sprintQueries";
 import { KanbanColumnComponent } from "../components/KanbanColumnComponent";
 import {
   ISSUE_PRIORITIES,
@@ -31,6 +38,7 @@ export function ProjectKanbanPage() {
   const { projectSlug = "" } = useParams<{ projectSlug: string }>();
   const subdomain = getSubdomain() || "";
 
+  const [selectedSprintId, setSelectedSprintId] = useState<string>("all");
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
@@ -42,6 +50,9 @@ export function ProjectKanbanPage() {
     isLoading: isBoardLoading,
     isError: isBoardError,
   } = useKanbanBoard(subdomain, projectSlug);
+
+  const { data: boardSprints = [], isLoading: isSprintsLoading } =
+    useBoardSprints(subdomain, projectSlug);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -56,11 +67,18 @@ export function ProjectKanbanPage() {
 
   const columnFilters: KanbanColumnIssuesParams = {
     search: activeSearch || undefined,
+    sprint_id: selectedSprintId !== "all" ? selectedSprintId : undefined,
     issue_type: typeFilter !== "all" ? (typeFilter as IssueType) : undefined,
     priority:
       priorityFilter !== "all" ? (priorityFilter as IssuePriority) : undefined,
     sort: sortOption,
   };
+
+  const selectedSprintName =
+    selectedSprintId === "all"
+      ? "All Sprints"
+      : (boardSprints.find((s) => String(s.id) === selectedSprintId)?.name ??
+        "All Sprints");
 
   const selectedTypeLabel =
     ISSUE_TYPES.find((t) => t.value === typeFilter)?.label ?? "Type: All";
@@ -74,14 +92,52 @@ export function ProjectKanbanPage() {
   return (
     <div className="bg-black text-white min-h-screen p-4 sm:p-6 lg:p-8 font-mono flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
-        <div>
-          <div className="flex items-center gap-2">
-            <LayoutDashboard className="h-5 w-5 text-amber-500" />
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight uppercase">
-              Board
-            </h1>
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <LayoutDashboard className="h-5 w-5 text-amber-500" />
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight uppercase">
+                Board
+              </h1>
+            </div>
+
+            <span className="text-zinc-600">/</span>
+
+            <Select
+              value={selectedSprintId}
+              onValueChange={(val) => setSelectedSprintId(val ?? "all")}
+              disabled={isSprintsLoading}
+            >
+              <SelectTrigger className="h-8 border border-white/10 bg-[#09090B] text-xs text-zinc-200 px-2.5 gap-2 rounded-xs hover:border-white/20 hover:text-white transition-colors focus:ring-0 focus:ring-offset-0">
+                <div className="flex items-center gap-1.5">
+                  <Layers className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <span className="font-semibold">{selectedSprintName}</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent
+                side="bottom"
+                sideOffset={4}
+                align="start"
+                alignItemWithTrigger={false}
+                className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs min-w-44"
+              >
+                <SelectItem className="rounded-xs cursor-pointer" value="all">
+                  All Sprints
+                </SelectItem>
+                {boardSprints.map((sprint) => (
+                  <SelectItem
+                    className="rounded-xs cursor-pointer"
+                    key={sprint.id}
+                    value={String(sprint.id)}
+                  >
+                    {sprint.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <p className="text-xs text-zinc-400 mt-1">
+
+          <p className="text-xs text-zinc-400">
             Visual workflow pipeline and sprint task progress.
           </p>
         </div>
