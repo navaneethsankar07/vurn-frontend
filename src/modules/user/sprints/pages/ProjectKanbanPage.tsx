@@ -62,6 +62,15 @@ export function ProjectKanbanPage() {
     sort: sortOption,
   };
 
+  const selectedTypeLabel =
+    ISSUE_TYPES.find((t) => t.value === typeFilter)?.label ?? "Type: All";
+  const selectedPriorityLabel =
+    ISSUE_PRIORITIES.find((p) => p.value === priorityFilter)?.label ??
+    "Priority: All";
+  const selectedSortLabel =
+    KANBAN_SORT_OPTIONS.find((s) => s.value === sortOption)?.label ??
+    "Sort: Position";
+
   return (
     <div className="bg-black text-white min-h-screen p-4 sm:p-6 lg:p-8 font-mono flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
@@ -112,12 +121,21 @@ export function ProjectKanbanPage() {
             value={typeFilter}
             onValueChange={(val) => setTypeFilter(val ?? "all")}
           >
-            <SelectTrigger className="w-32 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
-              <SelectValue placeholder="Type: All" />
+            <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
+              <SelectValue>{selectedTypeLabel}</SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs">
+            <SelectContent
+              side="bottom"
+              sideOffset={4}
+              alignItemWithTrigger={false}
+              className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs"
+            >
               {ISSUE_TYPES.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
+                <SelectItem
+                  className="rounded-xs"
+                  key={t.value}
+                  value={t.value}
+                >
                   {t.label}
                 </SelectItem>
               ))}
@@ -128,12 +146,21 @@ export function ProjectKanbanPage() {
             value={priorityFilter}
             onValueChange={(val) => setPriorityFilter(val ?? "all")}
           >
-            <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
-              <SelectValue placeholder="Priority: All" />
+            <SelectTrigger className="w-40 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
+              <SelectValue>{selectedPriorityLabel}</SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs">
+            <SelectContent
+              side="bottom"
+              sideOffset={4}
+              alignItemWithTrigger={false}
+              className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs"
+            >
               {ISSUE_PRIORITIES.map((p) => (
-                <SelectItem key={p.value} value={p.value}>
+                <SelectItem
+                  className="rounded-xs"
+                  key={p.value}
+                  value={p.value}
+                >
                   {p.label}
                 </SelectItem>
               ))}
@@ -146,12 +173,21 @@ export function ProjectKanbanPage() {
               setSortOption((val as KanbanSortOption) ?? "position")
             }
           >
-            <SelectTrigger className="w-44 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
-              <SelectValue placeholder="Sort" />
+            <SelectTrigger className="w-52 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
+              <SelectValue>{selectedSortLabel}</SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs">
+            <SelectContent
+              side="bottom"
+              sideOffset={4}
+              alignItemWithTrigger={false}
+              className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs"
+            >
               {KANBAN_SORT_OPTIONS.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
+                <SelectItem
+                  className="rounded-xs"
+                  key={s.value}
+                  value={s.value}
+                >
                   {s.label}
                 </SelectItem>
               ))}
