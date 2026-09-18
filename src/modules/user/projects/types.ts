@@ -243,3 +243,19 @@ export interface UpdateWorkflowTransitionParams {
   transitionId: number | string;
   data: UpdateWorkflowTransitionPayload;
 }
+
+export interface ProjectArchiveStatusResponse {
+  is_archived: boolean;
+  archived_at: string | null;
+  archived_by?: string | null;
+}
+
+export interface ProjectUnarchiveResponse {
+  message: string;
+  is_archived: boolean;
+}
+
+export interface ProjectParams {
+  subdomain: string;
+  projectSlug: string;
+}

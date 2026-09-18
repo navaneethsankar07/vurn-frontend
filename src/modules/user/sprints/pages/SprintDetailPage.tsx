@@ -85,7 +85,7 @@ export function SprintDetailPage() {
             description={sprint.description}
             startDate={sprint.start_date}
             endDate={sprint.end_date}
-            createdByName="Priya Raman"
+            createdByName={sprint.created_by_name}
             updatedAt={sprint.updated_at}
           />
 
@@ -95,7 +95,7 @@ export function SprintDetailPage() {
         <div className="lg:col-span-1">
           <SprintSidebar
             status={sprint.status}
-            createdByName="Priya Raman"
+            createdByName={sprint.created_by_name}
             createdAt={sprint.created_at}
             updatedAt={sprint.updated_at}
             totalIssues={sprint.issues.length}

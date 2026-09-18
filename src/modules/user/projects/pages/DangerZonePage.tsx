@@ -1,37 +1,61 @@
 import { useParams } from "react-router-dom";
-import { Archive, Trash2, AlertTriangle } from "lucide-react";
+import { Archive, RotateCcw, Trash2, AlertTriangle } from "lucide-react";
 import { getSubdomain } from "@/utils/subdomain";
 import { useModal } from "@/hooks/useModal";
-import { useProjectSettings } from "../api/projectQueries";
-import { useArchiveProject, useDeleteProject } from "../api/projectMutations";
+import {
+  useProjectSettings,
+  useProjectArchiveStatus,
+} from "../api/projectQueries";
+import {
+  useArchiveProject,
+  useUnarchiveProject,
+  useDeleteProject,
+} from "../api/projectMutations";
 import { ArchiveProjectModal } from "../components/modals/ArchiveProjectModal";
+import { UnarchiveProjectModal } from "../components/modals/UnarchiveProjectModal";
 import { DeleteProjectModal } from "../components/modals/DeleteProjectModal";
 
 export function DangerZoneSection() {
-  const { projectSlug } = useParams<{ projectSlug: string }>();
+  const { projectSlug = "" } = useParams<{ projectSlug: string }>();
   const subdomain = getSubdomain() || "";
 
-  const { data: projectData } = useProjectSettings(
+  const { data: projectData } = useProjectSettings(subdomain, projectSlug);
+  const { data: archiveStatus } = useProjectArchiveStatus(
     subdomain,
-    projectSlug || "",
+    projectSlug,
   );
 
+  const isArchived = Boolean(archiveStatus?.is_archived);
+
   const archiveModal = useModal(false);
+  const unarchiveModal = useModal(false);
   const deleteModal = useModal(false);
 
   const { mutate: archiveProj, isPending: isArchiving } = useArchiveProject({
     subdomain,
-    projectSlug: projectSlug || "",
+    projectSlug,
   });
+
+  const { mutate: unarchiveProj, isPending: isUnarchiving } =
+    useUnarchiveProject({
+      subdomain,
+      projectSlug,
+    });
 
   const { mutate: deleteProj, isPending: isDeleting } = useDeleteProject({
     subdomain,
-    projectSlug: projectSlug || "",
+    projectSlug,
   });
 
   const handleArchiveConfirm = () => {
     archiveProj(undefined, {
       onSuccess: archiveModal.closeModal,
+    });
+  };
+
+  const handleUnarchiveConfirm = () => {
+    unarchiveProj(undefined, {
+      onSuccess: unarchiveModal.closeModal,
     });
   };
 
@@ -56,24 +80,49 @@ export function DangerZoneSection() {
 
         <div className="divide-y divide-white/10">
           <div className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1 max-w-xl">
-              <h3 className="text-xs font-semibold text-white">
-                Archive Project
-              </h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                Archived projects become read-only and are hidden from the
-                default Projects list. They can still be viewed by filtering for
-                archived projects and can be restored later.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={archiveModal.openModal}
-              className="flex items-center gap-2 px-3.5 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold rounded-xs transition-colors shrink-0"
-            >
-              <Archive className="h-3.5 w-3.5" />
-              <span>Archive Project</span>
-            </button>
+            {isArchived ? (
+              <>
+                <div className="space-y-1 max-w-xl">
+                  <h3 className="text-xs font-semibold text-white">
+                    Unarchive Project
+                  </h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    This project is currently archived and read-only. Restoring
+                    it will return it to active status, making it visible in the
+                    main projects list and editable by team members.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={unarchiveModal.openModal}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-semibold rounded-xs transition-colors shrink-0"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  <span>Unarchive Project</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="space-y-1 max-w-xl">
+                  <h3 className="text-xs font-semibold text-white">
+                    Archive Project
+                  </h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    Archived projects become read-only and are hidden from the
+                    default Projects list. They can still be viewed by filtering
+                    for archived projects and can be restored later.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={archiveModal.openModal}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold rounded-xs transition-colors shrink-0"
+                >
+                  <Archive className="h-3.5 w-3.5" />
+                  <span>Archive Project</span>
+                </button>
+              </>
+            )}
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -115,6 +164,13 @@ export function DangerZoneSection() {
         onClose={archiveModal.closeModal}
         onConfirm={handleArchiveConfirm}
         isPending={isArchiving}
+      />
+
+      <UnarchiveProjectModal
+        isOpen={unarchiveModal.isOpen}
+        onClose={unarchiveModal.closeModal}
+        onConfirm={handleUnarchiveConfirm}
+        isPending={isUnarchiving}
       />
 
       <DeleteProjectModal

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  fetchProjectArchiveStatus,
   getProjectMembers,
   getProjectOptions,
   getProjects,
@@ -18,6 +19,17 @@ export const useProjectOptions = () => {
     queryFn: getProjectOptions,
   });
 };
+
+export function useProjectArchiveStatus(
+  subdomain: string,
+  projectSlug: string,
+) {
+  return useQuery({
+    queryKey: ["project-archive-status", subdomain, projectSlug],
+    queryFn: () => fetchProjectArchiveStatus({ subdomain, projectSlug }),
+    enabled: Boolean(subdomain && projectSlug),
+  });
+}
 
 export const useProjects = (subdomain: string, params?: ProjectListParams) => {
   return useQuery({

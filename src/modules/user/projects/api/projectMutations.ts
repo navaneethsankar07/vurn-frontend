@@ -8,6 +8,7 @@ import {
   deleteProject,
   deleteWorkflowStatus,
   removeProjectMember,
+  unarchiveProject,
   updateProjectSettings,
   updateWorkflowStatus,
   updateWorkflowStatusPosition,
@@ -18,6 +19,8 @@ import type {
   CreateProjectPayload,
   CreateWorkflowStatusPayload,
   ProjectDeleteRequest,
+  ProjectParams,
+  ProjectUnarchiveResponse,
   ProjectUpdateRequest,
   UpdateWorkflowStatusPayload,
   UpdateWorkflowTransitionPayload,
@@ -294,6 +297,28 @@ export function useUpdateWorkflowTransition(
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["project-workflow", subdomain, projectSlug],
+      });
+    },
+  });
+}
+
+export function useUnarchiveProject({ subdomain, projectSlug }: ProjectParams) {
+  const queryClient = useQueryClient();
+
+  return useMutation<ProjectUnarchiveResponse, any, void>({
+    mutationFn: () => unarchiveProject({ subdomain, projectSlug }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-archive-status", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["project-settings", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["project-detail", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["projects", subdomain],
       });
     },
   });

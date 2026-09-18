@@ -65,6 +65,7 @@ export interface SprintDetailExtended extends SprintDetailAPIResponse {
   members: SprintMember[];
   issues: SprintIssue[];
   activities: SprintActivity[];
+  created_by_name: string;
   totalPoints: number;
   completedPoints: number;
   remainingPoints: number;

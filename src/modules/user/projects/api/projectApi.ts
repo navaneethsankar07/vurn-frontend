@@ -6,12 +6,15 @@ import type {
   CreateWorkflowStatusParams,
   GetProjectMembersParams,
   PaginatedProjectsResponse,
+  ProjectArchiveStatusResponse,
   ProjectDeleteRequest,
   ProjectDetail,
   ProjectListParams,
   ProjectMemberListResponse,
   ProjectOptionsResponse,
+  ProjectParams,
   ProjectResponse,
+  ProjectUnarchiveResponse,
   ProjectUpdateRequest,
   RemoveProjectMemberParams,
   RemoveProjectMemberResponse,
@@ -233,6 +236,26 @@ export async function updateWorkflowTransition({
   const response = await api.patch(
     `/organizations/${subdomain}/projects/${projectSlug}/workflow/transitions/${transitionId}/`,
     data,
+  );
+  return response.data;
+}
+
+export async function fetchProjectArchiveStatus({
+  subdomain,
+  projectSlug,
+}: ProjectParams): Promise<ProjectArchiveStatusResponse> {
+  const response = await api.get<ProjectArchiveStatusResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/archive-status/`,
+  );
+  return response.data;
+}
+
+export async function unarchiveProject({
+  subdomain,
+  projectSlug,
+}: ProjectParams): Promise<ProjectUnarchiveResponse> {
+  const response = await api.post<ProjectUnarchiveResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/unarchive/`,
   );
   return response.data;
 }
