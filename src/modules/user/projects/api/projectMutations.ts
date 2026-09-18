@@ -237,7 +237,8 @@ export function useCreateWorkflowTransition(
   return useMutation({
     mutationFn: (payload: WorkflowTransitionPayload) =>
       createWorkflowTransition(subdomain, projectSlug, payload),
-    onSuccess: () => {
+    onSuccess: (res) => {
+      toast.success(res.message)
       queryClient.invalidateQueries({
         queryKey: ["project-workflow", subdomain, projectSlug],
       });

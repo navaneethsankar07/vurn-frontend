@@ -171,6 +171,7 @@ export interface WorkflowTransition {
   from_status_id: number;
   to_status_id: number;
   name?: string;
+  message?: string;
 }
 
 export interface WorkflowOverviewResponse {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, ArrowRightLeft, Sparkles, AlertCircle } from "lucide-react";
+import { Loader2, ArrowRightLeft, AlertCircle } from "lucide-react";
 
 import {
   Dialog,
@@ -106,7 +106,7 @@ export function CreateWorkflowTransitionModal({
         <div className="p-6 space-y-6">
           <DialogHeader className="space-y-1.5 text-left border-b border-white/10 pb-4">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-xs bg-primary/10 border border-primary/20 text-primary">
+              <div className="p-1.5 rounded-xs bg-amber-500/10 border border-amber-500/20 text-amber-500">
                 <ArrowRightLeft className="h-4 w-4" />
               </div>
               <DialogTitle className="text-sm font-bold uppercase tracking-wider text-white">
@@ -141,28 +141,48 @@ export function CreateWorkflowTransitionModal({
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Start Progress, Send for Review"
                 maxLength={60}
-                className="h-9 border-white/10 bg-black text-white placeholder:text-zinc-600 rounded-xs text-xs focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:border-primary/50 font-sans"
+                className="h-9 border-white/10 bg-black text-white placeholder:text-zinc-600 rounded-xs text-xs focus-visible:ring-1 focus-visible:ring-amber-500 focus-visible:border-amber-500 font-sans"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wide flex items-center gap-1">
-                  From Status <span className="text-primary">*</span>
+                  From Status <span className="text-amber-500">*</span>
                 </Label>
                 <Select
                   value={fromStatusId}
                   onValueChange={(val) => setFromStatusId(val ?? "")}
                 >
-                  <SelectTrigger className="h-9 border-white/10 bg-black text-white rounded-xs text-xs focus:ring-1 focus:ring-primary/50">
-                    <SelectValue placeholder="Select origin status" />
+                  <SelectTrigger className="h-9 border-white/10 bg-black text-white rounded-xs text-xs focus:ring-1 focus:ring-amber-500 focus:border-amber-500">
+                    <SelectValue placeholder="Select origin status">
+                      {selectedFromStatus && (
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="h-2 w-2 rounded-full shrink-0"
+                            style={{
+                              backgroundColor:
+                                selectedFromStatus.color || "#888888",
+                            }}
+                          />
+                          <span className="truncate">
+                            {selectedFromStatus.name}
+                          </span>
+                        </div>
+                      )}
+                    </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-none">
+                  <SelectContent
+                    side="bottom"
+                    sideOffset={4}
+                    alignItemWithTrigger={false}
+                    className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs"
+                  >
                     {statuses.map((status) => (
                       <SelectItem
                         key={status.id}
                         value={String(status.id)}
-                        className="text-xs cursor-pointer focus:bg-white/10 focus:text-white rounded-none font-sans"
+                        className="text-xs cursor-pointer focus:bg-white/10 focus:text-white rounded-xs font-sans"
                       >
                         <div className="flex items-center gap-2">
                           <span
@@ -181,21 +201,41 @@ export function CreateWorkflowTransitionModal({
 
               <div className="space-y-2">
                 <Label className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wide flex items-center gap-1">
-                  To Status <span className="text-primary">*</span>
+                  To Status <span className="text-amber-500">*</span>
                 </Label>
                 <Select
                   value={toStatusId}
                   onValueChange={(val) => setToStatusId(val ?? "")}
                 >
-                  <SelectTrigger className="h-9 border-white/10 bg-black text-white rounded-xs text-xs focus:ring-1 focus:ring-primary/50">
-                    <SelectValue placeholder="Select target status" />
+                  <SelectTrigger className="h-9 border-white/10 bg-black text-white rounded-xs text-xs focus:ring-1 focus:ring-amber-500 focus:border-amber-500">
+                    <SelectValue placeholder="Select target status">
+                      {selectedToStatus && (
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="h-2 w-2 rounded-full shrink-0"
+                            style={{
+                              backgroundColor:
+                                selectedToStatus.color || "#888888",
+                            }}
+                          />
+                          <span className="truncate">
+                            {selectedToStatus.name}
+                          </span>
+                        </div>
+                      )}
+                    </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-none">
+                  <SelectContent
+                    side="bottom"
+                    sideOffset={4}
+                    alignItemWithTrigger={false}
+                    className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs"
+                  >
                     {statuses.map((status) => (
                       <SelectItem
                         key={status.id}
                         value={String(status.id)}
-                        className="text-xs cursor-pointer focus:bg-white/10 focus:text-white rounded-none font-sans"
+                        className="text-xs cursor-pointer focus:bg-white/10 focus:text-white rounded-xs font-sans"
                       >
                         <div className="flex items-center gap-2">
                           <span
@@ -238,7 +278,7 @@ export function CreateWorkflowTransitionModal({
                 </div>
 
                 <div className="flex flex-col items-center shrink-0 px-2">
-                  <span className="text-[10px] text-primary font-mono font-medium truncate max-w-[100px]">
+                  <span className="text-[10px] text-amber-500 font-mono font-medium truncate max-w-25">
                     {name.trim() || "transition"}
                   </span>
                   <span className="text-zinc-500 text-[10px]">➔</span>
@@ -276,13 +316,11 @@ export function CreateWorkflowTransitionModal({
               <Button
                 type="submit"
                 disabled={createTransitionMutation.isPending}
-                className="h-8 bg-primary  text-black hover:bg-primary/90 text-xs font-semibold rounded-xs gap-2 transition-all shadow-sm"
+                className="h-8 border-primary bg-transparent hover:bg-transparent hover:text-primary/70 hover:border-primary/70 text-primary text-xs font-semibold rounded-xs gap-2 transition-all shadow-sm"
               >
                 {createTransitionMutation.isPending ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Sparkles className="h-3.5 w-3.5" />
-                )}
+                ) : ""}
                 Create Transition
               </Button>
             </DialogFooter>
