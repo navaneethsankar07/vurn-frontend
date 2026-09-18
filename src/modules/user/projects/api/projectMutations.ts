@@ -11,6 +11,7 @@ import {
   updateProjectSettings,
   updateWorkflowStatus,
   updateWorkflowStatusPosition,
+  updateWorkflowTransition,
 } from "./projectApi";
 import type {
   AddProjectMemberPayload,
@@ -19,6 +20,7 @@ import type {
   ProjectDeleteRequest,
   ProjectUpdateRequest,
   UpdateWorkflowStatusPayload,
+  UpdateWorkflowTransitionPayload,
   WorkflowTransitionPayload,
 } from "../types";
 import { toast } from "sonner";
@@ -238,7 +240,7 @@ export function useCreateWorkflowTransition(
     mutationFn: (payload: WorkflowTransitionPayload) =>
       createWorkflowTransition(subdomain, projectSlug, payload),
     onSuccess: (res) => {
-      toast.success(res.message)
+      toast.success(res.message);
       queryClient.invalidateQueries({
         queryKey: ["project-workflow", subdomain, projectSlug],
       });
@@ -273,3 +275,26 @@ export const useUpdateWorkflowStatusPosition = (
     },
   });
 };
+
+export function useUpdateWorkflowTransition(
+  subdomain: string,
+  projectSlug: string,
+  transitionId: number | string,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateWorkflowTransitionPayload) =>
+      updateWorkflowTransition({
+        subdomain,
+        projectSlug,
+        transitionId,
+        data,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project-workflow", subdomain, projectSlug],
+      });
+    },
+  });
+}

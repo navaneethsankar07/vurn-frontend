@@ -16,6 +16,7 @@ import type {
   RemoveProjectMemberParams,
   RemoveProjectMemberResponse,
   UpdateWorkflowStatusPayload,
+  UpdateWorkflowTransitionParams,
   WorkflowOverviewResponse,
   WorkflowStatus,
   WorkflowTransition,
@@ -222,3 +223,16 @@ export const updateWorkflowStatusPosition = async ({
   );
   return response.data;
 };
+
+export async function updateWorkflowTransition({
+  subdomain,
+  projectSlug,
+  transitionId,
+  data,
+}: UpdateWorkflowTransitionParams): Promise<WorkflowTransition> {
+  const response = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/workflow/transitions/${transitionId}/`,
+    data,
+  );
+  return response.data;
+}

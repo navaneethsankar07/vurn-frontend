@@ -33,6 +33,7 @@ import { CreateWorkflowStatusModal } from "../components/modals/CreateWorkflowSt
 import { EditWorkflowStatusModal } from "../components/modals/EditWorkflowStatusModal";
 import { DeleteWorkflowStatusModal } from "../components/modals/DeleteWorkflowStatusModal";
 import { CreateWorkflowTransitionModal } from "../components/modals/CreateWorkflowTransitionModal";
+import { EditWorkflowTransitionModal } from "../components/modals/EditWorkflowTransitionModal";
 import type { WorkflowStatus, WorkflowTransition } from "../types";
 
 export function ProjectWorkflowPage() {
@@ -51,10 +52,13 @@ export function ProjectWorkflowPage() {
   const createTransitionModal = useModal();
   const editStatusModal = useModal();
   const deleteStatusModal = useModal();
+  const editTransitionModal = useModal();
 
   const [selectedStatus, setSelectedStatus] = useState<WorkflowStatus | null>(
     null,
   );
+  const [selectedTransition, setSelectedTransition] =
+    useState<WorkflowTransition | null>(null);
 
   const {
     data: workflowData,
@@ -126,6 +130,11 @@ export function ProjectWorkflowPage() {
   const handleDeleteClick = (status: WorkflowStatus) => {
     setSelectedStatus(status);
     deleteStatusModal.openModal();
+  };
+
+  const handleEditTransitionClick = (transition: WorkflowTransition) => {
+    setSelectedTransition(transition);
+    editTransitionModal.openModal();
   };
 
   const handleDragStart = (
@@ -396,6 +405,25 @@ export function ProjectWorkflowPage() {
                       <span className="text-xs font-bold text-white">
                         {transition.name || "Transition"}
                       </span>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="text-zinc-500 hover:text-white p-1 transition-colors focus:outline-none">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-[#09090B] border-white/10 text-white font-mono min-w-28 rounded-none"
+                        >
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleEditTransitionClick(transition)
+                            }
+                            className="text-xs rounded-none cursor-pointer focus:bg-white/10 focus:text-white flex items-center gap-2"
+                          >
+                            <Pencil className="h-3.5 w-3.5 text-zinc-400" />
+                            Edit
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
 
                     <div className="flex items-center justify-between gap-2 pt-1">
@@ -491,6 +519,18 @@ export function ProjectWorkflowPage() {
           subdomain={subdomain}
           projectSlug={projectSlug}
           status={selectedStatus}
+        />
+
+        <EditWorkflowTransitionModal
+          isOpen={editTransitionModal.isOpen}
+          onClose={() => {
+            editTransitionModal.closeModal();
+            setSelectedTransition(null);
+          }}
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          statuses={rawStatuses}
+          transition={selectedTransition}
         />
 
         <DeleteWorkflowStatusModal

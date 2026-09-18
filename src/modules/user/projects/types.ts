@@ -230,4 +230,16 @@ export interface UpdateStatusPositionParams {
   statusId: number;
   position: number;
 }
- 
+
+export interface UpdateWorkflowTransitionPayload {
+  from_status_id: number;
+  to_status_id: number;
+  name?: string;
+}
+
+export interface UpdateWorkflowTransitionParams {
+  subdomain: string;
+  projectSlug: string;
+  transitionId: number | string;
+  data: UpdateWorkflowTransitionPayload;
+}
