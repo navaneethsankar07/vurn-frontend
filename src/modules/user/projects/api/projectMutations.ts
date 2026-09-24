@@ -82,6 +82,9 @@ export function useArchiveProject({
         queryKey: ["project-settings", subdomain, projectSlug],
       });
       queryClient.invalidateQueries({
+        queryKey: ["project-archive-status", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
         queryKey: ["projects", subdomain],
       });
       toast.success("Project archived successfully.");
@@ -248,6 +251,13 @@ export function useCreateWorkflowTransition(
         queryKey: ["project-workflow", subdomain, projectSlug],
       });
     },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to delete status.";
+      toast.error(errorMessage);
+    },
   });
 }
 
@@ -276,6 +286,13 @@ export const useUpdateWorkflowStatusPosition = (
         queryKey: ["project-workflow", subdomain, projectSlug],
       });
     },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to Update status Position.";
+      toast.error(errorMessage);
+    },
   });
 };
 
@@ -299,6 +316,13 @@ export function useUpdateWorkflowTransition(
         queryKey: ["project-workflow", subdomain, projectSlug],
       });
     },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to delete status.";
+      toast.error(errorMessage);
+    },
   });
 }
 
@@ -307,7 +331,8 @@ export function useUnarchiveProject({ subdomain, projectSlug }: ProjectParams) {
 
   return useMutation<ProjectUnarchiveResponse, any, void>({
     mutationFn: () => unarchiveProject({ subdomain, projectSlug }),
-    onSuccess: () => {
+    onSuccess: (res) => {
+      toast.success(res.message);
       queryClient.invalidateQueries({
         queryKey: ["project-archive-status", subdomain, projectSlug],
       });
@@ -320,6 +345,13 @@ export function useUnarchiveProject({ subdomain, projectSlug }: ProjectParams) {
       queryClient.invalidateQueries({
         queryKey: ["projects", subdomain],
       });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to unarchive project.";
+      toast.error(errorMessage);
     },
   });
 }
