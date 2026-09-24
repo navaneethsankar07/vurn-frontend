@@ -31,6 +31,7 @@ export interface SprintDetailAPIResponse {
   end_date: string;
   status: SprintStatus;
   created_by_id: number;
+  created_by_name: string;
   created_at: string;
   updated_at: string;
 }

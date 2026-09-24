@@ -10,6 +10,7 @@ export const DUMMY_SPRINT_EXTENDED: Omit<
   | "end_date"
   | "status"
   | "created_by_id"
+  | "created_by_name"
   | "created_at"
   | "updated_at"
 > = {
