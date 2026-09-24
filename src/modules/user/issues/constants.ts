@@ -57,10 +57,11 @@ export const WORK_ITEM_PRIORITIES: {
 ];
 
 export const WORK_ITEM_SORT_OPTIONS = [
-  { value: "-created_at", label: "Recently Created" },
-  { value: "created_at", label: "Oldest Created" },
-  { value: "-updated_at", label: "Recently Updated" },
-  { value: "updated_at", label: "Least Recently Updated" },
-  { value: "priority", label: "Priority: Highest" },
-  { value: "-priority", label: "Priority: Lowest" },
+  { value: "created_desc", label: "Created Newest" },
+  { value: "created_asc", label: "Created Oldest" },
+  { value: "updated_desc", label: "Updated Newest" },
+  { value: "updated_asc", label: "Updated Oldest" },
+  { value: "priority_desc", label: "Priority Descending" },
+  { value: "priority_asc", label: "Priority Ascending" },
+  { value: "position", label: "Position" },
 ];
