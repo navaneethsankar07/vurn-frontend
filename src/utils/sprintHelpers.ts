@@ -7,6 +7,7 @@ export function calculateSprintProgress(
   status: SprintStatus,
 ): number {
   if (status === "completed") return 100;
+  if (status === "planned") return 0;
   if (!startDateStr || !endDateStr) return 0;
 
   const start = parseISO(startDateStr).getTime();

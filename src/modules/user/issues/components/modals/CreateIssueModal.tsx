@@ -225,7 +225,7 @@ export function CreateIssueModal({
                         alignItemWithTrigger={false}
                         className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs"
                       >
-                        {WORK_ITEM_TYPES.map((t) => {
+                        {WORK_ITEM_TYPES.filter((t) => t.value !== "subtask").map((t) => {
                           const Icon = t.icon;
                           return (
                             <SelectItem
@@ -235,7 +235,7 @@ export function CreateIssueModal({
                             >
                               <div className="flex items-center gap-2">
                                 <Icon
-                                  className="h-3.5 w-3.5"
+                                  className="h-3.5 w-3.5 "
                                   style={{ color: t.color }}
                                 />
                                 <span>{t.label}</span>

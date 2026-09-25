@@ -90,7 +90,7 @@ export function ProjectKanbanPage() {
     "Sort: Position";
 
   return (
-    <div className="bg-black text-white min-h-screen p-4 sm:p-6 lg:p-8 font-mono flex flex-col gap-6">
+    <div className="bg-black text-white p-4 sm:p-6 lg:p-8 font-mono flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ export function ProjectKanbanPage() {
               onValueChange={(val) => setSelectedSprintId(val ?? "all")}
               disabled={isSprintsLoading}
             >
-              <SelectTrigger className="h-8 border border-white/10 bg-[#09090B] text-xs text-zinc-200 px-2.5 gap-2 rounded-xs hover:border-white/20 hover:text-white transition-colors focus:ring-0 focus:ring-offset-0">
+              <SelectTrigger className="h-7 border border-white/10 bg-[#09090B] text-xs text-zinc-200 px-2.5 gap-2 rounded-xs hover:border-white/20 hover:text-white transition-colors focus:ring-0 focus:ring-offset-0">
                 <div className="flex items-center gap-1.5">
                   <Layers className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                   <span className="font-semibold">{selectedSprintName}</span>

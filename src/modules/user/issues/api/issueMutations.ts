@@ -33,7 +33,7 @@ export function useCreateProjectIssue() {
           variables.projectSlug,
         ],
       });
-      toast.success(`${data.key} created successfully.`);
+      toast.success(data.message);
     },
     onError: (error: any) => {
       const message =

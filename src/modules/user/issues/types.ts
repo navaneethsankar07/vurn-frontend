@@ -5,7 +5,7 @@ export interface IssueItem {
   id: number;
   key: string;
   project_id: number;
-  parent_id: number | null;
+  parent_key: string | null;
   sprint_id: number | null;
   status_id: number;
   status_name: string;
@@ -20,6 +20,7 @@ export interface IssueItem {
   position: number;
   created_at: string;
   updated_at: string;
+  message: string | null;
 }
 
 export interface CreateIssuePayload {
@@ -60,4 +61,17 @@ export interface IssueListResponse {
   next: string | null;
   previous: string | null;
   results: IssueItem[];
+}
+
+export interface IssueDetailResponse extends IssueItem {
+  assignee_name?: string | null;
+  reporter_name?: string | null;
+  sprint_name?: string | null;
+  due_date?: string | null;
+}
+
+export interface IssueDetailParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
 }

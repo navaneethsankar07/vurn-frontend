@@ -35,8 +35,8 @@ export function ProjectSprintsPage() {
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sortField, setSortField] = useState<string>("created");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [sortField, setSortField] = useState<string>("start_date");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const createSprintModal = useModal();
 
@@ -69,6 +69,13 @@ export function ProjectSprintsPage() {
     isLoading,
     isError,
   } = useProjectSprints(subdomain, projectSlug, queryParams);
+
+  const sortLabels: Record<string, string> = {
+    start_date: "Start Date",
+    end_date: "End Date",
+    created: "Created",
+    name: "Name",
+  };
 
   return (
     <div className="bg-black text-white p-4 sm:p-6 lg:p-8 font-mono">
@@ -136,16 +143,18 @@ export function ProjectSprintsPage() {
             <div className="flex items-center gap-1">
               <Select
                 value={sortField}
-                onValueChange={(value) => setSortField(value ?? "created")}
+                onValueChange={(value) => setSortField(value ?? "start_date")}
               >
                 <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none">
-                  <SelectValue placeholder="Sort By" />
+                  <SelectValue>
+                    {sortLabels[sortField] ?? "Start Date"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs">
+                  <SelectItem value="start_date">Start Date</SelectItem>
+                  <SelectItem value="end_date">End Date</SelectItem>
                   <SelectItem value="created">Created</SelectItem>
                   <SelectItem value="name">Name</SelectItem>
-                  <SelectItem value="start_date">Start date</SelectItem>
-                  <SelectItem value="end_date">End date</SelectItem>
                 </SelectContent>
               </Select>
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchProjectIssues } from "./issueApi";
+import { fetchProjectIssueDetail, fetchProjectIssues } from "./issueApi";
 import type { IssueListParams } from "../types";
 
 export function useProjectIssues(
@@ -11,5 +11,22 @@ export function useProjectIssues(
     queryKey: ["project-issues", subdomain, projectSlug, params],
     queryFn: () => fetchProjectIssues(subdomain, projectSlug, params),
     enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+export function useProjectIssueDetail(
+  subdomain: string,
+  projectSlug: string,
+  issueId: number | string | null,
+) {
+  return useQuery({
+    queryKey: ["project-issue-detail", subdomain, projectSlug, issueId],
+    queryFn: () =>
+      fetchProjectIssueDetail({
+        subdomain,
+        projectSlug,
+        issueId: issueId as number | string,
+      }),
+    enabled: Boolean(subdomain && projectSlug && issueId),
   });
 }
