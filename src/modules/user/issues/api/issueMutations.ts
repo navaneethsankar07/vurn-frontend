@@ -69,7 +69,7 @@ export function useCreateProjectIssue() {
           variables.projectSlug,
         ],
       });
-      toast.success(data.message);
+      toast.success(data?.message || "Work item created successfully.");
     },
     onError: (error: any) => {
       const message =
@@ -114,6 +114,13 @@ export function useUpdateProjectIssue() {
           variables.projectSlug,
         ],
       });
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update issue.";
+      toast.error(message);
     },
   });
 }
@@ -425,6 +432,13 @@ export function useSetCommentReaction() {
         ],
         reactionData,
       );
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update reaction.";
+      toast.error(message);
     },
   });
 }

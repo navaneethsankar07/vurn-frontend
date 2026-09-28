@@ -14,6 +14,22 @@ export const issueUpdateSchema = z.object({
   assignee_id: z.number().int().positive().nullable().optional(),
   priority: z.enum(["urgent", "high", "medium", "low"]).optional(),
   story_points: z.number().int().min(0).nullable().optional(),
+  due_date: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(
+      (val) => !val || !isNaN(Date.parse(val)),
+      "Invalid due date format",
+    ),
+  estimated_time: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(
+      (val) => !val || !isNaN(Date.parse(val)),
+      "Invalid estimated date format",
+    ),
 });
 
 export const addLabelSchema = z
@@ -28,3 +44,5 @@ export const addLabelSchema = z
       message: "Provide either label_id or name, but not both.",
     },
   );
+
+export type IssueUpdateFormValues = z.infer<typeof issueUpdateSchema>;

@@ -9,7 +9,9 @@ import {
 import type {
   CommentReactionSummary,
   GetIssueCommentsParams,
+  IssueDetailResponse,
   IssueListParams,
+  IssueListResponse,
   LabelQueryParams,
   PaginatedCommentsResponse,
   ReactionParams,
@@ -20,7 +22,7 @@ export function useProjectIssues(
   projectSlug: string,
   params?: IssueListParams,
 ) {
-  return useQuery({
+  return useQuery<IssueListResponse>({
     queryKey: ["project-issues", subdomain, projectSlug, params],
     queryFn: () => fetchProjectIssues(subdomain, projectSlug, params),
     enabled: Boolean(subdomain && projectSlug),
@@ -32,8 +34,8 @@ export function useProjectIssueDetail(
   projectSlug: string,
   issueId: number | string | null,
 ) {
-  return useQuery({
-    queryKey: ["project-issue-detail", subdomain, projectSlug, issueId],
+  return useQuery<IssueDetailResponse>({
+    queryKey: ["project-issue-detail", subdomain, projectSlug, String(issueId)],
     queryFn: () =>
       fetchProjectIssueDetail({
         subdomain,

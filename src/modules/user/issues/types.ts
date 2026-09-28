@@ -23,6 +23,8 @@ export interface IssueItem {
   description: string;
   priority: WorkItemPriority;
   story_points: number | null;
+  due_date: string | null;
+  estimated_time: number | null;
   position: number;
   created_at: string;
   updated_at: string;
@@ -39,6 +41,8 @@ export interface CreateIssuePayload {
   assignee_id?: number | null;
   priority: WorkItemPriority;
   story_points?: number | null;
+  due_date?: string | null;
+  estimated_time?: number | null;
 }
 
 export interface CreateIssueParams {
@@ -57,6 +61,8 @@ export interface IssueListParams {
   assignee_id?: number | string;
   priority?: WorkItemPriority;
   status_id?: number | string;
+  due_date?: string;
+  estimated_time?: number;
   sort?: string;
   page?: number;
   page_size?: number;
@@ -73,7 +79,8 @@ export interface IssueDetailResponse extends IssueItem {
   assignee_name?: string | null;
   reporter_name?: string | null;
   sprint_name?: string | null;
-  due_date?: string | null;
+  due_date: string | null;
+  estimated_time: number | null;
   labels?: IssueLabel[];
 }
 
@@ -86,6 +93,8 @@ export interface UpdateIssuePayload {
   assignee_id?: number | null;
   priority?: WorkItemPriority;
   story_points?: number | null;
+  due_date?: string | null;
+  estimated_time?: number | null;
 }
 
 export interface UpdateIssueParams {

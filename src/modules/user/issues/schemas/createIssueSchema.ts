@@ -20,6 +20,22 @@ export const createIssueSchema = z.object({
       (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
       "Story points must be 0 or greater",
     ),
+  due_date: z
+    .string()
+    .optional()
+    .nullable()
+    .refine(
+      (val) => !val || !isNaN(Date.parse(val)),
+      "Invalid due date format",
+    ),
+  estimated_time: z
+    .string()
+    .optional()
+    .nullable()
+    .refine(
+      (val) => !val || !isNaN(Date.parse(val)),
+      "Invalid estimated date format",
+    ),
 });
 
 export type CreateIssueFormValues = z.infer<typeof createIssueSchema>;
