@@ -10,6 +10,7 @@ import {
   createProjectIssue,
   deleteCommentReaction,
   deleteIssueComment,
+  deleteProjectIssue,
   removeIssueLabel,
   setCommentReaction,
   updateIssueComment,
@@ -25,6 +26,8 @@ import type {
   CreateIssueParams,
   DeleteCommentParams,
   DeleteCommentResponse,
+  DeleteIssueParams,
+  DeleteIssueResponse,
   DeleteReactionResponse,
   IssueDetailResponse,
   IssueItem,
@@ -561,6 +564,69 @@ export function useDeleteCommentReaction() {
       } else {
         queryClient.invalidateQueries({ queryKey });
       }
+    },
+  });
+}
+
+export function useDeleteProjectIssue() {
+  const queryClient = useQueryClient();
+
+  return useMutation<DeleteIssueResponse, any, DeleteIssueParams>({
+    mutationFn: deleteProjectIssue,
+    onSuccess: (data, variables) => {
+      queryClient.removeQueries({
+        queryKey: [
+          "project-issue-detail",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.issueId),
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-issues",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["kanban-board", variables.subdomain, variables.projectSlug],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "kanban-column-issues",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "issue-subtasks",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-sprints",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+
+      toast.success(data?.message || "Issue deleted successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to delete issue.";
+      toast.error(message);
     },
   });
 }

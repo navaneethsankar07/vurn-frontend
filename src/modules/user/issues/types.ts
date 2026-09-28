@@ -315,3 +315,13 @@ export interface FetchSubtasksParams {
   issueId: number | string;
   params?: SubtaskListParams;
 }
+
+export interface DeleteIssueResponse {
+  message: string;
+}
+
+export interface DeleteIssueParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+}

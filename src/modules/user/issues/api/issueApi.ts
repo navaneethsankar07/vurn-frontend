@@ -7,6 +7,8 @@ import type {
   CreateIssueParams,
   DeleteCommentParams,
   DeleteCommentResponse,
+  DeleteIssueParams,
+  DeleteIssueResponse,
   DeleteReactionResponse,
   FetchSubtasksParams,
   GetIssueCommentsParams,
@@ -217,6 +219,17 @@ export async function fetchIssueSubtasks({
   const response = await api.get<SubtaskListResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/subtasks/`,
     { params },
+  );
+  return response.data;
+}
+
+export async function deleteProjectIssue({
+  subdomain,
+  projectSlug,
+  issueId,
+}: DeleteIssueParams): Promise<DeleteIssueResponse> {
+  const response = await api.delete<DeleteIssueResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/`,
   );
   return response.data;
 }

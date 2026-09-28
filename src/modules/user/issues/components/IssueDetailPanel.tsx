@@ -15,6 +15,7 @@ import {
   useUpdateProjectIssue,
   useAddIssueLabel,
   useRemoveIssueLabel,
+  useDeleteProjectIssue,
 } from "../api/issueMutations";
 
 import { IssueDetailHeader } from "./IssueDetailHeader";
@@ -22,6 +23,7 @@ import { IssueInfoCard } from "./IssueInfoCard";
 import { IssueLabelsCard } from "./IssueLabelsCard";
 import { IssueSubtasksSection } from "./IssueSubtasksSection";
 import { IssueCommentsSection } from "./IssueCommentsSection";
+import { DeleteIssueConfirmationModal } from "./modals/DeleteIssueConfirmModal";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
 import type { WorkItemPriority, IssueLabel, IssueItem } from "../types";
 
@@ -64,6 +66,8 @@ export function IssueDetailPanel({
   const [labelSearch, setLabelSearch] = useState("");
   const [isLabelOpen, setIsLabelOpen] = useState(false);
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const titleInputRef = useRef<HTMLInputElement>(null);
   const descInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -85,6 +89,8 @@ export function IssueDetailPanel({
   const { mutate: updateIssue } = useUpdateProjectIssue();
   const { mutate: addLabel, isPending: isAddingLabel } = useAddIssueLabel();
   const { mutate: removeLabel } = useRemoveIssueLabel();
+  const { mutate: deleteIssue, isPending: isDeletingIssue } =
+    useDeleteProjectIssue();
 
   const statuses = workflowData?.statuses || [];
   const members = membersResponse?.results || [];
@@ -137,6 +143,26 @@ export function IssueDetailPanel({
       prev.set("selectedIssue", String(previousId));
       return prev;
     });
+  };
+
+  const handleConfirmDelete = () => {
+    deleteIssue(
+      {
+        subdomain,
+        projectSlug,
+        issueId: currentIssueId,
+      },
+      {
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          if (canGoBack) {
+            handleBackToParent();
+          } else {
+            onClose();
+          }
+        },
+      },
+    );
   };
 
   if (isLoading) {
@@ -271,9 +297,10 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId: currentIssueId,
+        issue,
+        currentIssueId: currentIssueId,
         data: { priority },
-      });
+      } as any);
     }
   };
 
@@ -341,157 +368,12 @@ export function IssueDetailPanel({
   );
 
   return (
-    <div className="h-full w-full bg-[#09090B] border-l border-white/10 flex flex-col font-mono text-white text-xs select-none">
-      <IssueDetailHeader
-        issue={issue}
-        statuses={statuses}
-        isEditingPoints={pointsEditLocation === "header"}
-        pointsInput={pointsInput}
-        onPointsInputChange={setPointsInput}
-        onSavePoints={handleSavePoints}
-        onCancelPoints={() => {
-          setPointsEditLocation(null);
-          setPointsInput(
-            issue.story_points !== null && issue.story_points !== undefined
-              ? String(issue.story_points)
-              : "",
-          );
-        }}
-        onStartEditingPoints={() => {
-          setPointsInput(
-            issue.story_points !== null && issue.story_points !== undefined
-              ? String(issue.story_points)
-              : "",
-          );
-          setPointsEditLocation("header");
-        }}
-        onStatusChange={handleStatusChange}
-        onClose={onClose}
-        onBack={handleBackToParent}
-        canGoBack={canGoBack}
-      />
-
-      <div className="flex-1 overflow-y-auto p-5 space-y-6">
-        <div>
-          {isEditingTitle ? (
-            <Input
-              ref={titleInputRef}
-              value={titleInput}
-              onChange={(e) => setTitleInput(e.target.value)}
-              onBlur={handleSaveTitle}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSaveTitle();
-                if (e.key === "Escape") {
-                  setIsEditingTitle(false);
-                  setTitleInput(issue.title);
-                }
-              }}
-              className="bg-black border-amber-500 text-zinc-100 font-sans text-sm font-semibold h-8 rounded-xs px-2"
-            />
-          ) : (
-            <h2
-              onClick={() => setIsEditingTitle(true)}
-              className="text-sm font-semibold text-zinc-100 font-sans leading-snug cursor-pointer hover:bg-white/5 p-1 rounded-xs transition-colors"
-            >
-              {issue.title}
-            </h2>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-zinc-400">
-            <span className="text-[10px] font-semibold uppercase tracking-wider">
-              Description
-            </span>
-          </div>
-          {isEditingDesc ? (
-            <div className="space-y-2">
-              <Textarea
-                ref={descInputRef}
-                value={descInput}
-                onChange={(e) => setDescInput(e.target.value)}
-                rows={5}
-                className="bg-black border-amber-500 text-zinc-200 text-xs font-sans rounded-xs p-2.5 resize-y focus-visible:ring-0"
-              />
-              <div className="flex items-center justify-end gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsEditingDesc(false);
-                    setDescInput(issue.description || "");
-                  }}
-                  className="h-7 text-xs border-white/10 bg-transparent text-zinc-400 hover:text-white rounded-xs cursor-pointer"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleSaveDesc}
-                  className="h-7 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs cursor-pointer"
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div
-              onClick={() => setIsEditingDesc(true)}
-              className="text-zinc-300 font-sans text-xs leading-relaxed bg-black/40 p-3 rounded-xs border border-white/5 whitespace-pre-wrap cursor-pointer hover:border-white/20 transition-colors min-h-16"
-            >
-              {issue.description ? (
-                <ReactMarkdown>{issue.description}</ReactMarkdown>
-              ) : (
-                <span className="text-zinc-600 italic">
-                  Click to add a description...
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        {!isSubtask && (
-          <IssueSubtasksSection
-            subdomain={subdomain}
-            projectSlug={projectSlug}
-            issueId={currentIssueId}
-            onSelectSubtask={handleOpenSubtask}
-          />
-        )}
-
-        <IssueInfoCard
+    <>
+      <div className="h-full w-full bg-[#09090B] border-l border-white/10 flex flex-col font-mono text-white text-xs select-none">
+        <IssueDetailHeader
           issue={issue}
           statuses={statuses}
-          members={members}
-          boardSprints={boardSprints}
-          onStatusChange={handleStatusChange}
-          onPriorityChange={handlePriorityChange}
-          onAssigneeChange={handleAssigneeChange}
-          onSprintChange={handleSprintChange}
-          onDueDateChange={handleDueDateChange}
-          isEditingEstimateHours={isEditingEstimateHours}
-          estimateHoursInput={estimateHoursInput}
-          onEstimateHoursInputChange={setEstimateHoursInput}
-          onSaveEstimateHours={handleSaveEstimateHours}
-          onCancelEstimateHours={() => {
-            setIsEditingEstimateHours(false);
-            setEstimateHoursInput(
-              issue.estimated_time !== null &&
-                issue.estimated_time !== undefined
-                ? String(issue.estimated_time)
-                : "",
-            );
-          }}
-          onStartEditingEstimateHours={() => {
-            setEstimateHoursInput(
-              issue.estimated_time !== null &&
-                issue.estimated_time !== undefined
-                ? String(issue.estimated_time)
-                : "",
-            );
-            setIsEditingEstimateHours(true);
-          }}
-          isEditingPoints={pointsEditLocation === "info"}
+          isEditingPoints={pointsEditLocation === "header"}
           pointsInput={pointsInput}
           onPointsInputChange={setPointsInput}
           onSavePoints={handleSavePoints}
@@ -509,67 +391,225 @@ export function IssueDetailPanel({
                 ? String(issue.story_points)
                 : "",
             );
-            setPointsEditLocation("info");
+            setPointsEditLocation("header");
           }}
+          onStatusChange={handleStatusChange}
+          onClose={onClose}
+          onBack={handleBackToParent}
+          canGoBack={canGoBack}
+          onDelete={() => setIsDeleteModalOpen(true)}
         />
 
-        <IssueLabelsCard
-          labels={currentLabels}
-          isLabelOpen={isLabelOpen}
-          onLabelOpenChange={setIsLabelOpen}
-          labelSearch={labelSearch}
-          onLabelSearchChange={setLabelSearch}
-          filteredSuggestions={filteredSuggestions}
-          isAddingLabel={isAddingLabel}
-          onAttachExistingLabel={handleAttachExistingLabel}
-          onCreateAndAttachLabel={handleCreateAndAttachLabel}
-          onRemoveLabel={handleRemoveLabel}
-        />
-
-        <div className="space-y-3">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
-            Activity
-          </span>
-          <div className="space-y-2 text-[11px] text-zinc-400 font-sans">
-            <div className="flex items-center justify-between">
-              <span>Issue created</span>
-              <span className="text-[10px] font-mono text-zinc-600">
-                {formatRelativeTime(issue.created_at)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Status updated to {issue.status_name}</span>
-              <span className="text-[10px] font-mono text-zinc-600">
-                {formatRelativeTime(issue.updated_at)}
-              </span>
-            </div>
+        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+          <div>
+            {isEditingTitle ? (
+              <Input
+                ref={titleInputRef}
+                value={titleInput}
+                onChange={(e) => setTitleInput(e.target.value)}
+                onBlur={handleSaveTitle}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSaveTitle();
+                  if (e.key === "Escape") {
+                    setIsEditingTitle(false);
+                    setTitleInput(issue.title);
+                  }
+                }}
+                className="bg-black border-amber-500 text-zinc-100 font-sans text-sm font-semibold h-8 rounded-xs px-2"
+              />
+            ) : (
+              <h2
+                onClick={() => setIsEditingTitle(true)}
+                className="text-sm font-semibold text-zinc-100 font-sans leading-snug cursor-pointer hover:bg-white/5 p-1 rounded-xs transition-colors"
+              >
+                {issue.title}
+              </h2>
+            )}
           </div>
-        </div>
 
-        <IssueCommentsSection
-          subdomain={subdomain}
-          projectSlug={projectSlug}
-          issueId={currentIssueId}
-        />
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-zinc-400">
+              <span className="text-[10px] font-semibold uppercase tracking-wider">
+                Description
+              </span>
+            </div>
+            {isEditingDesc ? (
+              <div className="space-y-2">
+                <Textarea
+                  ref={descInputRef}
+                  value={descInput}
+                  onChange={(e) => setDescInput(e.target.value)}
+                  rows={5}
+                  className="bg-black border-amber-500 text-zinc-200 text-xs font-sans rounded-xs p-2.5 resize-y focus-visible:ring-0"
+                />
+                <div className="flex items-center justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditingDesc(false);
+                      setDescInput(issue.description || "");
+                    }}
+                    className="h-7 text-xs border-white/10 bg-transparent text-zinc-400 hover:text-white rounded-xs cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleSaveDesc}
+                    className="h-7 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs cursor-pointer"
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div
+                onClick={() => setIsEditingDesc(true)}
+                className="text-zinc-300 font-sans text-xs leading-relaxed bg-black/40 p-3 rounded-xs border border-white/5 whitespace-pre-wrap cursor-pointer hover:border-white/20 transition-colors min-h-16"
+              >
+                {issue.description ? (
+                  <ReactMarkdown>{issue.description}</ReactMarkdown>
+                ) : (
+                  <span className="text-zinc-600 italic">
+                    Click to add a description...
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-zinc-400">
-            <span className="text-[10px] font-semibold uppercase tracking-wider">
-              Attachments
+          {!isSubtask && (
+            <IssueSubtasksSection
+              subdomain={subdomain}
+              projectSlug={projectSlug}
+              issueId={currentIssueId}
+              onSelectSubtask={handleOpenSubtask}
+            />
+          )}
+
+          <IssueInfoCard
+            issue={issue}
+            statuses={statuses}
+            members={members}
+            boardSprints={boardSprints}
+            onStatusChange={handleStatusChange}
+            onPriorityChange={handlePriorityChange}
+            onAssigneeChange={handleAssigneeChange}
+            onSprintChange={handleSprintChange}
+            onDueDateChange={handleDueDateChange}
+            isEditingEstimateHours={isEditingEstimateHours}
+            estimateHoursInput={estimateHoursInput}
+            onEstimateHoursInputChange={setEstimateHoursInput}
+            onSaveEstimateHours={handleSaveEstimateHours}
+            onCancelEstimateHours={() => {
+              setIsEditingEstimateHours(false);
+              setEstimateHoursInput(
+                issue.estimated_time !== null &&
+                  issue.estimated_time !== undefined
+                  ? String(issue.estimated_time)
+                  : "",
+              );
+            }}
+            onStartEditingEstimateHours={() => {
+              setEstimateHoursInput(
+                issue.estimated_time !== null &&
+                  issue.estimated_time !== undefined
+                  ? String(issue.estimated_time)
+                  : "",
+              );
+              setIsEditingEstimateHours(true);
+            }}
+            isEditingPoints={pointsEditLocation === "info"}
+            pointsInput={pointsInput}
+            onPointsInputChange={setPointsInput}
+            onSavePoints={handleSavePoints}
+            onCancelPoints={() => {
+              setPointsEditLocation(null);
+              setPointsInput(
+                issue.story_points !== null && issue.story_points !== undefined
+                  ? String(issue.story_points)
+                  : "",
+              );
+            }}
+            onStartEditingPoints={() => {
+              setPointsInput(
+                issue.story_points !== null && issue.story_points !== undefined
+                  ? String(issue.story_points)
+                  : "",
+              );
+              setPointsEditLocation("info");
+            }}
+          />
+
+          <IssueLabelsCard
+            labels={currentLabels}
+            isLabelOpen={isLabelOpen}
+            onLabelOpenChange={setIsLabelOpen}
+            labelSearch={labelSearch}
+            onLabelSearchChange={setLabelSearch}
+            filteredSuggestions={filteredSuggestions}
+            isAddingLabel={isAddingLabel}
+            onAttachExistingLabel={handleAttachExistingLabel}
+            onCreateAndAttachLabel={handleCreateAndAttachLabel}
+            onRemoveLabel={handleRemoveLabel}
+          />
+
+          <div className="space-y-3">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
+              Activity
             </span>
-            <button
-              type="button"
-              className="flex items-center gap-1 text-[11px] text-amber-500 hover:text-amber-400 transition-colors"
-            >
-              <Paperclip className="h-3 w-3" />
-              <span>Attach</span>
-            </button>
+            <div className="space-y-2 text-[11px] text-zinc-400 font-sans">
+              <div className="flex items-center justify-between">
+                <span>Issue created</span>
+                <span className="text-[10px] font-mono text-zinc-600">
+                  {formatRelativeTime(issue.created_at)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Status updated to {issue.status_name}</span>
+                <span className="text-[10px] font-mono text-zinc-600">
+                  {formatRelativeTime(issue.updated_at)}
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="p-3 border border-dashed border-white/10 rounded-xs text-center text-zinc-600 text-[11px] font-sans">
-            No files attached yet.
+
+          <IssueCommentsSection
+            subdomain={subdomain}
+            projectSlug={projectSlug}
+            issueId={currentIssueId}
+          />
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-zinc-400">
+              <span className="text-[10px] font-semibold uppercase tracking-wider">
+                Attachments
+              </span>
+              <button
+                type="button"
+                className="flex items-center gap-1 text-[11px] text-amber-500 hover:text-amber-400 transition-colors"
+              >
+                <Paperclip className="h-3 w-3" />
+                <span>Attach</span>
+              </button>
+            </div>
+            <div className="p-3 border border-dashed border-white/10 rounded-xs text-center text-zinc-600 text-[11px] font-sans">
+              No files attached yet.
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <DeleteIssueConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        issueKey={issue.key}
+        issueTitle={issue.title}
+        issueType={issue.issue_type}
+        isPending={isDeletingIssue}
+      />
+    </>
   );
 }

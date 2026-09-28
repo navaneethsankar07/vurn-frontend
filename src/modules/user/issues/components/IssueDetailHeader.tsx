@@ -1,4 +1,5 @@
-import { MoreHorizontal, X, ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { MoreHorizontal, X, ArrowLeft, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -7,6 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { WORK_ITEM_TYPES } from "../constants";
 import type { IssueDetailResponse } from "../types";
 import type { WorkflowStatus } from "@/modules/user/projects/types";
@@ -24,6 +31,7 @@ interface IssueDetailHeaderProps {
   onClose: () => void;
   onBack?: () => void;
   canGoBack?: boolean;
+  onDelete?: () => void;
 }
 
 export function IssueDetailHeader({
@@ -39,7 +47,9 @@ export function IssueDetailHeader({
   onClose,
   onBack,
   canGoBack = false,
+  onDelete,
 }: IssueDetailHeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isSubtask = issue.issue_type === "subtask";
   const typeConfig =
     WORK_ITEM_TYPES.find((t) => t.value === issue.issue_type) ??
@@ -129,12 +139,31 @@ export function IssueDetailHeader({
       </div>
 
       <div className="flex items-center gap-1 text-zinc-500">
-        <button
-          type="button"
-          className="p-1 hover:text-white hover:bg-white/5 rounded-xs transition-colors"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </button>
+        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+          <DropdownMenuTrigger
+            type="button"
+            className="p-1 hover:text-white hover:bg-white/5 rounded-xs transition-colors cursor-pointer"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            sideOffset={4}
+            className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs min-w-max p-1"
+          >
+            <DropdownMenuItem
+              onClick={() => {
+                setIsMenuOpen(false);
+                onDelete?.();
+              }}
+              className="text-red-400 focus:bg-red-500/10 focus:text-red-300 rounded-xs cursor-pointer flex items-center gap-2 py-1.5 px-2.5 whitespace-nowrap"
+            >
+              <Trash2 className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">Delete {typeConfig.label}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <button
           type="button"
           onClick={onClose}
