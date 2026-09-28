@@ -129,6 +129,7 @@ export interface CommentReplyItem {
   issue_id?: number;
   parent_id?: number | null;
   author_id: number;
+  author_profile: string | null;
   author_name: string;
   content: string;
   created_at: string;
@@ -141,6 +142,7 @@ export interface CommentItem {
   parent_id?: number | null;
   author_id: number;
   author_name: string;
+  author_profile: string | null;
   content: string;
   created_at: string;
   updated_at: string;
@@ -154,11 +156,14 @@ export interface PaginatedCommentsResponse {
   results: CommentItem[];
 }
 
+export type CommentSortOption = "newest" | "top" | "oldest";
+
 export interface GetIssueCommentsParams {
   subdomain: string;
   projectSlug: string;
   issueId: number | string;
   page?: number;
+  sort?: CommentSortOption;
 }
 
 export interface CreateCommentPayload {
@@ -179,6 +184,7 @@ export interface CreateCommentResponse {
     id: number;
     issue_id: number;
     parent_id: number | null;
+    author_profile: string | null;
     author_id: number;
     author_name: string;
     content: string;

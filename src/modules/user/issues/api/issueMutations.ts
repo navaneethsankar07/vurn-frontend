@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   addIssueLabel,
@@ -149,37 +153,38 @@ export function useCreateIssueComment() {
   return useMutation<CreateCommentResponse, any, CreateCommentParams>({
     mutationFn: createIssueComment,
     onSuccess: (res, variables) => {
-      const queryKey = [
-        "issue-comments",
-        variables.subdomain,
-        variables.projectSlug,
-        String(variables.issueId),
-      ];
+      const newCommentRaw = res.comment;
+      const isReply = Boolean(newCommentRaw.parent_id);
 
-      queryClient.setQueryData<InfiniteData<PaginatedCommentsResponse>>(
-        queryKey,
+      const newCommentItem: CommentItem = {
+        ...newCommentRaw,
+        replies: [],
+      };
+
+      queryClient.setQueriesData<InfiniteData<PaginatedCommentsResponse>>(
+        {
+          queryKey: [
+            "issue-comments",
+            variables.subdomain,
+            variables.projectSlug,
+            String(variables.issueId),
+          ],
+        },
         (oldData) => {
           if (!oldData || !oldData.pages || oldData.pages.length === 0) {
             return oldData;
           }
 
-          const newCommentRaw = res.comment;
-          const newCommentItem: CommentItem = {
-            ...newCommentRaw,
-            replies: [],
-          };
-
-          const isReply = Boolean(newCommentRaw.parent_id);
-
           const updatedPages = oldData.pages.map((page, index) => {
-            const currentCount = (page.count || 0) + 1;
+            const currentCount = (page.count || 0) + (isReply ? 0 : 1);
 
             if (isReply) {
               const updatedResults = page.results.map((comment) => {
-                if (comment.id === newCommentRaw.parent_id) {
+                if (Number(comment.id) === Number(newCommentRaw.parent_id)) {
                   const currentReplies = Array.isArray(comment.replies)
                     ? comment.replies
                     : [];
+
                   return {
                     ...comment,
                     replies: [...currentReplies, newCommentItem],
@@ -190,7 +195,6 @@ export function useCreateIssueComment() {
 
               return {
                 ...page,
-                count: currentCount,
                 results: updatedResults,
               };
             }

@@ -2,9 +2,17 @@ import { useState } from "react";
 import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCreateIssueComment } from "../api/issueMutations";
 import { useIssueComments } from "../api/issueQueries";
 import { IssueCommentList } from "./IssueCommentList";
+import type { CommentSortOption } from "../types";
 
 interface IssueCommentsSectionProps {
   subdomain: string;
@@ -18,12 +26,14 @@ export function IssueCommentsSection({
   issueId,
 }: IssueCommentsSectionProps) {
   const [commentText, setCommentText] = useState("");
+  const [sortOption, setSortOption] = useState<CommentSortOption>("newest");
 
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useIssueComments({
       subdomain,
       projectSlug,
       issueId,
+      sort: sortOption,
     });
 
   const comments = data?.pages.flatMap((page) => page.results) || [];
@@ -59,9 +69,39 @@ export function IssueCommentsSection({
 
   return (
     <div className="space-y-4">
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
-        Comments ({totalCount})
-      </span>
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
+          Comments ({totalCount})
+        </span>
+
+        <Select
+          value={sortOption}
+          onValueChange={(val: string | null) => {
+            if (val) setSortOption(val as CommentSortOption);
+          }}
+        >
+          <SelectTrigger className="h-6 w-24 border border-white/10 bg-black text-[11px] text-zinc-300 rounded-xs px-2 py-0 focus:ring-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent
+            side="bottom"
+            align="end"
+            sideOffset={4}
+            alignItemWithTrigger={false}
+            className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs min-w-24"
+          >
+            <SelectItem value="oldest" className="cursor-pointer text-xs">
+              Oldest
+            </SelectItem>
+            <SelectItem value="newest" className="cursor-pointer text-xs">
+              Newest
+            </SelectItem>
+            <SelectItem value="top" className="cursor-pointer text-xs">
+              Top
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <IssueCommentList
         subdomain={subdomain}

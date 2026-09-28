@@ -119,11 +119,15 @@ export async function fetchIssueComments({
   projectSlug,
   issueId,
   page = 1,
+  sort = "newest",
 }: GetIssueCommentsParams): Promise<PaginatedCommentsResponse> {
   const response = await api.get<PaginatedCommentsResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
     {
-      params: { page },
+      params: {
+        page,
+        sort,
+      },
     },
   );
   return response.data;

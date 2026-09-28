@@ -57,15 +57,17 @@ export function useIssueComments({
   subdomain,
   projectSlug,
   issueId,
+  sort = "newest",
 }: Omit<GetIssueCommentsParams, "page">) {
   return useInfiniteQuery<PaginatedCommentsResponse>({
-    queryKey: ["issue-comments", subdomain, projectSlug, String(issueId)],
+    queryKey: ["issue-comments", subdomain, projectSlug, String(issueId), sort],
     queryFn: ({ pageParam = 1 }) =>
       fetchIssueComments({
         subdomain,
         projectSlug,
         issueId,
         page: pageParam as number,
+        sort,
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
