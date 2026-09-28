@@ -7,6 +7,7 @@ import type {
   CreateIssueParams,
   DeleteCommentParams,
   DeleteCommentResponse,
+  DeleteReactionResponse,
   GetIssueCommentsParams,
   IssueDetailParams,
   IssueDetailResponse,
@@ -189,6 +190,18 @@ export async function setCommentReaction({
   const response = await api.put<SetReactionResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reaction/`,
     data,
+  );
+  return response.data;
+}
+
+export async function deleteCommentReaction({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+}: ReactionParams): Promise<DeleteReactionResponse> {
+  const response = await api.delete<DeleteReactionResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reaction/`,
   );
   return response.data;
 }

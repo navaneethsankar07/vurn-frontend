@@ -8,6 +8,7 @@ import {
   addIssueLabel,
   createIssueComment,
   createProjectIssue,
+  deleteCommentReaction,
   deleteIssueComment,
   removeIssueLabel,
   setCommentReaction,
@@ -24,10 +25,12 @@ import type {
   CreateIssueParams,
   DeleteCommentParams,
   DeleteCommentResponse,
+  DeleteReactionResponse,
   IssueDetailResponse,
   IssueItem,
   IssueLabel,
   PaginatedCommentsResponse,
+  ReactionParams,
   RemoveIssueLabelParams,
   SetReactionParams,
   SetReactionResponse,
@@ -402,6 +405,7 @@ export function useDeleteIssueComment() {
     },
   });
 }
+
 export function useSetCommentReaction() {
   const queryClient = useQueryClient();
 
@@ -421,6 +425,29 @@ export function useSetCommentReaction() {
         ],
         reactionData,
       );
+    },
+  });
+}
+
+export function useDeleteCommentReaction() {
+  const queryClient = useQueryClient();
+
+  return useMutation<DeleteReactionResponse, any, ReactionParams>({
+    mutationFn: deleteCommentReaction,
+    onSuccess: (res, variables) => {
+      const queryKey = [
+        "comment-reactions",
+        variables.subdomain,
+        variables.projectSlug,
+        String(variables.issueId),
+        String(variables.commentId),
+      ];
+
+      if (res?.reaction) {
+        queryClient.setQueryData(queryKey, res.reaction);
+      } else {
+        queryClient.invalidateQueries({ queryKey });
+      }
     },
   });
 }

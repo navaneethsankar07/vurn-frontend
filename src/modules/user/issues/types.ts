@@ -232,13 +232,24 @@ export interface DeleteCommentResponse {
 export type CommentReactionType =
   "heart" | "like" | "laugh" | "celebrate" | "surprised" | "sad";
 
+export interface ReactedUser {
+  id: number;
+  name: string;
+  avatar: string | null;
+}
+
+export interface ReactionDetail {
+  count: number;
+  users: ReactedUser[];
+}
+
 export interface CommentReactionSummary {
-  heart: number;
-  like: number;
-  laugh: number;
-  celebrate: number;
-  surprised: number;
-  sad: number;
+  heart: ReactionDetail;
+  like: ReactionDetail;
+  laugh: ReactionDetail;
+  celebrate: ReactionDetail;
+  surprised: ReactionDetail;
+  sad: ReactionDetail;
   my_reaction: CommentReactionType | null;
 }
 
@@ -255,6 +266,11 @@ export interface SetReactionPayload {
 
 export interface SetReactionParams extends ReactionParams {
   data: SetReactionPayload;
+}
+
+export interface DeleteReactionResponse {
+  message?: string;
+  reaction?: CommentReactionSummary;
 }
 
 export interface SetReactionResponse {
