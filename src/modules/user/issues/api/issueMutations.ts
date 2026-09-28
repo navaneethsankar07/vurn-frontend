@@ -8,6 +8,7 @@ import {
   addIssueLabel,
   createIssueComment,
   createProjectIssue,
+  deleteIssueComment,
   removeIssueLabel,
   updateIssueComment,
   updateProjectIssue,
@@ -19,6 +20,8 @@ import type {
   CreateCommentParams,
   CreateCommentResponse,
   CreateIssueParams,
+  DeleteCommentParams,
+  DeleteCommentResponse,
   IssueDetailResponse,
   IssueItem,
   IssueLabel,
@@ -311,6 +314,86 @@ export function useUpdateIssueComment() {
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to update comment.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useDeleteIssueComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation<DeleteCommentResponse, any, DeleteCommentParams>({
+    mutationFn: deleteIssueComment,
+    onSuccess: (res, variables) => {
+      const targetId = Number(variables.commentId);
+
+      queryClient.setQueriesData<InfiniteData<PaginatedCommentsResponse>>(
+        {
+          queryKey: [
+            "issue-comments",
+            variables.subdomain,
+            variables.projectSlug,
+            String(variables.issueId),
+          ],
+        },
+        (oldData) => {
+          if (!oldData || !oldData.pages) return oldData;
+
+          let removedTopLevel = false;
+
+          const updatedPages = oldData.pages.map((page) => {
+            const hasTopLevelTarget = page.results.some(
+              (c) => c.id === targetId,
+            );
+
+            if (hasTopLevelTarget) {
+              removedTopLevel = true;
+              return {
+                ...page,
+                results: page.results.filter((c) => c.id !== targetId),
+              };
+            }
+
+            const updatedResults = page.results.map((c: CommentItem) => {
+              if (
+                Array.isArray(c.replies) &&
+                c.replies.some((r) => r.id === targetId)
+              ) {
+                return {
+                  ...c,
+                  replies: c.replies.filter((r) => r.id !== targetId),
+                };
+              }
+              return c;
+            });
+
+            return {
+              ...page,
+              results: updatedResults,
+            };
+          });
+
+          const finalPages = updatedPages.map((page) => ({
+            ...page,
+            count: removedTopLevel
+              ? Math.max(0, (page.count || 0) - 1)
+              : page.count,
+          }));
+
+          return {
+            ...oldData,
+            pages: finalPages,
+          };
+        },
+      );
+
+      toast.success(res?.message || "Comment deleted successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to delete comment.";
       toast.error(message);
     },
   });

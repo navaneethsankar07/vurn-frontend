@@ -217,3 +217,14 @@ export interface UpdateCommentResponse {
   parent_id?: number | null;
   message: string;
 }
+
+export interface DeleteCommentParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  commentId: number | string;
+}
+
+export interface DeleteCommentResponse {
+  message?: string;
+}

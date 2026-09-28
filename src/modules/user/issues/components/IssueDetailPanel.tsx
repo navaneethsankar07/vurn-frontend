@@ -324,7 +324,9 @@ export function IssueDetailPanel({
                       className="h-1.5 w-1.5 rounded-full shrink-0"
                       style={{ backgroundColor: s.color || "#888888" }}
                     />
-                    <span>{s.name}</span>
+                    <span style={{ color: "white" }}>
+                      {s.name}
+                    </span>
                   </div>
                 </SelectItem>
               ))}

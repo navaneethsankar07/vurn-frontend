@@ -8,15 +8,21 @@ import {
   ChevronDown,
   ChevronUp,
   Pencil,
+  Trash2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useCreateIssueComment } from "../api/issueMutations";
-import { formatRelativeTime } from "@/utils/sprintHelpers";
-import { IssueCommentEditForm } from "./IssueCommentEditForm";
-import type { CommentItem, CommentReplyItem } from "../types";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/app/store";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useModal } from "@/hooks/useModal";
+import {
+  useCreateIssueComment,
+  useDeleteIssueComment,
+} from "../api/issueMutations";
+import { formatRelativeTime, isCommentEdited } from "@/utils/sprintHelpers";
+import { IssueCommentEditForm } from "./IssueCommentEditForm";
+import { DeleteCommentModal } from "./modals/DeleteCommentModal";
+import type { CommentItem, CommentReplyItem } from "../types";
 
 interface IssueCommentListProps {
   subdomain: string;
@@ -50,6 +56,10 @@ export function IssueCommentList({
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [replyText, setReplyText] = useState("");
 
+  const [targetDeleteId, setTargetDeleteId] = useState<number | null>(null);
+  const [isDeletingReply, setIsDeletingReply] = useState(false);
+  const deleteModal = useModal();
+
   const [expandedReplies, setExpandedReplies] = useState<
     Record<number, boolean>
   >({});
@@ -57,7 +67,10 @@ export function IssueCommentList({
     Record<number, number>
   >({});
 
-  const { mutate: createComment, isPending } = useCreateIssueComment();
+  const { mutate: createComment, isPending: isCreatingReply } =
+    useCreateIssueComment();
+  const { mutate: deleteComment, isPending: isDeletingComment } =
+    useDeleteIssueComment();
 
   const handleOpenReply = (commentId: number) => {
     setEditingCommentId(null);
@@ -100,7 +113,7 @@ export function IssueCommentList({
 
   const handleSubmitReply = (parentId: number) => {
     const trimmed = replyText.trim();
-    if (!trimmed || isPending) return;
+    if (!trimmed || isCreatingReply) return;
 
     createComment(
       {
@@ -123,6 +136,37 @@ export function IssueCommentList({
               REPLIES_PAGE_SIZE,
             ),
           }));
+        },
+      },
+    );
+  };
+
+  const handlePromptDelete = (commentId: number, isReply = false) => {
+    setTargetDeleteId(commentId);
+    setIsDeletingReply(isReply);
+    deleteModal.openModal();
+  };
+
+  const handleConfirmDelete = () => {
+    if (!targetDeleteId || isDeletingComment) return;
+
+    deleteComment(
+      {
+        subdomain,
+        projectSlug,
+        issueId,
+        commentId: targetDeleteId,
+      },
+      {
+        onSuccess: () => {
+          deleteModal.closeModal();
+          setTargetDeleteId(null);
+          if (editingCommentId === targetDeleteId) {
+            setEditingCommentId(null);
+          }
+          if (activeReplyId === targetDeleteId) {
+            setActiveReplyId(null);
+          }
         },
       },
     );
@@ -198,12 +242,11 @@ export function IssueCommentList({
                   <span className="text-[10px] font-mono text-zinc-500">
                     {formatRelativeTime(comment.created_at, "")}
                   </span>
-                  {comment.updated_at &&
-                    comment.updated_at !== comment.created_at && (
-                      <span className="text-[9px] font-mono text-zinc-600">
-                        (edited)
-                      </span>
-                    )}
+                  {isCommentEdited(comment.created_at, comment.updated_at) && (
+                    <span className="text-[9px] font-mono text-zinc-600">
+                      (edited)
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -240,17 +283,27 @@ export function IssueCommentList({
                   </button>
 
                   {isCommentAuthor && !isEditingThisComment && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveReplyId(null);
-                        setEditingCommentId(comment.id);
-                      }}
-                      className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-white transition-colors py-0.5"
-                    >
-                      <Pencil className="h-3 w-3" />
-                      <span>Edit</span>
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveReplyId(null);
+                          setEditingCommentId(comment.id);
+                        }}
+                        className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-white transition-colors py-0.5"
+                      >
+                        <Pencil className="h-3 w-3" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePromptDelete(comment.id, false)}
+                        className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-red-400 transition-colors py-0.5"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        <span>Delete</span>
+                      </button>
+                    </>
                   )}
 
                   {totalReplies > 0 && (
@@ -277,6 +330,22 @@ export function IssueCommentList({
                   )}
                 </div>
               </div>
+
+              {targetDeleteId === comment.id && !isDeletingReply && (
+                <div className="pl-7 pt-1">
+                  <DeleteCommentModal
+                    isOpen={deleteModal.isOpen}
+                    onClose={() => {
+                      deleteModal.closeModal();
+                      setTargetDeleteId(null);
+                    }}
+                    onConfirm={handleConfirmDelete}
+                    isPending={isDeletingComment}
+                    isReply={false}
+                    hasReplies={totalReplies > 0}
+                  />
+                </div>
+              )}
             </div>
 
             {activeReplyId === comment.id && (
@@ -302,11 +371,11 @@ export function IssueCommentList({
                   </Button>
                   <Button
                     type="button"
-                    disabled={!replyText.trim() || isPending}
+                    disabled={!replyText.trim() || isCreatingReply}
                     onClick={() => handleSubmitReply(comment.id)}
                     className="h-6 px-2.5 bg-amber-500 text-black hover:bg-amber-400 text-[11px] font-semibold rounded-xs gap-1 transition-colors"
                   >
-                    {isPending ? (
+                    {isCreatingReply ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
                     ) : (
                       <Send className="h-3 w-3" />
@@ -351,12 +420,14 @@ export function IssueCommentList({
                           <span className="text-[10px] font-mono text-zinc-500">
                             {formatRelativeTime(reply.created_at, "")}
                           </span>
-                          {reply.updated_at &&
-                            reply.updated_at !== reply.created_at && (
-                              <span className="text-[9px] font-mono text-zinc-600">
-                                (edited)
-                              </span>
-                            )}
+                          {isCommentEdited(
+                            reply.created_at,
+                            reply.updated_at,
+                          ) && (
+                            <span className="text-[9px] font-mono text-zinc-600">
+                              (edited)
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -378,7 +449,7 @@ export function IssueCommentList({
                       )}
 
                       {isReplyAuthor && !isEditingThisReply && (
-                        <div className="flex items-center gap-2 pl-5 pt-0.5">
+                        <div className="flex items-center gap-3 pl-5 pt-0.5">
                           <button
                             type="button"
                             onClick={() => {
@@ -390,6 +461,30 @@ export function IssueCommentList({
                             <Pencil className="h-2.5 w-2.5" />
                             <span>Edit</span>
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => handlePromptDelete(reply.id, true)}
+                            className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-red-400 transition-colors"
+                          >
+                            <Trash2 className="h-2.5 w-2.5" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      )}
+
+                      {targetDeleteId === reply.id && isDeletingReply && (
+                        <div className="pl-5 pt-1">
+                          <DeleteCommentModal
+                            isOpen={deleteModal.isOpen}
+                            onClose={() => {
+                              deleteModal.closeModal();
+                              setTargetDeleteId(null);
+                            }}
+                            onConfirm={handleConfirmDelete}
+                            isPending={isDeletingComment}
+                            isReply={true}
+                            hasReplies={false}
+                          />
                         </div>
                       )}
                     </div>

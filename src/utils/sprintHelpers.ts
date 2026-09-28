@@ -63,3 +63,17 @@ export function formatRelativeTime(
   const weeks = Math.floor(days / 7);
   return `${prefix}${weeks}w ago`;
 }
+
+export function isCommentEdited(
+  createdAt?: string,
+  updatedAt?: string,
+): boolean {
+  if (!createdAt || !updatedAt) return false;
+  try {
+    const created = parseISO(createdAt);
+    const updated = parseISO(updatedAt);
+    return differenceInSeconds(updated, created) > 2;
+  } catch {
+    return false;
+  }
+}

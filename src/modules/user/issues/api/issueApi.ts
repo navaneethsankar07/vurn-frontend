@@ -4,6 +4,8 @@ import type {
   CreateCommentParams,
   CreateCommentResponse,
   CreateIssueParams,
+  DeleteCommentParams,
+  DeleteCommentResponse,
   GetIssueCommentsParams,
   IssueDetailParams,
   IssueDetailResponse,
@@ -145,6 +147,18 @@ export async function updateIssueComment({
   const response = await api.patch<UpdateCommentResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/`,
     data,
+  );
+  return response.data;
+}
+
+export async function deleteIssueComment({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+}: DeleteCommentParams): Promise<DeleteCommentResponse> {
+  const response = await api.delete<DeleteCommentResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/`,
   );
   return response.data;
 }
