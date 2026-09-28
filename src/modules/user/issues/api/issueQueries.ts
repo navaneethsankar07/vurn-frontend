@@ -2,6 +2,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   fetchCommentReactions,
   fetchIssueComments,
+  fetchIssueSubtasks,
   fetchLabelSuggestions,
   fetchProjectIssueDetail,
   fetchProjectIssues,
@@ -15,6 +16,8 @@ import type {
   LabelQueryParams,
   PaginatedCommentsResponse,
   ReactionParams,
+  SubtaskListParams,
+  SubtaskListResponse,
 } from "../types";
 
 export function useProjectIssues(
@@ -111,5 +114,39 @@ export function useCommentReactions({
         commentId,
       }),
     enabled: Boolean(subdomain && projectSlug && issueId && commentId),
+  });
+}
+
+interface UseIssueSubtasksOptions {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string | null;
+  params?: SubtaskListParams;
+  enabled?: boolean;
+}
+
+export function useIssueSubtasks({
+  subdomain,
+  projectSlug,
+  issueId,
+  params,
+  enabled = true,
+}: UseIssueSubtasksOptions) {
+  return useQuery<SubtaskListResponse>({
+    queryKey: [
+      "issue-subtasks",
+      subdomain,
+      projectSlug,
+      String(issueId),
+      params,
+    ],
+    queryFn: () =>
+      fetchIssueSubtasks({
+        subdomain,
+        projectSlug,
+        issueId: issueId as number | string,
+        params,
+      }),
+    enabled: Boolean(enabled && subdomain && projectSlug && issueId),
   });
 }

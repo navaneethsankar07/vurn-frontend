@@ -8,6 +8,7 @@ import type {
   DeleteCommentParams,
   DeleteCommentResponse,
   DeleteReactionResponse,
+  FetchSubtasksParams,
   GetIssueCommentsParams,
   IssueDetailParams,
   IssueDetailResponse,
@@ -21,6 +22,7 @@ import type {
   RemoveIssueLabelParams,
   SetReactionParams,
   SetReactionResponse,
+  SubtaskListResponse,
   UpdateCommentParams,
   UpdateCommentResponse,
   UpdateIssueParams,
@@ -202,6 +204,19 @@ export async function deleteCommentReaction({
 }: ReactionParams): Promise<DeleteReactionResponse> {
   const response = await api.delete<DeleteReactionResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reaction/`,
+  );
+  return response.data;
+}
+
+export async function fetchIssueSubtasks({
+  subdomain,
+  projectSlug,
+  issueId,
+  params,
+}: FetchSubtasksParams): Promise<SubtaskListResponse> {
+  const response = await api.get<SubtaskListResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/subtasks/`,
+    { params },
   );
   return response.data;
 }

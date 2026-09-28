@@ -286,3 +286,27 @@ export interface SetReactionResponse {
   message: string;
   reaction: CommentReactionSummary;
 }
+
+export type SubtaskSortOption =
+  "position" | "created_asc" | "created_desc" | "updated_asc" | "updated_desc";
+
+export interface SubtaskListParams {
+  search?: string;
+  sort?: SubtaskSortOption;
+  page?: number;
+  page_size?: number;
+}
+
+export interface SubtaskListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: IssueItem[];
+}
+
+export interface FetchSubtasksParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  params?: SubtaskListParams;
+}
