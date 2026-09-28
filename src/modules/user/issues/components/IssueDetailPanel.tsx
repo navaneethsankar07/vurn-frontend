@@ -53,7 +53,9 @@ export function IssueDetailPanel({
   const [titleInput, setTitleInput] = useState("");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [descInput, setDescInput] = useState("");
-  const [isEditingPoints, setIsEditingPoints] = useState(false);
+  const [pointsEditLocation, setPointsEditLocation] = useState<
+    "header" | "info" | null
+  >(null);
   const [pointsInput, setPointsInput] = useState("");
 
   const [isEditingEstimateHours, setIsEditingEstimateHours] = useState(false);
@@ -197,9 +199,13 @@ export function IssueDetailPanel({
   };
 
   const handleSavePoints = () => {
-    setIsEditingPoints(false);
-    const parsed = pointsInput.trim() === "" ? null : Number(pointsInput);
-    if (parsed !== issue.story_points && (parsed === null || !isNaN(parsed))) {
+    setPointsEditLocation(null);
+    const trimmed = pointsInput.trim();
+    const parsed = trimmed === "" ? null : Number(trimmed);
+    if (
+      parsed !== issue.story_points &&
+      (parsed === null || (!isNaN(parsed) && parsed >= 0))
+    ) {
       updateIssue({
         subdomain,
         projectSlug,
@@ -339,19 +345,26 @@ export function IssueDetailPanel({
       <IssueDetailHeader
         issue={issue}
         statuses={statuses}
-        isEditingPoints={isEditingPoints}
+        isEditingPoints={pointsEditLocation === "header"}
         pointsInput={pointsInput}
         onPointsInputChange={setPointsInput}
         onSavePoints={handleSavePoints}
         onCancelPoints={() => {
-          setIsEditingPoints(false);
+          setPointsEditLocation(null);
           setPointsInput(
             issue.story_points !== null && issue.story_points !== undefined
               ? String(issue.story_points)
               : "",
           );
         }}
-        onStartEditingPoints={() => setIsEditingPoints(true)}
+        onStartEditingPoints={() => {
+          setPointsInput(
+            issue.story_points !== null && issue.story_points !== undefined
+              ? String(issue.story_points)
+              : "",
+          );
+          setPointsEditLocation("header");
+        }}
         onStatusChange={handleStatusChange}
         onClose={onClose}
         onBack={handleBackToParent}
@@ -478,19 +491,26 @@ export function IssueDetailPanel({
             );
             setIsEditingEstimateHours(true);
           }}
-          isEditingPoints={isEditingPoints}
+          isEditingPoints={pointsEditLocation === "info"}
           pointsInput={pointsInput}
           onPointsInputChange={setPointsInput}
           onSavePoints={handleSavePoints}
           onCancelPoints={() => {
-            setIsEditingPoints(false);
+            setPointsEditLocation(null);
             setPointsInput(
               issue.story_points !== null && issue.story_points !== undefined
                 ? String(issue.story_points)
                 : "",
             );
           }}
-          onStartEditingPoints={() => setIsEditingPoints(true)}
+          onStartEditingPoints={() => {
+            setPointsInput(
+              issue.story_points !== null && issue.story_points !== undefined
+                ? String(issue.story_points)
+                : "",
+            );
+            setPointsEditLocation("info");
+          }}
         />
 
         <IssueLabelsCard

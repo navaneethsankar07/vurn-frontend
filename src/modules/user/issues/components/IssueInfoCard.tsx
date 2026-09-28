@@ -1,5 +1,4 @@
 import {
-  X,
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
@@ -398,36 +397,20 @@ export function IssueInfoCard({
             <div className="py-2 px-3 flex items-center justify-between">
               <span className="text-zinc-500">Estimated Hours</span>
               {isEditingEstimateHours ? (
-                <div className="flex items-center gap-1">
-                  <Input
-                    autoFocus
-                    value={estimateHoursInput}
-                    onChange={(e) => onEstimateHoursInputChange(e.target.value)}
-                    onBlur={onSaveEstimateHours}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") onSaveEstimateHours();
-                      if (e.key === "Escape") onCancelEstimateHours();
-                    }}
-                    type="number"
-                    min="0"
-                    placeholder="Hours"
-                    className="h-6 w-16 bg-black border-amber-500 text-white text-[10px] px-1 py-0 rounded-xs"
-                  />
-                  <button
-                    type="button"
-                    onClick={onSaveEstimateHours}
-                    className="h-6 px-1.5 bg-amber-500 text-black text-[10px] font-semibold rounded-xs"
-                  >
-                    Set
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onCancelEstimateHours}
-                    className="h-6 px-1 text-zinc-400 hover:text-white text-[10px]"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
+                <Input
+                  autoFocus
+                  value={estimateHoursInput}
+                  onChange={(e) => onEstimateHoursInputChange(e.target.value)}
+                  onBlur={onSaveEstimateHours}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") onSaveEstimateHours();
+                    if (e.key === "Escape") onCancelEstimateHours();
+                  }}
+                  type="number"
+                  min="0"
+                  placeholder="Hours"
+                  className="h-6 w-16 bg-black border-amber-500 text-white text-[10px] px-1 py-0 rounded-xs"
+                />
               ) : (
                 <span
                   onClick={onStartEditingEstimateHours}
@@ -455,6 +438,7 @@ export function IssueInfoCard({
                   }}
                   type="number"
                   min="0"
+                  placeholder="Points"
                   className="h-6 w-16 bg-black border-amber-500 text-zinc-200 text-xs px-1 py-0 rounded-xs"
                 />
               ) : (

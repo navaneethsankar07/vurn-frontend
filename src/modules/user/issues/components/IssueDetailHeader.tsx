@@ -40,6 +40,7 @@ export function IssueDetailHeader({
   onBack,
   canGoBack = false,
 }: IssueDetailHeaderProps) {
+  const isSubtask = issue.issue_type === "subtask";
   const typeConfig =
     WORK_ITEM_TYPES.find((t) => t.value === issue.issue_type) ??
     WORK_ITEM_TYPES[2];
@@ -99,8 +100,8 @@ export function IssueDetailHeader({
           </SelectContent>
         </Select>
 
-        {isEditingPoints ? (
-          <div className="flex items-center gap-1">
+        {!isSubtask &&
+          (isEditingPoints ? (
             <Input
               autoFocus
               value={pointsInput}
@@ -114,18 +115,17 @@ export function IssueDetailHeader({
               min="0"
               className="h-6 w-14 bg-black border-amber-500 text-white text-[10px] px-1 py-0 rounded-xs"
             />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={onStartEditingPoints}
-            className="bg-zinc-800 hover:bg-zinc-700 text-[10px] px-1.5 py-0.5 rounded-xs text-zinc-300 transition-colors cursor-pointer"
-          >
-            {issue.story_points !== null && issue.story_points !== undefined
-              ? `${issue.story_points} pt`
-              : "+ Points"}
-          </button>
-        )}
+          ) : (
+            <button
+              type="button"
+              onClick={onStartEditingPoints}
+              className="bg-zinc-800 hover:bg-zinc-700 text-[10px] px-1.5 py-0.5 rounded-xs text-zinc-300 transition-colors cursor-pointer"
+            >
+              {issue.story_points !== null && issue.story_points !== undefined
+                ? `${issue.story_points} pt`
+                : "+ Points"}
+            </button>
+          ))}
       </div>
 
       <div className="flex items-center gap-1 text-zinc-500">
