@@ -66,11 +66,11 @@ export function IssueCommentsSection({
       </span>
 
       <IssueCommentList
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        issueId={issueId}
         comments={comments}
         isLoading={isLoading}
-        onReplyClick={(commentId, authorName) => {
-          console.log("Reply intent for comment:", commentId, authorName);
-        }}
       />
 
       <div className="space-y-2 pt-2 border-t border-white/5">
