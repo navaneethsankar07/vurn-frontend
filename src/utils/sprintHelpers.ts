@@ -45,18 +45,21 @@ export function formatSprintDates(
   return `${format(start, "MMM d")} - ${format(end, "MMM d")}`;
 }
 
-export function formatRelativeTime(dateStr: string): string {
+export function formatRelativeTime(
+  dateStr: string,
+  prefix = "Updated ",
+): string {
   if (!dateStr) return "";
   const date = parseISO(dateStr);
   const diffInSeconds = Math.abs(differenceInSeconds(new Date(), date));
 
-  if (diffInSeconds < 60) return "Updated just now";
+  if (diffInSeconds < 60) return prefix ? `${prefix}just now` : "Just now";
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `Updated ${minutes}m ago`;
+  if (minutes < 60) return `${prefix}${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `Updated ${hours}h ago`;
+  if (hours < 24) return `${prefix}${hours}h ago`;
   const days = Math.floor(hours / 24);
-  if (days < 30) return `Updated ${days}d ago`;
+  if (days < 30) return `${prefix}${days}d ago`;
   const weeks = Math.floor(days / 7);
-  return `Updated ${weeks}w ago`;
+  return `${prefix}${weeks}w ago`;
 }

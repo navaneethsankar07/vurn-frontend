@@ -1,11 +1,16 @@
 import api from "@/api/axios";
 import type {
+  AddIssueLabelParams,
   CreateIssueParams,
   IssueDetailParams,
   IssueDetailResponse,
   IssueItem,
+  IssueLabel,
   IssueListParams,
   IssueListResponse,
+  LabelQueryParams,
+  RemoveIssueLabelParams,
+  UpdateIssueParams,
 } from "../types";
 
 export async function createProjectIssue({
@@ -41,4 +46,53 @@ export async function fetchProjectIssueDetail({
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/`,
   );
   return response.data;
+}
+
+export async function updateProjectIssue({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: UpdateIssueParams): Promise<IssueDetailResponse> {
+  const response = await api.patch<IssueDetailResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function fetchLabelSuggestions(
+  subdomain: string,
+  projectSlug: string,
+  params?: LabelQueryParams,
+): Promise<IssueLabel[]> {
+  const response = await api.get<IssueLabel[]>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/labels/`,
+    { params },
+  );
+  return response.data;
+}
+
+export async function addIssueLabel({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: AddIssueLabelParams): Promise<IssueLabel> {
+  const response = await api.post<IssueLabel>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/labels/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function removeIssueLabel({
+  subdomain,
+  projectSlug,
+  issueId,
+  labelId,
+}: RemoveIssueLabelParams): Promise<void> {
+  await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/labels/${labelId}/`,
+  );
 }

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchProjectIssueDetail, fetchProjectIssues } from "./issueApi";
-import type { IssueListParams } from "../types";
+import { fetchLabelSuggestions, fetchProjectIssueDetail, fetchProjectIssues } from "./issueApi";
+import type { IssueListParams, LabelQueryParams } from "../types";
 
 export function useProjectIssues(
   subdomain: string,
@@ -28,5 +28,17 @@ export function useProjectIssueDetail(
         issueId: issueId as number | string,
       }),
     enabled: Boolean(subdomain && projectSlug && issueId),
+  });
+}
+
+export function useLabelSuggestions(
+  subdomain: string,
+  projectSlug: string,
+  params?: LabelQueryParams,
+) {
+  return useQuery({
+    queryKey: ["issue-label-suggestions", subdomain, projectSlug, params],
+    queryFn: () => fetchLabelSuggestions(subdomain, projectSlug, params),
+    enabled: Boolean(subdomain && projectSlug),
   });
 }

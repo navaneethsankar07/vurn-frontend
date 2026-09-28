@@ -59,6 +59,8 @@ export function CreateIssueModal({
   sprints = [],
   parentCandidates = [],
 }: CreateIssueModalProps) {
+  const defaultStatus = statuses.find((s) => s.is_default) || statuses[0];
+
   const {
     register,
     handleSubmit,
@@ -76,7 +78,7 @@ export function CreateIssueModal({
       description: "",
       parent_id: "",
       sprint_id: "",
-      status_id: statuses[0]?.id ? String(statuses[0].id) : "",
+      status_id: defaultStatus?.id ? String(defaultStatus.id) : "",
       assignee_id: "",
       priority: "medium",
       story_points: "",
@@ -92,8 +94,9 @@ export function CreateIssueModal({
   useEffect(() => {
     if (isOpen) {
       setValue("issue_type", defaultType);
-      if (statuses.length > 0 && !selectedStatusId) {
-        setValue("status_id", String(statuses[0].id));
+      const fallbackStatus = statuses.find((s) => s.is_default) || statuses[0];
+      if (fallbackStatus && !selectedStatusId) {
+        setValue("status_id", String(fallbackStatus.id));
       }
     }
   }, [isOpen, defaultType, statuses, setValue, selectedStatusId]);
@@ -225,7 +228,9 @@ export function CreateIssueModal({
                         alignItemWithTrigger={false}
                         className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs"
                       >
-                        {WORK_ITEM_TYPES.filter((t) => t.value !== "subtask").map((t) => {
+                        {WORK_ITEM_TYPES.filter(
+                          (t) => t.value !== "subtask",
+                        ).map((t) => {
                           const Icon = t.icon;
                           return (
                             <SelectItem

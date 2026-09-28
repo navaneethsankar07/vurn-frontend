@@ -1,6 +1,12 @@
 export type WorkItemType = "epic" | "story" | "task" | "bug" | "subtask";
 export type WorkItemPriority = "urgent" | "high" | "medium" | "low";
 
+export interface IssueLabel {
+  id: number;
+  name: string;
+  color: string;
+}
+
 export interface IssueItem {
   id: number;
   key: string;
@@ -68,6 +74,49 @@ export interface IssueDetailResponse extends IssueItem {
   reporter_name?: string | null;
   sprint_name?: string | null;
   due_date?: string | null;
+  labels?: IssueLabel[];
+}
+
+export interface UpdateIssuePayload {
+  title?: string;
+  description?: string;
+  parent_id?: number | null;
+  sprint_id?: number | null;
+  status_id?: number;
+  assignee_id?: number | null;
+  priority?: WorkItemPriority;
+  story_points?: number | null;
+}
+
+export interface UpdateIssueParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: UpdateIssuePayload;
+}
+
+export interface AddIssueLabelPayload {
+  label_id?: number;
+  name?: string;
+  color?: string;
+}
+
+export interface AddIssueLabelParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: AddIssueLabelPayload;
+}
+
+export interface RemoveIssueLabelParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  labelId: number | string;
+}
+
+export interface LabelQueryParams {
+  search?: string;
 }
 
 export interface IssueDetailParams {
