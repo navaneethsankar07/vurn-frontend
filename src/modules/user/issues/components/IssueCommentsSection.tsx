@@ -92,19 +92,19 @@ export function IssueCommentsSection({
           >
             <SelectItem
               value="oldest"
-              className="rounded-xs cursor-pointer text-xs"
+              className="rounded-xs cursor-pointer text-xs focus:bg-white/10 focus:border-transparent"
             >
               Oldest
             </SelectItem>
             <SelectItem
               value="newest"
-              className="rounded-xs cursor-pointer text-xs"
+              className="rounded-xs cursor-pointer text-xs focus:bg-white/10"
             >
               Newest
             </SelectItem>
             <SelectItem
               value="top"
-              className="rounded-xs cursor-pointer text-xs"
+              className="rounded-xs cursor-pointer text-xs focus:bg-white/10"
             >
               Top
             </SelectItem>

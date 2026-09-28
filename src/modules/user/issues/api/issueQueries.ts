@@ -132,7 +132,7 @@ export function useIssueSubtasks({
   params,
   enabled = true,
 }: UseIssueSubtasksOptions) {
-  return useQuery<SubtaskListResponse>({
+  return useInfiniteQuery<SubtaskListResponse>({
     queryKey: [
       "issue-subtasks",
       subdomain,
@@ -140,13 +140,27 @@ export function useIssueSubtasks({
       String(issueId),
       params,
     ],
-    queryFn: () =>
+    queryFn: ({ pageParam = 1 }) =>
       fetchIssueSubtasks({
         subdomain,
         projectSlug,
         issueId: issueId as number | string,
-        params,
+        params: {
+          ...params,
+          page: pageParam as number,
+        },
       }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.next) return undefined;
+      try {
+        const url = new URL(lastPage.next);
+        const nextPage = url.searchParams.get("page");
+        return nextPage ? Number(nextPage) : undefined;
+      } catch {
+        return undefined;
+      }
+    },
     enabled: Boolean(enabled && subdomain && projectSlug && issueId),
   });
 }

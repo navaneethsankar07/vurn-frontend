@@ -290,6 +290,11 @@ export interface SetReactionResponse {
 export type SubtaskSortOption =
   "position" | "created_asc" | "created_desc" | "updated_asc" | "updated_desc";
 
+export interface SubtaskItem extends IssueItem {
+  due_date: string | null;
+  estimated_time: number | null;
+}
+
 export interface SubtaskListParams {
   search?: string;
   sort?: SubtaskSortOption;
@@ -301,7 +306,7 @@ export interface SubtaskListResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: IssueItem[];
+  results: SubtaskItem[];
 }
 
 export interface FetchSubtasksParams {

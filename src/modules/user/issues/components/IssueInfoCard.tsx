@@ -229,6 +229,7 @@ export function IssueInfoCard({
   onCancelPoints,
   onStartEditingPoints,
 }: IssueInfoCardProps) {
+  const isSubtask = issue.issue_type === "subtask";
   const currentPriorityConfig =
     WORK_ITEM_PRIORITIES.find((p) => p.value === issue.priority) ??
     WORK_ITEM_PRIORITIES[2];
@@ -384,85 +385,89 @@ export function IssueInfoCard({
           </Select>
         </div>
 
-        <div className="py-2 px-3 flex items-center justify-between">
-          <span className="text-zinc-500">Due Date</span>
-          <InlineDatePickerPopover
-            value={issue.due_date}
-            onChange={onDueDateChange}
-          />
-        </div>
-
-        <div className="py-2 px-3 flex items-center justify-between">
-          <span className="text-zinc-500">Estimated Hours</span>
-          {isEditingEstimateHours ? (
-            <div className="flex items-center gap-1">
-              <Input
-                autoFocus
-                value={estimateHoursInput}
-                onChange={(e) => onEstimateHoursInputChange(e.target.value)}
-                onBlur={onSaveEstimateHours}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") onSaveEstimateHours();
-                  if (e.key === "Escape") onCancelEstimateHours();
-                }}
-                type="number"
-                min="0"
-                placeholder="Hours"
-                className="h-6 w-16 bg-black border-amber-500 text-white text-[10px] px-1 py-0 rounded-xs"
+        {!isSubtask && (
+          <>
+            <div className="py-2 px-3 flex items-center justify-between">
+              <span className="text-zinc-500">Due Date</span>
+              <InlineDatePickerPopover
+                value={issue.due_date}
+                onChange={onDueDateChange}
               />
-              <button
-                type="button"
-                onClick={onSaveEstimateHours}
-                className="h-6 px-1.5 bg-amber-500 text-black text-[10px] font-semibold rounded-xs"
-              >
-                Set
-              </button>
-              <button
-                type="button"
-                onClick={onCancelEstimateHours}
-                className="h-6 px-1 text-zinc-400 hover:text-white text-[10px]"
-              >
-                <X className="h-3 w-3" />
-              </button>
             </div>
-          ) : (
-            <span
-              onClick={onStartEditingEstimateHours}
-              className="text-zinc-200 cursor-pointer hover:bg-white/5 px-1 py-0.5 rounded-xs transition-colors"
-            >
-              {issue.estimated_time !== null &&
-              issue.estimated_time !== undefined
-                ? `${issue.estimated_time}h`
-                : "—"}
-            </span>
-          )}
-        </div>
 
-        <div className="py-2 px-3 flex items-center justify-between">
-          <span className="text-zinc-500">Story Points</span>
-          {isEditingPoints ? (
-            <Input
-              autoFocus
-              value={pointsInput}
-              onChange={(e) => onPointsInputChange(e.target.value)}
-              onBlur={onSavePoints}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") onSavePoints();
-                if (e.key === "Escape") onCancelPoints();
-              }}
-              type="number"
-              min="0"
-              className="h-6 w-16 bg-black border-amber-500 text-zinc-200 text-xs px-1 py-0 rounded-xs"
-            />
-          ) : (
-            <span
-              onClick={onStartEditingPoints}
-              className="text-zinc-200 cursor-pointer hover:bg-white/5 px-1 py-0.5 rounded-xs transition-colors"
-            >
-              {issue.story_points ?? "—"}
-            </span>
-          )}
-        </div>
+            <div className="py-2 px-3 flex items-center justify-between">
+              <span className="text-zinc-500">Estimated Hours</span>
+              {isEditingEstimateHours ? (
+                <div className="flex items-center gap-1">
+                  <Input
+                    autoFocus
+                    value={estimateHoursInput}
+                    onChange={(e) => onEstimateHoursInputChange(e.target.value)}
+                    onBlur={onSaveEstimateHours}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") onSaveEstimateHours();
+                      if (e.key === "Escape") onCancelEstimateHours();
+                    }}
+                    type="number"
+                    min="0"
+                    placeholder="Hours"
+                    className="h-6 w-16 bg-black border-amber-500 text-white text-[10px] px-1 py-0 rounded-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={onSaveEstimateHours}
+                    className="h-6 px-1.5 bg-amber-500 text-black text-[10px] font-semibold rounded-xs"
+                  >
+                    Set
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onCancelEstimateHours}
+                    className="h-6 px-1 text-zinc-400 hover:text-white text-[10px]"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ) : (
+                <span
+                  onClick={onStartEditingEstimateHours}
+                  className="text-zinc-200 cursor-pointer hover:bg-white/5 px-1 py-0.5 rounded-xs transition-colors"
+                >
+                  {issue.estimated_time !== null &&
+                  issue.estimated_time !== undefined
+                    ? `${issue.estimated_time}h`
+                    : "—"}
+                </span>
+              )}
+            </div>
+
+            <div className="py-2 px-3 flex items-center justify-between">
+              <span className="text-zinc-500">Story Points</span>
+              {isEditingPoints ? (
+                <Input
+                  autoFocus
+                  value={pointsInput}
+                  onChange={(e) => onPointsInputChange(e.target.value)}
+                  onBlur={onSavePoints}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") onSavePoints();
+                    if (e.key === "Escape") onCancelPoints();
+                  }}
+                  type="number"
+                  min="0"
+                  className="h-6 w-16 bg-black border-amber-500 text-zinc-200 text-xs px-1 py-0 rounded-xs"
+                />
+              ) : (
+                <span
+                  onClick={onStartEditingPoints}
+                  className="text-zinc-200 cursor-pointer hover:bg-white/5 px-1 py-0.5 rounded-xs transition-colors"
+                >
+                  {issue.story_points ?? "—"}
+                </span>
+              )}
+            </div>
+          </>
+        )}
 
         <div className="py-2 px-3 flex items-center justify-between">
           <span className="text-zinc-500">Created</span>

@@ -34,6 +34,7 @@ import type {
   RemoveIssueLabelParams,
   SetReactionParams,
   SetReactionResponse,
+  SubtaskItem,
   SubtaskListResponse,
   UpdateCommentParams,
   UpdateCommentResponse,
@@ -89,9 +90,9 @@ export function useCreateIssueSubtask() {
   return useMutation<any, any, CreateIssueParams>({
     mutationFn: createProjectIssue,
     onSuccess: (response, variables) => {
-      const createdItem: IssueItem = response?.issue ?? response;
+      const createdItem: SubtaskItem = response?.issue ?? response;
 
-      queryClient.setQueriesData<SubtaskListResponse>(
+      queryClient.setQueriesData<InfiniteData<SubtaskListResponse>>(
         {
           queryKey: [
             "issue-subtasks",
@@ -101,18 +102,40 @@ export function useCreateIssueSubtask() {
           ],
         },
         (oldData) => {
-          if (!oldData) {
+          if (!oldData || !oldData.pages || oldData.pages.length === 0) {
             return {
-              count: 1,
-              next: null,
-              previous: null,
-              results: [createdItem],
+              pages: [
+                {
+                  count: 1,
+                  next: null,
+                  previous: null,
+                  results: [createdItem],
+                },
+              ],
+              pageParams: [1],
             };
           }
+
+          const updatedPages = oldData.pages.map((page, index) => {
+            const newCount = (page.count || 0) + 1;
+
+            if (index === oldData.pages.length - 1) {
+              return {
+                ...page,
+                count: newCount,
+                results: [...page.results, createdItem],
+              };
+            }
+
+            return {
+              ...page,
+              count: newCount,
+            };
+          });
+
           return {
             ...oldData,
-            count: (oldData.count || 0) + 1,
-            results: [...oldData.results, createdItem],
+            pages: updatedPages,
           };
         },
       );
@@ -176,13 +199,11 @@ export function useUpdateProjectIssue() {
       queryClient.invalidateQueries({
         queryKey: ["kanban-board", variables.subdomain, variables.projectSlug],
       });
-
       queryClient.invalidateQueries({
         queryKey: [
           "issue-subtasks",
           variables.subdomain,
           variables.projectSlug,
-          String(variables.data.parent_id),
         ],
       });
       queryClient.invalidateQueries({
