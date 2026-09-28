@@ -4,6 +4,7 @@ import type {
   CommentItem,
   CreateCommentParams,
   CreateIssueParams,
+  GetIssueCommentsParams,
   IssueDetailParams,
   IssueDetailResponse,
   IssueItem,
@@ -108,6 +109,17 @@ export async function createIssueComment({
   const response = await api.post<CommentItem>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
     data,
+  );
+  return response.data;
+}
+
+export async function fetchIssueComments({
+  subdomain,
+  projectSlug,
+  issueId,
+}: GetIssueCommentsParams): Promise<CommentItem[]> {
+  const response = await api.get<CommentItem[]>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
   );
   return response.data;
 }

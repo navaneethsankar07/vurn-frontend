@@ -1,6 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchLabelSuggestions, fetchProjectIssueDetail, fetchProjectIssues } from "./issueApi";
-import type { IssueListParams, LabelQueryParams } from "../types";
+import {
+  fetchIssueComments,
+  fetchLabelSuggestions,
+  fetchProjectIssueDetail,
+  fetchProjectIssues,
+} from "./issueApi";
+import type {
+  GetIssueCommentsParams,
+  IssueListParams,
+  LabelQueryParams,
+} from "../types";
 
 export function useProjectIssues(
   subdomain: string,
@@ -40,5 +49,17 @@ export function useLabelSuggestions(
     queryKey: ["issue-label-suggestions", subdomain, projectSlug, params],
     queryFn: () => fetchLabelSuggestions(subdomain, projectSlug, params),
     enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+export function useIssueComments({
+  subdomain,
+  projectSlug,
+  issueId,
+}: GetIssueCommentsParams) {
+  return useQuery({
+    queryKey: ["issue-comments", subdomain, projectSlug, String(issueId)],
+    queryFn: () => fetchIssueComments({ subdomain, projectSlug, issueId }),
+    enabled: Boolean(subdomain && projectSlug && issueId),
   });
 }

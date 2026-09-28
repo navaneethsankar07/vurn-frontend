@@ -3,6 +3,8 @@ import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateIssueComment } from "../api/issueMutations";
+import { useIssueComments } from "../api/issueQueries";
+import { IssueCommentList } from "./IssueCommentList";
 
 interface IssueCommentsSectionProps {
   subdomain: string;
@@ -16,6 +18,19 @@ export function IssueCommentsSection({
   issueId,
 }: IssueCommentsSectionProps) {
   const [commentText, setCommentText] = useState("");
+
+  const { data: commentsData, isLoading } = useIssueComments({
+    subdomain,
+    projectSlug,
+    issueId,
+  });
+
+  const comments = Array.isArray(commentsData)
+    ? commentsData
+    : Array.isArray((commentsData as any)?.results)
+      ? (commentsData as any).results
+      : [];
+
   const { mutate: createComment, isPending } = useCreateIssueComment();
 
   const handleSubmitComment = () => {
@@ -45,11 +60,20 @@ export function IssueCommentsSection({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
-        Comments
+        Comments ({comments.length})
       </span>
-      <div className="space-y-2">
+
+      <IssueCommentList
+        comments={comments}
+        isLoading={isLoading}
+        onReplyClick={(commentId, authorName) => {
+          console.log("Reply intent for comment:", commentId, authorName);
+        }}
+      />
+
+      <div className="space-y-2 pt-2 border-t border-white/5">
         <Textarea
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}

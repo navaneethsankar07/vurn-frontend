@@ -124,6 +124,14 @@ export interface IssueDetailParams {
   projectSlug: string;
   issueId: number | string;
 }
+export interface CommentReplyItem {
+  id: number;
+  author_id: number;
+  author_name: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface CommentItem {
   id: number;
@@ -133,7 +141,7 @@ export interface CommentItem {
   created_at: string;
   updated_at: string;
   parent_id?: number | null;
-  replies?: CommentItem[];
+  replies?: CommentReplyItem[];
   message?: string | null;
 }
 
@@ -147,4 +155,10 @@ export interface CreateCommentParams {
   projectSlug: string;
   issueId: number | string;
   data: CreateCommentPayload;
+}
+
+export interface GetIssueCommentsParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
 }
