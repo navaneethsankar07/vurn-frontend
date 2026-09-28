@@ -126,6 +126,8 @@ export interface IssueDetailParams {
 }
 export interface CommentReplyItem {
   id: number;
+  issue_id?: number;
+  parent_id?: number | null;
   author_id: number;
   author_name: string;
   content: string;
@@ -135,14 +137,28 @@ export interface CommentReplyItem {
 
 export interface CommentItem {
   id: number;
+  issue_id?: number;
+  parent_id?: number | null;
   author_id: number;
   author_name: string;
   content: string;
   created_at: string;
   updated_at: string;
-  parent_id?: number | null;
   replies?: CommentReplyItem[];
-  message?: string | null;
+}
+
+export interface PaginatedCommentsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CommentItem[];
+}
+
+export interface GetIssueCommentsParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  page?: number;
 }
 
 export interface CreateCommentPayload {
@@ -157,8 +173,16 @@ export interface CreateCommentParams {
   data: CreateCommentPayload;
 }
 
-export interface GetIssueCommentsParams {
-  subdomain: string;
-  projectSlug: string;
-  issueId: number | string;
+export interface CreateCommentResponse {
+  message: string;
+  comment: {
+    id: number;
+    issue_id: number;
+    parent_id: number | null;
+    author_id: number;
+    author_name: string;
+    content: string;
+    created_at: string;
+    updated_at: string;
+  };
 }

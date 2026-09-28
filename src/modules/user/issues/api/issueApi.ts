@@ -1,8 +1,8 @@
 import api from "@/api/axios";
 import type {
   AddIssueLabelParams,
-  CommentItem,
   CreateCommentParams,
+  CreateCommentResponse,
   CreateIssueParams,
   GetIssueCommentsParams,
   IssueDetailParams,
@@ -12,6 +12,7 @@ import type {
   IssueListParams,
   IssueListResponse,
   LabelQueryParams,
+  PaginatedCommentsResponse,
   RemoveIssueLabelParams,
   UpdateIssueParams,
 } from "../types";
@@ -105,8 +106,8 @@ export async function createIssueComment({
   projectSlug,
   issueId,
   data,
-}: CreateCommentParams): Promise<CommentItem> {
-  const response = await api.post<CommentItem>(
+}: CreateCommentParams): Promise<CreateCommentResponse> {
+  const response = await api.post<CreateCommentResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
     data,
   );
@@ -117,9 +118,13 @@ export async function fetchIssueComments({
   subdomain,
   projectSlug,
   issueId,
-}: GetIssueCommentsParams): Promise<CommentItem[]> {
-  const response = await api.get<CommentItem[]>(
+  page = 1,
+}: GetIssueCommentsParams): Promise<PaginatedCommentsResponse> {
+  const response = await api.get<PaginatedCommentsResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
+    {
+      params: { page },
+    },
   );
   return response.data;
 }

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   addIssueLabel,
@@ -11,10 +11,12 @@ import type {
   AddIssueLabelParams,
   CommentItem,
   CreateCommentParams,
+  CreateCommentResponse,
   CreateIssueParams,
   IssueDetailResponse,
   IssueItem,
   IssueLabel,
+  PaginatedCommentsResponse,
   RemoveIssueLabelParams,
   UpdateIssueParams,
 } from "../types";
@@ -144,25 +146,76 @@ export function useRemoveIssueLabel() {
 export function useCreateIssueComment() {
   const queryClient = useQueryClient();
 
-  return useMutation<CommentItem, any, CreateCommentParams>({
+  return useMutation<CreateCommentResponse, any, CreateCommentParams>({
     mutationFn: createIssueComment,
     onSuccess: (res, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          "issue-comments",
-          variables.subdomain,
-          variables.projectSlug,
-          String(variables.issueId),
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [
-          "project-issue-detail",
-          variables.subdomain,
-          variables.projectSlug,
-          String(variables.issueId),
-        ],
-      });
+      const queryKey = [
+        "issue-comments",
+        variables.subdomain,
+        variables.projectSlug,
+        String(variables.issueId),
+      ];
+
+      queryClient.setQueryData<InfiniteData<PaginatedCommentsResponse>>(
+        queryKey,
+        (oldData) => {
+          if (!oldData || !oldData.pages || oldData.pages.length === 0) {
+            return oldData;
+          }
+
+          const newCommentRaw = res.comment;
+          const newCommentItem: CommentItem = {
+            ...newCommentRaw,
+            replies: [],
+          };
+
+          const isReply = Boolean(newCommentRaw.parent_id);
+
+          const updatedPages = oldData.pages.map((page, index) => {
+            const currentCount = (page.count || 0) + 1;
+
+            if (isReply) {
+              const updatedResults = page.results.map((comment) => {
+                if (comment.id === newCommentRaw.parent_id) {
+                  const currentReplies = Array.isArray(comment.replies)
+                    ? comment.replies
+                    : [];
+                  return {
+                    ...comment,
+                    replies: [...currentReplies, newCommentItem],
+                  };
+                }
+                return comment;
+              });
+
+              return {
+                ...page,
+                count: currentCount,
+                results: updatedResults,
+              };
+            }
+
+            if (index === 0) {
+              return {
+                ...page,
+                count: currentCount,
+                results: [newCommentItem, ...page.results],
+              };
+            }
+
+            return {
+              ...page,
+              count: currentCount,
+            };
+          });
+
+          return {
+            ...oldData,
+            pages: updatedPages,
+          };
+        },
+      );
+
       toast.success(res.message || "Comment added successfully.");
     },
     onError: (error: any) => {

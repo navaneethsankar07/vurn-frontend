@@ -19,17 +19,15 @@ export function IssueCommentsSection({
 }: IssueCommentsSectionProps) {
   const [commentText, setCommentText] = useState("");
 
-  const { data: commentsData, isLoading } = useIssueComments({
-    subdomain,
-    projectSlug,
-    issueId,
-  });
+  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useIssueComments({
+      subdomain,
+      projectSlug,
+      issueId,
+    });
 
-  const comments = Array.isArray(commentsData)
-    ? commentsData
-    : Array.isArray((commentsData as any)?.results)
-      ? (commentsData as any).results
-      : [];
+  const comments = data?.pages.flatMap((page) => page.results) || [];
+  const totalCount = data?.pages[0]?.count || 0;
 
   const { mutate: createComment, isPending } = useCreateIssueComment();
 
@@ -62,7 +60,7 @@ export function IssueCommentsSection({
   return (
     <div className="space-y-4">
       <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
-        Comments ({comments.length})
+        Comments ({totalCount})
       </span>
 
       <IssueCommentList
@@ -71,6 +69,10 @@ export function IssueCommentsSection({
         issueId={issueId}
         comments={comments}
         isLoading={isLoading}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        onFetchNextPage={fetchNextPage}
+        totalCount={totalCount}
       />
 
       <div className="space-y-2 pt-2 border-t border-white/5">
