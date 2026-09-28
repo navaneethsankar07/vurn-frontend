@@ -22,6 +22,7 @@ import {
 import { formatRelativeTime, isCommentEdited } from "@/utils/sprintHelpers";
 import { IssueCommentEditForm } from "./IssueCommentEditForm";
 import { DeleteCommentModal } from "./modals/DeleteCommentModal";
+import { CommentReactions } from "./CommentReactions";
 import type { CommentItem, CommentReplyItem } from "../types";
 
 interface IssueCommentListProps {
@@ -269,6 +270,13 @@ export function IssueCommentList({
 
               <div className="flex items-center justify-between pt-1.5 pl-7">
                 <div className="flex items-center gap-3 text-[11px]">
+                  <CommentReactions
+                    subdomain={subdomain}
+                    projectSlug={projectSlug}
+                    issueId={issueId}
+                    commentId={comment.id}
+                  />
+
                   <button
                     type="button"
                     onClick={() => handleOpenReply(comment.id)}
@@ -448,29 +456,38 @@ export function IssueCommentList({
                         </p>
                       )}
 
-                      {isReplyAuthor && !isEditingThisReply && (
-                        <div className="flex items-center gap-3 pl-5 pt-0.5">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveReplyId(null);
-                              setEditingCommentId(reply.id);
-                            }}
-                            className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-white transition-colors"
-                          >
-                            <Pencil className="h-2.5 w-2.5" />
-                            <span>Edit</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handlePromptDelete(reply.id, true)}
-                            className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-red-400 transition-colors"
-                          >
-                            <Trash2 className="h-2.5 w-2.5" />
-                            <span>Delete</span>
-                          </button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-3 pl-5 pt-0.5">
+                        <CommentReactions
+                          subdomain={subdomain}
+                          projectSlug={projectSlug}
+                          issueId={issueId}
+                          commentId={reply.id}
+                        />
+
+                        {isReplyAuthor && !isEditingThisReply && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveReplyId(null);
+                                setEditingCommentId(reply.id);
+                              }}
+                              className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-white transition-colors"
+                            >
+                              <Pencil className="h-2.5 w-2.5" />
+                              <span>Edit</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handlePromptDelete(reply.id, true)}
+                              className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-red-400 transition-colors"
+                            >
+                              <Trash2 className="h-2.5 w-2.5" />
+                              <span>Delete</span>
+                            </button>
+                          </>
+                        )}
+                      </div>
 
                       {targetDeleteId === reply.id && isDeletingReply && (
                         <div className="pl-5 pt-1">

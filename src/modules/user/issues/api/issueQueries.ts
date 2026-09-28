@@ -1,15 +1,18 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
+  fetchCommentReactions,
   fetchIssueComments,
   fetchLabelSuggestions,
   fetchProjectIssueDetail,
   fetchProjectIssues,
 } from "./issueApi";
 import type {
+  CommentReactionSummary,
   GetIssueCommentsParams,
   IssueListParams,
   LabelQueryParams,
   PaginatedCommentsResponse,
+  ReactionParams,
 } from "../types";
 
 export function useProjectIssues(
@@ -81,5 +84,30 @@ export function useIssueComments({
       }
     },
     enabled: Boolean(subdomain && projectSlug && issueId),
+  });
+}
+
+export function useCommentReactions({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+}: ReactionParams) {
+  return useQuery<CommentReactionSummary>({
+    queryKey: [
+      "comment-reactions",
+      subdomain,
+      projectSlug,
+      String(issueId),
+      String(commentId),
+    ],
+    queryFn: () =>
+      fetchCommentReactions({
+        subdomain,
+        projectSlug,
+        issueId,
+        commentId,
+      }),
+    enabled: Boolean(subdomain && projectSlug && issueId && commentId),
   });
 }

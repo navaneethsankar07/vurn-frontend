@@ -10,12 +10,14 @@ import {
   createProjectIssue,
   deleteIssueComment,
   removeIssueLabel,
+  setCommentReaction,
   updateIssueComment,
   updateProjectIssue,
 } from "./issueApi";
 import type {
   AddIssueLabelParams,
   CommentItem,
+  CommentReactionSummary,
   CommentReplyItem,
   CreateCommentParams,
   CreateCommentResponse,
@@ -27,6 +29,8 @@ import type {
   IssueLabel,
   PaginatedCommentsResponse,
   RemoveIssueLabelParams,
+  SetReactionParams,
+  SetReactionResponse,
   UpdateCommentParams,
   UpdateCommentResponse,
   UpdateIssueParams,
@@ -395,6 +399,28 @@ export function useDeleteIssueComment() {
         error?.response?.data?.detail ||
         "Failed to delete comment.";
       toast.error(message);
+    },
+  });
+}
+export function useSetCommentReaction() {
+  const queryClient = useQueryClient();
+
+  return useMutation<SetReactionResponse, any, SetReactionParams>({
+    mutationFn: setCommentReaction,
+    onSuccess: (res, variables) => {
+      const reactionData: CommentReactionSummary =
+        (res as any)?.reaction ?? res;
+
+      queryClient.setQueryData(
+        [
+          "comment-reactions",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.issueId),
+          String(variables.commentId),
+        ],
+        reactionData,
+      );
     },
   });
 }

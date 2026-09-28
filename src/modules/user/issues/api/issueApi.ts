@@ -1,6 +1,7 @@
 import api from "@/api/axios";
 import type {
   AddIssueLabelParams,
+  CommentReactionSummary,
   CreateCommentParams,
   CreateCommentResponse,
   CreateIssueParams,
@@ -15,7 +16,10 @@ import type {
   IssueListResponse,
   LabelQueryParams,
   PaginatedCommentsResponse,
+  ReactionParams,
   RemoveIssueLabelParams,
+  SetReactionParams,
+  SetReactionResponse,
   UpdateCommentParams,
   UpdateCommentResponse,
   UpdateIssueParams,
@@ -159,6 +163,32 @@ export async function deleteIssueComment({
 }: DeleteCommentParams): Promise<DeleteCommentResponse> {
   const response = await api.delete<DeleteCommentResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/`,
+  );
+  return response.data;
+}
+
+export async function fetchCommentReactions({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+}: ReactionParams): Promise<CommentReactionSummary> {
+  const response = await api.get<CommentReactionSummary>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reactions/`,
+  );
+  return response.data;
+}
+
+export async function setCommentReaction({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+  data,
+}: SetReactionParams): Promise<SetReactionResponse> {
+  const response = await api.put<SetReactionResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reaction/`,
+    data,
   );
   return response.data;
 }
