@@ -7,12 +7,16 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Pencil,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateIssueComment } from "../api/issueMutations";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
+import { IssueCommentEditForm } from "./IssueCommentEditForm";
 import type { CommentItem, CommentReplyItem } from "../types";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/app/store";
 
 interface IssueCommentListProps {
   subdomain: string;
@@ -39,7 +43,11 @@ export function IssueCommentList({
   onFetchNextPage,
   totalCount = 0,
 }: IssueCommentListProps) {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const currentUserId = user?.id;
+
   const [activeReplyId, setActiveReplyId] = useState<number | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [replyText, setReplyText] = useState("");
 
   const [expandedReplies, setExpandedReplies] = useState<
@@ -52,6 +60,7 @@ export function IssueCommentList({
   const { mutate: createComment, isPending } = useCreateIssueComment();
 
   const handleOpenReply = (commentId: number) => {
+    setEditingCommentId(null);
     if (activeReplyId === commentId) {
       setActiveReplyId(null);
       setReplyText("");
@@ -161,10 +170,13 @@ export function IssueCommentList({
           ? comment.replies.slice(0, currentReplyLimit)
           : [];
         const hasMoreReplies = totalReplies > currentReplyLimit;
+        const isCommentAuthor =
+          currentUserId && comment.author_id === currentUserId;
+        const isEditingThisComment = editingCommentId === comment.id;
 
         return (
           <div key={comment.id} className="space-y-2.5">
-            <div className="bg-black/50 border border-white/5 p-3 rounded-xs space-y-1.5 transition-colors hover:border-white/10">
+            <div className="bg-black/50 border border-white/5 p-3 rounded-xs space-y-1.5 transition-colors hover:border-white/10 group">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {comment.author_profile ? (
@@ -182,14 +194,35 @@ export function IssueCommentList({
                     {comment.author_name}
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-zinc-500">
-                  {formatRelativeTime(comment.created_at, "")}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-zinc-500">
+                    {formatRelativeTime(comment.created_at, "")}
+                  </span>
+                  {comment.updated_at &&
+                    comment.updated_at !== comment.created_at && (
+                      <span className="text-[9px] font-mono text-zinc-600">
+                        (edited)
+                      </span>
+                    )}
+                </div>
               </div>
 
-              <p className="text-zinc-300 font-sans text-xs leading-relaxed whitespace-pre-wrap pl-7">
-                {comment.content}
-              </p>
+              {isEditingThisComment ? (
+                <div className="pl-7">
+                  <IssueCommentEditForm
+                    subdomain={subdomain}
+                    projectSlug={projectSlug}
+                    issueId={issueId}
+                    commentId={comment.id}
+                    initialContent={comment.content}
+                    onCancel={() => setEditingCommentId(null)}
+                  />
+                </div>
+              ) : (
+                <p className="text-zinc-300 font-sans text-xs leading-relaxed whitespace-pre-wrap pl-7">
+                  {comment.content}
+                </p>
+              )}
 
               <div className="flex items-center justify-between pt-1.5 pl-7">
                 <div className="flex items-center gap-3 text-[11px]">
@@ -205,6 +238,20 @@ export function IssueCommentList({
                     <MessageSquare className="h-3 w-3" />
                     <span>Reply</span>
                   </button>
+
+                  {isCommentAuthor && !isEditingThisComment && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveReplyId(null);
+                        setEditingCommentId(comment.id);
+                      }}
+                      className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-white transition-colors py-0.5"
+                    >
+                      <Pencil className="h-3 w-3" />
+                      <span>Edit</span>
+                    </button>
+                  )}
 
                   {totalReplies > 0 && (
                     <button
@@ -272,39 +319,82 @@ export function IssueCommentList({
 
             {isRepliesOpen && totalReplies > 0 && (
               <div className="pl-6 space-y-2 border-l border-white/10 ml-3">
-                {displayedReplies.map((reply: CommentReplyItem) => (
-                  <div
-                    key={reply.id}
-                    className="bg-black/30 border border-white/5 p-2.5 rounded-xs space-y-1"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <CornerDownRight className="h-3 w-3 text-zinc-600 shrink-0" />
-                        {reply.author_profile ? (
-                          <img
-                            src={reply.author_profile}
-                            alt={reply.author_name}
-                            className="h-4 w-4 rounded-full object-cover border border-white/10 shrink-0"
-                          />
-                        ) : (
-                          <span className="h-4 w-4 rounded-full bg-white/5 text-zinc-300 text-[9px] font-semibold flex items-center justify-center shrink-0">
-                            {reply.author_name?.[0]?.toUpperCase() || "U"}
-                          </span>
-                        )}
-                        <span className="font-semibold text-zinc-300 text-[11px] font-sans">
-                          {reply.author_name}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono text-zinc-500">
-                        {formatRelativeTime(reply.created_at, "")}
-                      </span>
-                    </div>
+                {displayedReplies.map((reply: CommentReplyItem) => {
+                  const isReplyAuthor =
+                    currentUserId && reply.author_id === currentUserId;
+                  const isEditingThisReply = editingCommentId === reply.id;
 
-                    <p className="text-zinc-300 font-sans text-xs leading-relaxed whitespace-pre-wrap pl-5">
-                      {reply.content}
-                    </p>
-                  </div>
-                ))}
+                  return (
+                    <div
+                      key={reply.id}
+                      className="bg-black/30 border border-white/5 p-2.5 rounded-xs space-y-1 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <CornerDownRight className="h-3 w-3 text-zinc-600 shrink-0" />
+                          {reply.author_profile ? (
+                            <img
+                              src={reply.author_profile}
+                              alt={reply.author_name}
+                              className="h-4 w-4 rounded-full object-cover border border-white/10 shrink-0"
+                            />
+                          ) : (
+                            <span className="h-4 w-4 rounded-full bg-white/5 text-zinc-300 text-[9px] font-semibold flex items-center justify-center shrink-0">
+                              {reply.author_name?.[0]?.toUpperCase() || "U"}
+                            </span>
+                          )}
+                          <span className="font-semibold text-zinc-300 text-[11px] font-sans">
+                            {reply.author_name}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono text-zinc-500">
+                            {formatRelativeTime(reply.created_at, "")}
+                          </span>
+                          {reply.updated_at &&
+                            reply.updated_at !== reply.created_at && (
+                              <span className="text-[9px] font-mono text-zinc-600">
+                                (edited)
+                              </span>
+                            )}
+                        </div>
+                      </div>
+
+                      {isEditingThisReply ? (
+                        <div className="pl-5">
+                          <IssueCommentEditForm
+                            subdomain={subdomain}
+                            projectSlug={projectSlug}
+                            issueId={issueId}
+                            commentId={reply.id}
+                            initialContent={reply.content}
+                            onCancel={() => setEditingCommentId(null)}
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-zinc-300 font-sans text-xs leading-relaxed whitespace-pre-wrap pl-5">
+                          {reply.content}
+                        </p>
+                      )}
+
+                      {isReplyAuthor && !isEditingThisReply && (
+                        <div className="flex items-center gap-2 pl-5 pt-0.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveReplyId(null);
+                              setEditingCommentId(reply.id);
+                            }}
+                            className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-white transition-colors"
+                          >
+                            <Pencil className="h-2.5 w-2.5" />
+                            <span>Edit</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
 
                 <div className="flex items-center gap-3 pt-1">
                   {hasMoreReplies && (

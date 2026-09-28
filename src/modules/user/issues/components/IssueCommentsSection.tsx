@@ -80,7 +80,7 @@ export function IssueCommentsSection({
             if (val) setSortOption(val as CommentSortOption);
           }}
         >
-          <SelectTrigger className="h-6 w-24 border border-white/10 bg-black text-[11px] text-zinc-300 rounded-xs px-2 py-0 focus:ring-0">
+          <SelectTrigger className="h-6 w-24 border border-white/10 bg-black text-[11px] rounded-xs text-zinc-300 px-2 py-0 focus:ring-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent
@@ -88,15 +88,24 @@ export function IssueCommentsSection({
             align="end"
             sideOffset={4}
             alignItemWithTrigger={false}
-            className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs min-w-24"
+            className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs min-w-24"
           >
-            <SelectItem value="oldest" className="cursor-pointer text-xs">
+            <SelectItem
+              value="oldest"
+              className="rounded-xs cursor-pointer text-xs"
+            >
               Oldest
             </SelectItem>
-            <SelectItem value="newest" className="cursor-pointer text-xs">
+            <SelectItem
+              value="newest"
+              className="rounded-xs cursor-pointer text-xs"
+            >
               Newest
             </SelectItem>
-            <SelectItem value="top" className="cursor-pointer text-xs">
+            <SelectItem
+              value="top"
+              className="rounded-xs cursor-pointer text-xs"
+            >
               Top
             </SelectItem>
           </SelectContent>

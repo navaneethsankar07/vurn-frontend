@@ -192,3 +192,28 @@ export interface CreateCommentResponse {
     updated_at: string;
   };
 }
+
+export interface UpdateCommentPayload {
+  content: string;
+}
+
+export interface UpdateCommentParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  commentId: number | string;
+  data: UpdateCommentPayload;
+}
+
+export interface UpdateCommentResponse {
+  id: number;
+  issue_id: number;
+  author_id: number;
+  author_name: string;
+  author_profile?: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  parent_id?: number | null;
+  message: string;
+}

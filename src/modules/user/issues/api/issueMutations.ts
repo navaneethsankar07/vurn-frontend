@@ -9,11 +9,13 @@ import {
   createIssueComment,
   createProjectIssue,
   removeIssueLabel,
+  updateIssueComment,
   updateProjectIssue,
 } from "./issueApi";
 import type {
   AddIssueLabelParams,
   CommentItem,
+  CommentReplyItem,
   CreateCommentParams,
   CreateCommentResponse,
   CreateIssueParams,
@@ -22,6 +24,8 @@ import type {
   IssueLabel,
   PaginatedCommentsResponse,
   RemoveIssueLabelParams,
+  UpdateCommentParams,
+  UpdateCommentResponse,
   UpdateIssueParams,
 } from "../types";
 
@@ -228,6 +232,85 @@ export function useCreateIssueComment() {
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to post comment.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useUpdateIssueComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation<UpdateCommentResponse, any, UpdateCommentParams>({
+    mutationFn: updateIssueComment,
+    onSuccess: (res, variables) => {
+      queryClient.setQueriesData<InfiniteData<PaginatedCommentsResponse>>(
+        {
+          queryKey: [
+            "issue-comments",
+            variables.subdomain,
+            variables.projectSlug,
+            String(variables.issueId),
+          ],
+        },
+        (oldData) => {
+          if (!oldData || !oldData.pages) return oldData;
+
+          const updatedCommentId = Number(variables.commentId);
+
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            results: page.results.map((comment: CommentItem) => {
+              if (comment.id === updatedCommentId) {
+                return {
+                  ...comment,
+                  content: res.content,
+                  updated_at: res.updated_at,
+                };
+              }
+
+              if (
+                Array.isArray(comment.replies) &&
+                comment.replies.length > 0
+              ) {
+                const hasTargetReply = comment.replies.some(
+                  (r) => r.id === updatedCommentId,
+                );
+                if (hasTargetReply) {
+                  return {
+                    ...comment,
+                    replies: comment.replies.map((reply: CommentReplyItem) => {
+                      if (reply.id === updatedCommentId) {
+                        return {
+                          ...reply,
+                          content: res.content,
+                          updated_at: res.updated_at,
+                        };
+                      }
+                      return reply;
+                    }),
+                  };
+                }
+              }
+
+              return comment;
+            }),
+          }));
+
+          return {
+            ...oldData,
+            pages: updatedPages,
+          };
+        },
+      );
+
+      toast.success(res.message || "Comment updated successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.content?.[0] ||
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update comment.";
       toast.error(message);
     },
   });

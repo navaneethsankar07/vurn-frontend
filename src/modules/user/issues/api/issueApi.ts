@@ -14,6 +14,8 @@ import type {
   LabelQueryParams,
   PaginatedCommentsResponse,
   RemoveIssueLabelParams,
+  UpdateCommentParams,
+  UpdateCommentResponse,
   UpdateIssueParams,
 } from "../types";
 
@@ -129,6 +131,20 @@ export async function fetchIssueComments({
         sort,
       },
     },
+  );
+  return response.data;
+}
+
+export async function updateIssueComment({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+  data,
+}: UpdateCommentParams): Promise<UpdateCommentResponse> {
+  const response = await api.patch<UpdateCommentResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/`,
+    data,
   );
   return response.data;
 }
