@@ -164,3 +164,15 @@ export function useIssueSubtasks({
     enabled: Boolean(enabled && subdomain && projectSlug && issueId),
   });
 }
+
+export function useProjectEpics(subdomain: string, projectSlug: string) {
+  return useQuery({
+    queryKey: ["project-epics-list", subdomain, projectSlug],
+    queryFn: () =>
+      fetchProjectIssues(subdomain, projectSlug, {
+        issue_type: "epic",
+        page_size: 100,
+      }),
+    enabled: Boolean(subdomain && projectSlug),
+  });
+}

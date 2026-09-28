@@ -186,10 +186,12 @@ interface IssueInfoCardProps {
   statuses: WorkflowStatus[];
   members: any[];
   boardSprints: BoardSprintOption[];
+  epics: any[];
   onStatusChange: (val: string | null) => void;
   onPriorityChange: (val: string | null) => void;
   onAssigneeChange: (val: string | null) => void;
   onSprintChange: (val: string | null) => void;
+  onParentChange: (val: string | null) => void;
   onDueDateChange: (val: string | null) => void;
   isEditingEstimateHours: boolean;
   estimateHoursInput: string;
@@ -210,10 +212,12 @@ export function IssueInfoCard({
   statuses,
   members,
   boardSprints,
+  epics,
   onStatusChange,
   onPriorityChange,
   onAssigneeChange,
   onSprintChange,
+  onParentChange,
   onDueDateChange,
   isEditingEstimateHours,
   estimateHoursInput,
@@ -229,9 +233,12 @@ export function IssueInfoCard({
   onStartEditingPoints,
 }: IssueInfoCardProps) {
   const isSubtask = issue.issue_type === "subtask";
+  const isEpic = issue.issue_type === "epic";
   const currentPriorityConfig =
     WORK_ITEM_PRIORITIES.find((p) => p.value === issue.priority) ??
     WORK_ITEM_PRIORITIES[2];
+
+  const activeEpic = epics.find((e) => e.id === issue.parent_id);
 
   return (
     <div className="space-y-2.5">
@@ -384,6 +391,52 @@ export function IssueInfoCard({
           </Select>
         </div>
 
+        {!isSubtask && !isEpic && (
+          <div className="py-2 px-3 flex items-center justify-between">
+            <span className="text-zinc-500">Parent Epic</span>
+            <Select
+              value={issue.parent_id ? String(issue.parent_id) : "none"}
+              onValueChange={onParentChange}
+            >
+              <SelectTrigger className="h-6 border-none bg-transparent text-zinc-200 text-xs p-0 focus:ring-0 max-w-44 truncate">
+                <SelectValue>
+                  {activeEpic
+                    ? `${activeEpic.key}: ${activeEpic.title}`
+                    : "None"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent
+                side="bottom"
+                sideOffset={4}
+                align="end"
+                alignItemWithTrigger={false}
+                className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs w-72 max-h-56 overflow-y-auto"
+              >
+                <SelectItem
+                  value="none"
+                  className="cursor-pointer text-zinc-400 focus:bg-white/10 focus:text-white"
+                >
+                  None
+                </SelectItem>
+                {epics.map((e) => (
+                  <SelectItem
+                    key={e.id}
+                    value={String(e.id)}
+                    className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white"
+                  >
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-amber-500 font-semibold shrink-0">
+                        {e.key}:
+                      </span>
+                      <span className="truncate">{e.title}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         {!isSubtask && (
           <>
             <div className="py-2 px-3 flex items-center justify-between">
@@ -439,14 +492,17 @@ export function IssueInfoCard({
                   type="number"
                   min="0"
                   placeholder="Points"
-                  className="h-6 w-16 bg-black border-amber-500 text-zinc-200 text-xs px-1 py-0 rounded-xs"
+                  className="h-6 w-16 bg-black border-amber-500 text-white text-[10px] px-1 py-0 rounded-xs"
                 />
               ) : (
                 <span
                   onClick={onStartEditingPoints}
                   className="text-zinc-200 cursor-pointer hover:bg-white/5 px-1 py-0.5 rounded-xs transition-colors"
                 >
-                  {issue.story_points ?? "—"}
+                  {issue.story_points !== null &&
+                  issue.story_points !== undefined
+                    ? `${issue.story_points} pt`
+                    : "—"}
                 </span>
               )}
             </div>

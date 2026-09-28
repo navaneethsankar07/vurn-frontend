@@ -78,6 +78,7 @@ export interface IssueListResponse {
 export interface IssueDetailResponse extends IssueItem {
   assignee_name?: string | null;
   reporter_name?: string | null;
+  parent_id?: number | string;
   sprint_name?: string | null;
   due_date: string | null;
   estimated_time: number | null;

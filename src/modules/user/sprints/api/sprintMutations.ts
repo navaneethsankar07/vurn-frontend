@@ -123,6 +123,13 @@ export function useMoveIssueStatus() {
           variables.projectSlug,
         ],
       });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-issues",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
       toast.success(data.message || "Issue status updated.");
     },
     onError: (error: any) => {

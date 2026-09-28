@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
-import { useProjectIssueDetail } from "../api/issueQueries";
+import { useProjectIssueDetail, useProjectEpics } from "../api/issueQueries";
 import { useProjectWorkflow } from "../../projects/api/projectQueries";
 import { useBoardSprints } from "../../sprints/api/sprintQueries";
 import { useProjectMembers } from "../../projects/api/projectQueries";
@@ -80,6 +80,7 @@ export function IssueDetailPanel({
   const { data: workflowData } = useProjectWorkflow(subdomain, projectSlug);
   const { data: boardSprints = [] } = useBoardSprints(subdomain, projectSlug);
   const { data: membersResponse } = useProjectMembers(subdomain, projectSlug);
+  const { data: epicsData } = useProjectEpics(subdomain, projectSlug);
   const { data: labelSuggestions = [] } = useLabelSuggestions(
     subdomain,
     projectSlug,
@@ -94,6 +95,7 @@ export function IssueDetailPanel({
 
   const statuses = workflowData?.statuses || [];
   const members = membersResponse?.results || [];
+  const epics = epicsData?.results || [];
 
   useEffect(() => {
     if (issue) {
@@ -297,10 +299,9 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issue,
-        currentIssueId: currentIssueId,
+        issueId: currentIssueId,
         data: { priority },
-      } as any);
+      });
     }
   };
 
@@ -324,6 +325,18 @@ export function IssueDetailPanel({
         projectSlug,
         issueId: currentIssueId,
         data: { sprint_id },
+      });
+    }
+  };
+
+  const handleParentChange = (val: string | null) => {
+    const parent_id = val === "none" ? null : Number(val);
+    if (parent_id !== issue.parent_id) {
+      updateIssue({
+        subdomain,
+        projectSlug,
+        issueId: currentIssueId,
+        data: { parent_id },
       });
     }
   };
@@ -493,10 +506,12 @@ export function IssueDetailPanel({
             statuses={statuses}
             members={members}
             boardSprints={boardSprints}
+            epics={epics}
             onStatusChange={handleStatusChange}
             onPriorityChange={handlePriorityChange}
             onAssigneeChange={handleAssigneeChange}
             onSprintChange={handleSprintChange}
+            onParentChange={handleParentChange}
             onDueDateChange={handleDueDateChange}
             isEditingEstimateHours={isEditingEstimateHours}
             estimateHoursInput={estimateHoursInput}
