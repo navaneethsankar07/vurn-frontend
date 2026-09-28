@@ -1,6 +1,8 @@
 import api from "@/api/axios";
 import type {
   AddIssueLabelParams,
+  CommentItem,
+  CreateCommentParams,
   CreateIssueParams,
   IssueDetailParams,
   IssueDetailResponse,
@@ -95,4 +97,17 @@ export async function removeIssueLabel({
   await api.delete(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/labels/${labelId}/`,
   );
+}
+
+export async function createIssueComment({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: CreateCommentParams): Promise<CommentItem> {
+  const response = await api.post<CommentItem>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
+    data,
+  );
+  return response.data;
 }

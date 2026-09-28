@@ -1,7 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { addIssueLabel, createProjectIssue, removeIssueLabel, updateProjectIssue } from "./issueApi";
-import type { AddIssueLabelParams, CreateIssueParams, IssueDetailResponse, IssueItem, IssueLabel, RemoveIssueLabelParams, UpdateIssueParams } from "../types";
+import {
+  addIssueLabel,
+  createIssueComment,
+  createProjectIssue,
+  removeIssueLabel,
+  updateProjectIssue,
+} from "./issueApi";
+import type {
+  AddIssueLabelParams,
+  CommentItem,
+  CreateCommentParams,
+  CreateIssueParams,
+  IssueDetailResponse,
+  IssueItem,
+  IssueLabel,
+  RemoveIssueLabelParams,
+  UpdateIssueParams,
+} from "../types";
 
 export function useCreateProjectIssue() {
   const queryClient = useQueryClient();
@@ -121,6 +137,41 @@ export function useRemoveIssueLabel() {
           String(variables.issueId),
         ],
       });
+    },
+  });
+}
+
+export function useCreateIssueComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation<CommentItem, any, CreateCommentParams>({
+    mutationFn: createIssueComment,
+    onSuccess: (res, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "issue-comments",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.issueId),
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-issue-detail",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.issueId),
+        ],
+      });
+      toast.success(res.message || "Comment added successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.content?.[0] ||
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to post comment.";
+      toast.error(message);
     },
   });
 }

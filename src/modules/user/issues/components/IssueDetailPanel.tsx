@@ -1,14 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import {
-  X,
-  MoreHorizontal,
-  Send,
-  Paperclip,
-  Plus,
-  Loader2,
-  Tag,
-} from "lucide-react";
+import { X, MoreHorizontal, Paperclip, Plus, Loader2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -35,6 +27,7 @@ import {
   useAddIssueLabel,
   useRemoveIssueLabel,
 } from "../api/issueMutations";
+import { IssueCommentsSection } from "./IssueCommentsSection";
 
 import { WORK_ITEM_TYPES, WORK_ITEM_PRIORITIES } from "../constants";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
@@ -53,7 +46,6 @@ export function IssueDetailPanel({
   issueId,
   onClose,
 }: IssueDetailPanelProps) {
-  const [commentText, setCommentText] = useState("");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState("");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
@@ -803,30 +795,11 @@ export function IssueDetailPanel({
           </div>
         </div>
 
-        <div className="space-y-2">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
-            Comments
-          </span>
-          <div className="space-y-2">
-            <Textarea
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Add a comment..."
-              rows={2}
-              className="bg-black border-white/10 text-white rounded-xs text-xs font-sans placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-amber-500 resize-none"
-            />
-            <div className="flex items-center justify-end">
-              <Button
-                type="button"
-                disabled={!commentText.trim()}
-                className="h-7 bg-amber-500 text-black hover:bg-amber-400 text-xs font-semibold rounded-xs gap-1.5 px-3"
-              >
-                <Send className="h-3 w-3" />
-                <span>Comment</span>
-              </Button>
-            </div>
-          </div>
-        </div>
+        <IssueCommentsSection
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          issueId={issueId}
+        />
 
         <div className="space-y-2">
           <div className="flex items-center justify-between text-zinc-400">
