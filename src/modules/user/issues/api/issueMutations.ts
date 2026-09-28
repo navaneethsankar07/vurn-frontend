@@ -34,6 +34,7 @@ import type {
   RemoveIssueLabelParams,
   SetReactionParams,
   SetReactionResponse,
+  SubtaskListResponse,
   UpdateCommentParams,
   UpdateCommentResponse,
   UpdateIssueParams,
@@ -82,6 +83,74 @@ export function useCreateProjectIssue() {
   });
 }
 
+export function useCreateIssueSubtask() {
+  const queryClient = useQueryClient();
+
+  return useMutation<any, any, CreateIssueParams>({
+    mutationFn: createProjectIssue,
+    onSuccess: (response, variables) => {
+      const createdItem: IssueItem = response?.issue ?? response;
+
+      queryClient.setQueriesData<SubtaskListResponse>(
+        {
+          queryKey: [
+            "issue-subtasks",
+            variables.subdomain,
+            variables.projectSlug,
+            String(variables.data.parent_id),
+          ],
+        },
+        (oldData) => {
+          if (!oldData) {
+            return {
+              count: 1,
+              next: null,
+              previous: null,
+              results: [createdItem],
+            };
+          }
+          return {
+            ...oldData,
+            count: (oldData.count || 0) + 1,
+            results: [...oldData.results, createdItem],
+          };
+        },
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "issue-subtasks",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.data.parent_id),
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-issues",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["kanban-board", variables.subdomain, variables.projectSlug],
+      });
+
+      toast.success(response?.message || "Subtask created successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        error?.response?.data?.title?.[0] ||
+        "Failed to create subtask.";
+      toast.error(message);
+    },
+  });
+}
+
 export function useUpdateProjectIssue() {
   const queryClient = useQueryClient();
 
@@ -106,6 +175,15 @@ export function useUpdateProjectIssue() {
       });
       queryClient.invalidateQueries({
         queryKey: ["kanban-board", variables.subdomain, variables.projectSlug],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "issue-subtasks",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.data.parent_id),
+        ],
       });
       queryClient.invalidateQueries({
         queryKey: [

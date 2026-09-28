@@ -1,4 +1,4 @@
-import { MoreHorizontal, X } from "lucide-react";
+import { MoreHorizontal, X, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -22,6 +22,8 @@ interface IssueDetailHeaderProps {
   onStartEditingPoints: () => void;
   onStatusChange: (statusId: string | null) => void;
   onClose: () => void;
+  onBack?: () => void;
+  canGoBack?: boolean;
 }
 
 export function IssueDetailHeader({
@@ -35,6 +37,8 @@ export function IssueDetailHeader({
   onStartEditingPoints,
   onStatusChange,
   onClose,
+  onBack,
+  canGoBack = false,
 }: IssueDetailHeaderProps) {
   const typeConfig =
     WORK_ITEM_TYPES.find((t) => t.value === issue.issue_type) ??
@@ -44,6 +48,17 @@ export function IssueDetailHeader({
   return (
     <div className="h-12 px-4 border-b border-white/10 flex items-center justify-between shrink-0 bg-black/40">
       <div className="flex items-center gap-2 min-w-0">
+        {canGoBack && onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            title="Back to parent issue"
+            className="p-1 -ml-1 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xs transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+        )}
+
         <TypeIcon
           className="h-3.5 w-3.5 shrink-0"
           style={{ color: typeConfig.color }}
@@ -104,7 +119,7 @@ export function IssueDetailHeader({
           <button
             type="button"
             onClick={onStartEditingPoints}
-            className="bg-zinc-800 hover:bg-zinc-700 text-[10px] px-1.5 py-0.5 rounded-xs text-zinc-300 transition-colors"
+            className="bg-zinc-800 hover:bg-zinc-700 text-[10px] px-1.5 py-0.5 rounded-xs text-zinc-300 transition-colors cursor-pointer"
           >
             {issue.story_points !== null && issue.story_points !== undefined
               ? `${issue.story_points} pt`
@@ -123,7 +138,7 @@ export function IssueDetailHeader({
         <button
           type="button"
           onClick={onClose}
-          className="p-1 hover:text-white hover:bg-white/5 rounded-xs transition-colors"
+          className="p-1 hover:text-white hover:bg-white/5 rounded-xs transition-colors cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>

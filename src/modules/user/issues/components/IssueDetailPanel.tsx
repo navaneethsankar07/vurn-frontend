@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Loader2, Paperclip, X } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -29,18 +30,25 @@ interface IssueDetailPanelProps {
   projectSlug: string;
   issueId: number | string;
   onClose: () => void;
-  onOpenSubtask?: (subtask: IssueItem) => void;
-  onOpenCreateSubtask?: () => void;
 }
 
 export function IssueDetailPanel({
   subdomain,
   projectSlug,
-  issueId,
+  issueId: initialIssueId,
   onClose,
-  onOpenSubtask,
-  onOpenCreateSubtask,
 }: IssueDetailPanelProps) {
+  const [, setSearchParams] = useSearchParams();
+
+  const [currentIssueId, setCurrentIssueId] = useState<number | string>(
+    initialIssueId,
+  );
+  const [historyStack, setHistoryStack] = useState<(number | string)[]>([]);
+
+  useEffect(() => {
+    setCurrentIssueId(initialIssueId);
+  }, [initialIssueId]);
+
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState("");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
@@ -61,7 +69,7 @@ export function IssueDetailPanel({
     data: issue,
     isLoading,
     isError,
-  } = useProjectIssueDetail(subdomain, projectSlug, issueId);
+  } = useProjectIssueDetail(subdomain, projectSlug, currentIssueId);
 
   const { data: workflowData } = useProjectWorkflow(subdomain, projectSlug);
   const { data: boardSprints = [] } = useBoardSprints(subdomain, projectSlug);
@@ -109,6 +117,26 @@ export function IssueDetailPanel({
     }
   }, [isEditingDesc]);
 
+  const handleOpenSubtask = (subtask: IssueItem) => {
+    setHistoryStack((prev) => [...prev, currentIssueId]);
+    setCurrentIssueId(subtask.id);
+    setSearchParams((prev) => {
+      prev.set("selectedIssue", String(subtask.id));
+      return prev;
+    });
+  };
+
+  const handleBackToParent = () => {
+    if (historyStack.length === 0) return;
+    const previousId = historyStack[historyStack.length - 1];
+    setHistoryStack((prev) => prev.slice(0, -1));
+    setCurrentIssueId(previousId);
+    setSearchParams((prev) => {
+      prev.set("selectedIssue", String(previousId));
+      return prev;
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="h-full w-full bg-[#09090B] border-l border-white/10 flex items-center justify-center font-mono text-xs text-zinc-400">
@@ -139,6 +167,7 @@ export function IssueDetailPanel({
   }
 
   const isSubtask = issue.issue_type === "subtask";
+  const canGoBack = historyStack.length > 0;
 
   const handleSaveTitle = () => {
     setIsEditingTitle(false);
@@ -147,7 +176,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { title: trimmed },
       });
     } else {
@@ -161,7 +190,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { description: descInput },
       });
     }
@@ -174,7 +203,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { story_points: parsed },
       });
     } else {
@@ -197,7 +226,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { estimated_time: parsed },
       });
     } else {
@@ -213,7 +242,7 @@ export function IssueDetailPanel({
     updateIssue({
       subdomain,
       projectSlug,
-      issueId,
+      issueId: currentIssueId,
       data: { due_date: newDate },
     });
   };
@@ -224,7 +253,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { status_id },
       });
     }
@@ -236,7 +265,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { priority },
       });
     }
@@ -248,7 +277,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { assignee_id },
       });
     }
@@ -260,7 +289,7 @@ export function IssueDetailPanel({
       updateIssue({
         subdomain,
         projectSlug,
-        issueId,
+        issueId: currentIssueId,
         data: { sprint_id },
       });
     }
@@ -270,7 +299,7 @@ export function IssueDetailPanel({
     addLabel({
       subdomain,
       projectSlug,
-      issueId,
+      issueId: currentIssueId,
       data: { label_id: label.id },
     });
     setLabelSearch("");
@@ -283,7 +312,7 @@ export function IssueDetailPanel({
     addLabel({
       subdomain,
       projectSlug,
-      issueId,
+      issueId: currentIssueId,
       data: { name: trimmed },
     });
     setLabelSearch("");
@@ -294,7 +323,7 @@ export function IssueDetailPanel({
     removeLabel({
       subdomain,
       projectSlug,
-      issueId,
+      issueId: currentIssueId,
       labelId,
     });
   };
@@ -325,6 +354,8 @@ export function IssueDetailPanel({
         onStartEditingPoints={() => setIsEditingPoints(true)}
         onStatusChange={handleStatusChange}
         onClose={onClose}
+        onBack={handleBackToParent}
+        canGoBack={canGoBack}
       />
 
       <div className="flex-1 overflow-y-auto p-5 space-y-6">
@@ -377,14 +408,14 @@ export function IssueDetailPanel({
                     setIsEditingDesc(false);
                     setDescInput(issue.description || "");
                   }}
-                  className="h-7 text-xs border-white/10 bg-transparent text-zinc-400 hover:text-white rounded-xs"
+                  className="h-7 text-xs border-white/10 bg-transparent text-zinc-400 hover:text-white rounded-xs cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="button"
                   onClick={handleSaveDesc}
-                  className="h-7 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs"
+                  className="h-7 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs cursor-pointer"
                 >
                   Save
                 </Button>
@@ -410,13 +441,8 @@ export function IssueDetailPanel({
           <IssueSubtasksSection
             subdomain={subdomain}
             projectSlug={projectSlug}
-            issueId={issueId}
-            onSelectSubtask={(subtask) => {
-              if (onOpenSubtask) {
-                onOpenSubtask(subtask);
-              }
-            }}
-            onOpenCreateSubtask={onOpenCreateSubtask}
+            issueId={currentIssueId}
+            onSelectSubtask={handleOpenSubtask}
           />
         )}
 
@@ -503,7 +529,7 @@ export function IssueDetailPanel({
         <IssueCommentsSection
           subdomain={subdomain}
           projectSlug={projectSlug}
-          issueId={issueId}
+          issueId={currentIssueId}
         />
 
         <div className="space-y-2">
