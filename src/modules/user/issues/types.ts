@@ -379,3 +379,16 @@ export interface S3UploadProgressParams {
   file: File;
   onProgress?: (progress: number) => void;
 }
+
+export interface AttachmentListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: AttachmentItem[];
+}
+
+export interface FetchAttachmentsParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+}

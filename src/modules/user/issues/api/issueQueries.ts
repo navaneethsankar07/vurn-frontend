@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   fetchCommentReactions,
+  fetchIssueAttachments,
   fetchIssueComments,
   fetchIssueSubtasks,
   fetchLabelSuggestions,
@@ -8,6 +9,7 @@ import {
   fetchProjectIssues,
 } from "./issueApi";
 import type {
+  AttachmentListResponse,
   CommentReactionSummary,
   GetIssueCommentsParams,
   IssueDetailResponse,
@@ -174,5 +176,30 @@ export function useProjectEpics(subdomain: string, projectSlug: string) {
         page_size: 100,
       }),
     enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+interface UseIssueAttachmentsOptions {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string | null;
+  enabled?: boolean;
+}
+
+export function useIssueAttachments({
+  subdomain,
+  projectSlug,
+  issueId,
+  enabled = true,
+}: UseIssueAttachmentsOptions) {
+  return useQuery<AttachmentListResponse>({
+    queryKey: ["issue-attachments", subdomain, projectSlug, String(issueId)],
+    queryFn: () =>
+      fetchIssueAttachments({
+        subdomain,
+        projectSlug,
+        issueId: issueId as number | string,
+      }),
+    enabled: Boolean(enabled && subdomain && projectSlug && issueId),
   });
 }

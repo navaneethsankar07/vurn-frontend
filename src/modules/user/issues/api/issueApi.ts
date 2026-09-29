@@ -1,6 +1,7 @@
 import api from "@/api/axios";
 import type {
   AddIssueLabelParams,
+  AttachmentListResponse,
   CommentReactionSummary,
   CompleteUploadParams,
   CompleteUploadResponse,
@@ -12,6 +13,7 @@ import type {
   DeleteIssueParams,
   DeleteIssueResponse,
   DeleteReactionResponse,
+  FetchAttachmentsParams,
   FetchSubtasksParams,
   GetIssueCommentsParams,
   InitializeUploadParams,
@@ -260,6 +262,17 @@ export async function completeAttachmentUpload({
   const response = await api.post<CompleteUploadResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/upload/complete/`,
     data,
+  );
+  return response.data;
+}
+
+export async function fetchIssueAttachments({
+  subdomain,
+  projectSlug,
+  issueId,
+}: FetchAttachmentsParams): Promise<AttachmentListResponse> {
+  const response = await api.get<AttachmentListResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/`,
   );
   return response.data;
 }
