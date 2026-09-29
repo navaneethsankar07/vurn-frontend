@@ -392,3 +392,14 @@ export interface FetchAttachmentsParams {
   projectSlug: string;
   issueId: number | string;
 }
+
+export interface DeleteAttachmentParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  attachmentId: number | string;
+}
+
+export interface DeleteAttachmentResponse {
+  message: string;
+}

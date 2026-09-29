@@ -2,12 +2,19 @@ import { useRef, useState } from "react";
 import {
   Paperclip,
   Loader2,
-  UploadCloud,
   FileText,
   Download,
+  Trash2,
+  FileUp,
 } from "lucide-react";
+import { useModal } from "@/hooks/useModal";
 import { useIssueAttachments } from "../api/issueQueries";
-import { useAttachmentUploadWorkflow } from "../api/issueMutations";
+import {
+  useAttachmentUploadWorkflow,
+  useDeleteIssueAttachment,
+} from "../api/issueMutations";
+import { DeleteAttachmentConfirmationModal } from "./modals/DeleteAttachmentConfirmationModal";
+import type { AttachmentItem } from "../types";
 
 interface IssueAttachmentsSectionProps {
   subdomain: string;
@@ -22,6 +29,11 @@ export function IssueAttachmentsSection({
 }: IssueAttachmentsSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState(0);
+  const [activeFileName, setActiveFileName] = useState("");
+  const [selectedAttachment, setSelectedAttachment] =
+    useState<AttachmentItem | null>(null);
+
+  const deleteModal = useModal();
 
   const { data, isLoading } = useIssueAttachments({
     subdomain,
@@ -30,6 +42,8 @@ export function IssueAttachmentsSection({
   });
 
   const { mutate: uploadFile, isPending } = useAttachmentUploadWorkflow();
+  const { mutate: deleteAttachment, isPending: isDeleting } =
+    useDeleteIssueAttachment();
 
   const attachments = data?.results || [];
 
@@ -37,6 +51,7 @@ export function IssueAttachmentsSection({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setActiveFileName(file.name);
     setProgress(0);
     uploadFile(
       {
@@ -51,6 +66,30 @@ export function IssueAttachmentsSection({
           if (fileInputRef.current) {
             fileInputRef.current.value = "";
           }
+          setActiveFileName("");
+        },
+      },
+    );
+  };
+
+  const confirmDelete = (file: AttachmentItem) => {
+    setSelectedAttachment(file);
+    deleteModal.openModal();
+  };
+
+  const handleDelete = () => {
+    if (!selectedAttachment) return;
+    deleteAttachment(
+      {
+        subdomain,
+        projectSlug,
+        issueId,
+        attachmentId: selectedAttachment.id,
+      },
+      {
+        onSuccess: () => {
+          deleteModal.closeModal();
+          setSelectedAttachment(null);
         },
       },
     );
@@ -65,7 +104,7 @@ export function IssueAttachmentsSection({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       <div className="flex items-center justify-between text-zinc-400">
         <span className="text-[10px] font-semibold uppercase tracking-wider">
           Attachments ({attachments.length})
@@ -87,22 +126,27 @@ export function IssueAttachmentsSection({
           ) : (
             <Paperclip className="h-3 w-3" />
           )}
-          <span>{isPending ? `Uploading ${progress}%` : "Attach"}</span>
+          <span>{isPending ? "Uploading..." : "Attach"}</span>
         </button>
       </div>
 
       {isPending && (
-        <div className="p-3 border border-amber-500/30 bg-amber-500/5 rounded-xs space-y-2 font-mono">
-          <div className="flex items-center justify-between text-[11px] text-zinc-300">
-            <span className="flex items-center gap-1.5 truncate">
-              <UploadCloud className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-pulse" />
-              <span className="truncate">Uploading file to S3...</span>
+        <div className="p-3 bg-black/60 border border-white/10 rounded-xs space-y-2.5 font-mono animate-in fade-in duration-200">
+          <div className="flex items-center justify-between text-[11px]">
+            <div className="flex items-center gap-2 min-w-0 pr-2">
+              <FileUp className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-bounce" />
+              <span className="text-zinc-200 font-sans truncate">
+                {activeFileName || "Uploading file..."}
+              </span>
+            </div>
+            <span className="text-amber-500 font-semibold shrink-0">
+              {progress}%
             </span>
-            <span className="font-semibold text-amber-500">{progress}%</span>
           </div>
+
           <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-amber-500 transition-all duration-150"
+              className="h-full bg-amber-500 transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -121,14 +165,16 @@ export function IssueAttachmentsSection({
       ) : (
         <div className="border border-white/10 bg-black/40 rounded-xs divide-y divide-white/5 overflow-hidden">
           {attachments.map((file) => (
-            <a
+            <div
               key={file.id}
-              href={file.download_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between px-3 py-2 hover:bg-white/5 transition-colors group cursor-pointer"
+              className="flex items-center justify-between px-3 py-2 hover:bg-white/5 transition-colors group"
             >
-              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+              <a
+                href={file.download_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 min-w-0 pr-2 flex-1 cursor-pointer"
+              >
                 <FileText className="h-4 w-4 text-amber-500 shrink-0" />
                 <div className="min-w-0">
                   <p className="text-xs text-zinc-200 font-sans truncate group-hover:text-white transition-colors">
@@ -138,13 +184,40 @@ export function IssueAttachmentsSection({
                     {formatFileSize(file.file_size)} • {file.uploaded_by_name}
                   </p>
                 </div>
-              </div>
+              </a>
 
-              <Download className="h-3.5 w-3.5 text-zinc-600 group-hover:text-amber-500 shrink-0 transition-colors" />
-            </a>
+              <div className="flex items-center gap-1 shrink-0">
+                <a
+                  href={file.download_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Download / View"
+                  className="p-1 text-zinc-500 hover:text-white transition-colors rounded-xs"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                </a>
+                <button
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={() => confirmDelete(file)}
+                  title="Delete attachment"
+                  className="p-1 text-zinc-500 hover:text-red-400 transition-colors rounded-xs cursor-pointer disabled:opacity-30"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       )}
+
+      <DeleteAttachmentConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={deleteModal.closeModal}
+        onConfirm={handleDelete}
+        fileName={selectedAttachment?.file_name || ""}
+        isPending={isDeleting}
+      />
     </div>
   );
 }

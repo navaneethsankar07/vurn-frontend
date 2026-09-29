@@ -8,6 +8,8 @@ import type {
   CreateCommentParams,
   CreateCommentResponse,
   CreateIssueParams,
+  DeleteAttachmentParams,
+  DeleteAttachmentResponse,
   DeleteCommentParams,
   DeleteCommentResponse,
   DeleteIssueParams,
@@ -273,6 +275,18 @@ export async function fetchIssueAttachments({
 }: FetchAttachmentsParams): Promise<AttachmentListResponse> {
   const response = await api.get<AttachmentListResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/`,
+  );
+  return response.data;
+}
+
+export async function deleteIssueAttachment({
+  subdomain,
+  projectSlug,
+  issueId,
+  attachmentId,
+}: DeleteAttachmentParams): Promise<DeleteAttachmentResponse> {
+  const response = await api.delete<DeleteAttachmentResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/${attachmentId}/`,
   );
   return response.data;
 }

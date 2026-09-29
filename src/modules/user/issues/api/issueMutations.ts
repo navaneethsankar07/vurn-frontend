@@ -10,6 +10,7 @@ import {
   createIssueComment,
   createProjectIssue,
   deleteCommentReaction,
+  deleteIssueAttachment,
   deleteIssueComment,
   deleteProjectIssue,
   initializeAttachmentUpload,
@@ -26,6 +27,8 @@ import type {
   CreateCommentParams,
   CreateCommentResponse,
   CreateIssueParams,
+  DeleteAttachmentParams,
+  DeleteAttachmentResponse,
   DeleteCommentParams,
   DeleteCommentResponse,
   DeleteIssueParams,
@@ -696,6 +699,32 @@ export function useAttachmentUploadWorkflow() {
         error?.response?.data?.detail ||
         error?.message ||
         "Failed to upload attachment.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useDeleteIssueAttachment() {
+  const queryClient = useQueryClient();
+
+  return useMutation<DeleteAttachmentResponse, any, DeleteAttachmentParams>({
+    mutationFn: deleteIssueAttachment,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "issue-attachments",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.issueId),
+        ],
+      });
+      toast.success(data?.message || "Attachment deleted successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to delete attachment.";
       toast.error(message);
     },
   });
