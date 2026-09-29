@@ -6,11 +6,13 @@ import {
 import { toast } from "sonner";
 import {
   addIssueLabel,
+  completeAttachmentUpload,
   createIssueComment,
   createProjectIssue,
   deleteCommentReaction,
   deleteIssueComment,
   deleteProjectIssue,
+  initializeAttachmentUpload,
   removeIssueLabel,
   setCommentReaction,
   updateIssueComment,
@@ -43,6 +45,7 @@ import type {
   UpdateCommentResponse,
   UpdateIssueParams,
 } from "../types";
+import { uploadFileToS3 } from "@/utils/uploadToS3";
 
 export function useCreateProjectIssue() {
   const queryClient = useQueryClient();
@@ -626,6 +629,73 @@ export function useDeleteProjectIssue() {
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to delete issue.";
+      toast.error(message);
+    },
+  });
+}
+
+interface UploadWorkflowParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  file: File;
+  onProgress?: (progress: number) => void;
+}
+
+export function useAttachmentUploadWorkflow() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, any, UploadWorkflowParams>({
+    mutationFn: async ({
+      subdomain,
+      projectSlug,
+      issueId,
+      file,
+      onProgress,
+    }) => {
+      const initRes = await initializeAttachmentUpload({
+        subdomain,
+        projectSlug,
+        issueId,
+        data: {
+          file_name: file.name,
+          file_size: file.size,
+          mime_type: file.type,
+        },
+      });
+
+      await uploadFileToS3({
+        uploadUrl: initRes.upload_url,
+        file,
+        onProgress,
+      });
+
+      await completeAttachmentUpload({
+        subdomain,
+        projectSlug,
+        issueId,
+        data: {
+          object_key: initRes.object_key,
+        },
+      });
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "issue-attachments",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.issueId),
+        ],
+      });
+      toast.success("Attachment uploaded successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        error?.message ||
+        "Failed to upload attachment.";
       toast.error(message);
     },
   });

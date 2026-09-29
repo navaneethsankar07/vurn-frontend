@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { Loader2, Paperclip, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +26,7 @@ import { IssueCommentsSection } from "./IssueCommentsSection";
 import { DeleteIssueConfirmationModal } from "./modals/DeleteIssueConfirmModal";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
 import type { WorkItemPriority, IssueLabel, IssueItem } from "../types";
+import { IssueAttachmentsSection } from "./IssueAttachmentsSection";
 
 interface IssueDetailPanelProps {
   subdomain: string;
@@ -596,23 +597,11 @@ export function IssueDetailPanel({
             issueId={currentIssueId}
           />
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-zinc-400">
-              <span className="text-[10px] font-semibold uppercase tracking-wider">
-                Attachments
-              </span>
-              <button
-                type="button"
-                className="flex items-center gap-1 text-[11px] text-amber-500 hover:text-amber-400 transition-colors"
-              >
-                <Paperclip className="h-3 w-3" />
-                <span>Attach</span>
-              </button>
-            </div>
-            <div className="p-3 border border-dashed border-white/10 rounded-xs text-center text-zinc-600 text-[11px] font-sans">
-              No files attached yet.
-            </div>
-          </div>
+          <IssueAttachmentsSection
+            subdomain={subdomain}
+            projectSlug={projectSlug}
+            issueId={currentIssueId}
+          />
         </div>
       </div>
 

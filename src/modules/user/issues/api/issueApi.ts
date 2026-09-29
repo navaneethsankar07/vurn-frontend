@@ -2,6 +2,8 @@ import api from "@/api/axios";
 import type {
   AddIssueLabelParams,
   CommentReactionSummary,
+  CompleteUploadParams,
+  CompleteUploadResponse,
   CreateCommentParams,
   CreateCommentResponse,
   CreateIssueParams,
@@ -12,6 +14,8 @@ import type {
   DeleteReactionResponse,
   FetchSubtasksParams,
   GetIssueCommentsParams,
+  InitializeUploadParams,
+  InitializeUploadResponse,
   IssueDetailParams,
   IssueDetailResponse,
   IssueItem,
@@ -230,6 +234,32 @@ export async function deleteProjectIssue({
 }: DeleteIssueParams): Promise<DeleteIssueResponse> {
   const response = await api.delete<DeleteIssueResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/`,
+  );
+  return response.data;
+}
+
+export async function initializeAttachmentUpload({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: InitializeUploadParams): Promise<InitializeUploadResponse> {
+  const response = await api.post<InitializeUploadResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/upload/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function completeAttachmentUpload({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: CompleteUploadParams): Promise<CompleteUploadResponse> {
+  const response = await api.post<CompleteUploadResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/upload/complete/`,
+    data,
   );
   return response.data;
 }

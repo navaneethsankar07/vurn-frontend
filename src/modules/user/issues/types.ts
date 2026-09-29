@@ -326,3 +326,56 @@ export interface DeleteIssueParams {
   projectSlug: string;
   issueId: number | string;
 }
+
+export interface AttachmentItem {
+  id: number;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  uploaded_by_id: number;
+  uploaded_by_name: string;
+  uploaded_by_avatar?: string | null;
+  created_at: string;
+  download_url: string;
+}
+
+export interface InitializeUploadParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: {
+    file_name: string;
+    file_size: number;
+    mime_type: string;
+  };
+}
+
+export interface InitializeUploadResponse {
+  message: string;
+  upload_url: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  expires_in: number;
+  object_key: string;
+}
+
+export interface CompleteUploadParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: {
+    object_key: string;
+  };
+}
+
+export interface CompleteUploadResponse {
+  message: string;
+  attachment?: AttachmentItem;
+}
+
+export interface S3UploadProgressParams {
+  uploadUrl: string;
+  file: File;
+  onProgress?: (progress: number) => void;
+}
