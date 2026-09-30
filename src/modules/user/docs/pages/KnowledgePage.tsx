@@ -27,6 +27,11 @@ export function KnowledgePage() {
     }
   };
 
+  const handleDocumentCreated = (docId: number) => {
+    setSelectedDocumentId(docId);
+    setActiveCreatingFolderId(null);
+  };
+
   return (
     <div className="bg-black text-white flex h-170 font-mono overflow-hidden">
       <KnowledgeSidebar
@@ -39,6 +44,7 @@ export function KnowledgePage() {
         onCreateDocumentClick={handleOpenCreateDocument}
         activeCreatingFolderId={activeCreatingFolderId}
         setActiveCreatingFolderId={setActiveCreatingFolderId}
+        onDocumentCreated={handleDocumentCreated}
       />
 
       <KnowledgeMainContent

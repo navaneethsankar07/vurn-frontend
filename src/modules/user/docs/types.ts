@@ -87,3 +87,14 @@ export interface DocumentDetail {
   created_at: string;
   updated_at: string;
 }
+
+export interface UpdateDocumentPayload {
+  folder_id?: number;
+  title?: string;
+  content?: string;
+}
+
+export interface UpdateDocumentResponse {
+  id: number;
+  message: string;
+}

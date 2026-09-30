@@ -9,6 +9,8 @@ import type {
   DocumentFoldersResponse,
   DocumentsQueryParams,
   DocumentsResponse,
+  UpdateDocumentPayload,
+  UpdateDocumentResponse,
 } from "../types";
 
 export async function fetchDocumentFolders(
@@ -74,6 +76,24 @@ export async function fetchDocumentDetail(
 ): Promise<DocumentDetail> {
   const { data } = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
+  );
+  return data;
+}
+
+export async function updateProjectDocument({
+  subdomain,
+  projectSlug,
+  documentId,
+  payload,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number | string;
+  payload: UpdateDocumentPayload;
+}): Promise<UpdateDocumentResponse> {
+  const { data } = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
+    payload,
   );
   return data;
 }

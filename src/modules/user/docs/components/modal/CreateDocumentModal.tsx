@@ -14,6 +14,7 @@ interface CreateDocumentModalProps {
   subdomain: string;
   projectSlug: string;
   folderId: number;
+  onDocumentCreated?: (docId: number) => void;
 }
 
 export function CreateDocumentModal({
@@ -22,6 +23,7 @@ export function CreateDocumentModal({
   subdomain,
   projectSlug,
   folderId,
+  onDocumentCreated,
 }: CreateDocumentModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -32,7 +34,7 @@ export function CreateDocumentModal({
     formState: { errors },
   } = useForm<CreateDocumentInput>({
     resolver: zodResolver(createDocumentSchema),
-    defaultValues: { folder_id: folderId, title: "", content: "content" },
+    defaultValues: { folder_id: folderId, title: "", content: "<p></p>" },
   });
 
   const { mutate: createDocument, isPending } = useCreateProjectDocument(
@@ -42,7 +44,7 @@ export function CreateDocumentModal({
 
   useEffect(() => {
     if (isOpen) {
-      reset({ folder_id: folderId, title: "", content: "content" });
+      reset({ folder_id: folderId, title: "", content: "<p></p>" });
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen, folderId, reset]);
@@ -54,12 +56,15 @@ export function CreateDocumentModal({
       {
         folder_id: Number(folderId),
         title: data.title.trim(),
-        content: data.content?.trim() || "content",
+        content: "<p></p>",
       },
       {
-        onSuccess: () => {
+        onSuccess: (res: any) => {
           reset();
           onClose();
+          if (res?.id && onDocumentCreated) {
+            onDocumentCreated(res.id);
+          }
         },
       },
     );

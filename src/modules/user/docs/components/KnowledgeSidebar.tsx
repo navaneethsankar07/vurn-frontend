@@ -28,6 +28,7 @@ interface KnowledgeSidebarProps {
   onCreateDocumentClick: (folderId: number) => void;
   activeCreatingFolderId: number | null;
   setActiveCreatingFolderId: (folderId: number | null) => void;
+  onDocumentCreated: (docId: number) => void;
 }
 
 export function KnowledgeSidebar({
@@ -39,6 +40,7 @@ export function KnowledgeSidebar({
   onSelectDocument,
   activeCreatingFolderId,
   setActiveCreatingFolderId,
+  onDocumentCreated,
 }: KnowledgeSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
@@ -200,6 +202,7 @@ export function KnowledgeSidebar({
                         subdomain={subdomain}
                         projectSlug={projectSlug}
                         folderId={folder.id}
+                        onDocumentCreated={onDocumentCreated}
                       />
                     )}
 
