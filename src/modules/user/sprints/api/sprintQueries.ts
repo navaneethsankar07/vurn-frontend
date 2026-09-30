@@ -5,6 +5,7 @@ import {
   fetchKanbanBoard,
   fetchProjectSprints,
   fetchSprintDetail,
+  fetchSprintIssues,
 } from "./sprintApi";
 import type {
   KanbanColumnIssuesParams,
@@ -32,6 +33,19 @@ export function useSprintDetail(
   return useQuery({
     queryKey: ["sprint-detail", subdomain, projectSlug, sprintId],
     queryFn: () => fetchSprintDetail(subdomain, projectSlug, sprintId),
+    enabled: Boolean(subdomain && projectSlug && sprintId),
+  });
+}
+
+export function useSprintIssues(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+  page: number = 1,
+) {
+  return useQuery({
+    queryKey: ["sprint-issues", subdomain, projectSlug, String(sprintId), page],
+    queryFn: () => fetchSprintIssues(subdomain, projectSlug, sprintId, page),
     enabled: Boolean(subdomain && projectSlug && sprintId),
   });
 }

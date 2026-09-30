@@ -48,9 +48,9 @@ export interface SprintMember {
 export interface SprintIssue {
   key: string;
   title: string;
-  status: "Todo" | "In Progress" | "Done";
-  priority: "High" | "Medium" | "Low";
-  assignee: SprintMember;
+  status: string;
+  priority: string;
+  assignee: { id: number; name: string };
   storyPoints: number;
   updatedAt: string;
 }
@@ -65,10 +65,9 @@ export interface SprintActivity {
 
 export interface SprintDetailExtended extends SprintDetailAPIResponse {
   completionPercentage: number;
-  members: SprintMember[];
+  members: { id: number; name: string; isLead: boolean }[];
   issues: SprintIssue[];
   activities: SprintActivity[];
-  created_by_name: string;
   totalPoints: number;
   completedPoints: number;
   remainingPoints: number;
@@ -252,4 +251,20 @@ export interface BoardSprintOption {
   id: number;
   name: string;
   status: string;
+}
+
+export interface SprintIssueItem {
+  id: number;
+  key: string;
+  title: string;
+  issue_type: string;
+  status_id: number;
+  status_name: string;
+  status_category: string;
+  priority: "urgent" | "high" | "medium" | "low";
+  assignee_id: number | null;
+  assignee_name?: string | null;
+  assignee_avatar?: string | null;
+  story_points: number | null;
+  updated_at: string;
 }

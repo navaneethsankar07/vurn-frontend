@@ -9,14 +9,13 @@ import type {
   ProjectSprintsQueryParams,
   Sprint,
   SprintDetailAPIResponse,
-  SprintDetailExtended,
+  SprintIssueItem,
   StartSprintParams,
   StartSprintResponse,
   UpdateIssuePositionPayload,
   UpdateIssuePositionResponse,
 } from "../types";
 import type { CreateSprintInput } from "../schemas/createSprintSchema";
-import { DUMMY_SPRINT_EXTENDED } from "../constants";
 import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
 
 export async function fetchProjectSprints(
@@ -65,15 +64,29 @@ export async function fetchSprintDetail(
   subdomain: string,
   projectSlug: string,
   sprintId: string | number,
-): Promise<SprintDetailExtended> {
+): Promise<SprintDetailAPIResponse> {
   const { data } = await api.get<SprintDetailAPIResponse>(
     `/organizations/${subdomain}/projects/${projectSlug}/sprints/${sprintId}/`,
   );
+  return data;
+}
 
-  return {
-    ...data,
-    ...DUMMY_SPRINT_EXTENDED,
-  };
+export async function fetchSprintIssues(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+  page: number = 1,
+): Promise<{
+  results: SprintIssueItem[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+}> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/`,
+    { params: { sprint_id: sprintId, page } },
+  );
+  return data;
 }
 
 export async function updateProjectSprint(
