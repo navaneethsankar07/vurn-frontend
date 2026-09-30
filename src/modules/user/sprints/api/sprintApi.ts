@@ -1,6 +1,7 @@
 import api from "@/api/axios";
 import type {
   BoardSprintOption,
+  CompleteSprintPayload,
   KanbanBoardResponse,
   KanbanColumnIssuesParams,
   KanbanColumnIssuesResponse,
@@ -8,6 +9,7 @@ import type {
   MoveIssueStatusResponse,
   ProjectSprintsQueryParams,
   Sprint,
+  SprintCompletionCheckResponse,
   SprintDetailAPIResponse,
   SprintIssueItem,
   StartSprintParams,
@@ -18,11 +20,18 @@ import type {
 import type { CreateSprintInput } from "../schemas/createSprintSchema";
 import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
 
+export interface SprintsPaginatedResponse {
+  results: Sprint[];
+  count: number;
+  next?: string | null;
+  previous?: string | null;
+}
+
 export async function fetchProjectSprints(
   subdomain: string,
   projectSlug: string,
   params?: ProjectSprintsQueryParams,
-): Promise<Sprint[]> {
+): Promise<SprintsPaginatedResponse> {
   const queryParams: Record<string, string | number> = {};
 
   if (params?.search?.trim()) {
@@ -43,9 +52,16 @@ export async function fetchProjectSprints(
     { params: queryParams },
   );
 
-  return Array.isArray(response.data)
-    ? response.data
-    : response.data.results || [];
+  if (Array.isArray(response.data)) {
+    return { results: response.data, count: response.data.length };
+  }
+
+  return {
+    results: response.data.results || [],
+    count: response.data.count || 0,
+    next: response.data.next,
+    previous: response.data.previous,
+  };
 }
 
 export async function createProjectSprint(
@@ -170,4 +186,33 @@ export async function fetchBoardSprints(
     `/organizations/${subdomain}/projects/${projectSlug}/board/sprints/`,
   );
   return response.data;
+}
+
+export async function checkSprintCompletion(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+): Promise<SprintCompletionCheckResponse> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/sprints/${sprintId}/completion-check/`,
+  );
+  return data;
+}
+
+export async function completeSprint({
+  subdomain,
+  projectSlug,
+  sprintId,
+  payload,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  sprintId: string | number;
+  payload?: CompleteSprintPayload;
+}) {
+  const { data } = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/sprints/${sprintId}/complete/`,
+    payload || {},
+  );
+  return data;
 }

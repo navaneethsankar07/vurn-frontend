@@ -59,32 +59,24 @@ export function SprintCard({
   const contentToRender = sprint.goal || sprint.description;
 
   return (
-    <div className="bg-[#09090B] border border-white/10 p-4 space-y-4 font-mono hover:border-white/20 transition-all rounded-xs">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1.5 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-sm font-bold text-white tracking-tight">
-              {sprint.name}
-            </h3>
-            <span
-              className={`text-[10px] uppercase font-semibold px-2 py-0.5 border rounded-xs flex items-center gap-1.5 ${getBadgeStyle(
-                sprint.status,
-              )}`}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-current inline-block" />
-              {sprint.status}
-            </span>
-          </div>
+    <div className="bg-[#09090B] border border-white/10 p-3.5 space-y-3 font-mono hover:border-white/20 transition-all rounded-xs">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <h3 className="text-xs font-bold text-white tracking-tight truncate">
+            {sprint.name}
+          </h3>
+          <span
+            className={`text-[9px] uppercase font-semibold px-1.5 py-0.2 border rounded-xs flex items-center gap-1 shrink-0 ${getBadgeStyle(
+              sprint.status,
+            )}`}
+          >
+            <span className="h-1 w-1 rounded-full bg-current inline-block" />
+            {sprint.status}
+          </span>
+        </div>
 
-          <div className="text-xs text-zinc-400 font-sans line-clamp-1 prose prose-invert max-w-none [&_p]:m-0 [&_p]:inline">
-            {contentToRender ? (
-              <ReactMarkdown>{contentToRender}</ReactMarkdown>
-            ) : (
-              "No goal specified."
-            )}
-          </div>
-
-          <div className="flex items-center gap-2 text-[11px] text-zinc-500 pt-0.5">
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="hidden sm:flex items-center gap-3 text-[10px] text-zinc-500">
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3 text-zinc-500 shrink-0" />
               {formatSprintDates(sprint.start_date, sprint.end_date)}
@@ -92,82 +84,88 @@ export function SprintCard({
             <span>•</span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3 text-zinc-500 shrink-0" />
-              Updated {formatRelativeTime(sprint.updated_at)}
+              {formatRelativeTime(sprint.updated_at)}
             </span>
           </div>
-        </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 transition-colors focus:outline-none rounded-xs border border-transparent hover:border-white/10 shrink-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="bg-[#09090B] border-white/10 text-text-primary/80 font-mono text-xs min-w-38 rounded-xs p-1"
-          >
-            <DropdownMenuItem
-              onClick={handleOpenSprint}
-              className="cursor-pointer rounded-xs focus:bg-white/10 focus:text-white flex items-center justify-between"
-            >
-              <span>View Sprint</span>
-              <ExternalLink className="h-3 w-3 text-zinc-400" />
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onEditSprint?.(sprint)}
-              className="cursor-pointer rounded-xs focus:bg-white/10 focus:text-white"
-            >
-              Edit Sprint
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/10 my-1" />
-            <DropdownMenuItem
-              onClick={() => onDeleteSprint?.(sprint)}
-              className="cursor-pointer rounded-xs text-red-400 focus:bg-red-500/10 focus:text-red-400"
-            >
-              Delete Sprint
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <div className="flex items-center gap-3 border-l border-white/10 pl-3">
+            <div className="flex items-center gap-3 text-[10px] font-mono">
+              <span className="text-zinc-400">
+                Open:{" "}
+                <strong className="text-white">
+                  {sprint.open_issues_count ?? 0}
+                </strong>
+              </span>
+              <span className="text-zinc-400">
+                Done:{" "}
+                <strong className="text-emerald-400">
+                  {sprint.completed_issues_count ?? 0}
+                </strong>
+              </span>
+              <span className="text-zinc-400">
+                Left:{" "}
+                <strong className="text-amber-400">
+                  {sprint.remaining_issues_count ?? 0}
+                </strong>
+              </span>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className="p-1 text-zinc-400 hover:text-white hover:bg-white/5 transition-colors focus:outline-none rounded-xs border border-transparent hover:border-white/10 shrink-0 cursor-pointer">
+                <MoreHorizontal className="h-3.5 w-3.5" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="bg-[#09090B] border-white/10 text-zinc-200 font-mono text-xs min-w-38 rounded-xs p-1"
+              >
+                <DropdownMenuItem
+                  onClick={handleOpenSprint}
+                  className="cursor-pointer rounded-xs focus:bg-white/10 focus:text-white flex items-center justify-between"
+                >
+                  <span>View Sprint</span>
+                  <ExternalLink className="h-3 w-3 text-zinc-400" />
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onEditSprint?.(sprint)}
+                  className="cursor-pointer rounded-xs focus:bg-white/10 focus:text-white"
+                >
+                  Edit Sprint
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-white/10 my-1" />
+                <DropdownMenuItem
+                  onClick={() => onDeleteSprint?.(sprint)}
+                  className="cursor-pointer rounded-xs text-red-400 focus:bg-red-500/10 focus:text-red-400"
+                >
+                  Delete Sprint
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="text-zinc-500 font-medium uppercase tracking-wider">
-            Progress
-          </span>
-          <span className="text-white font-semibold">{progressPercent}%</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-white/5">
+        <div className="text-[11px] text-zinc-400 font-sans line-clamp-1 prose prose-invert max-w-none [&_p]:m-0 [&_p]:inline flex-1">
+          {contentToRender ? (
+            <ReactMarkdown>{contentToRender}</ReactMarkdown>
+          ) : (
+            <span className="text-zinc-600 italic">No goal specified.</span>
+          )}
         </div>
-        <div className="w-full bg-zinc-900 h-1.5 border border-white/5 overflow-hidden rounded-none">
-          <div
-            className="bg-amber-500 h-full transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/5">
-        <div>
-          <p className="text-sm font-bold text-white">
-            {sprint.open_issues_count ?? 0}
-          </p>
-          <p className="text-[10px] text-zinc-500 font-sans tracking-wide">
-            Open
-          </p>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-white">
-            {sprint.completed_issues_count ?? 0}
-          </p>
-          <p className="text-[10px] text-zinc-500 font-sans tracking-wide">
-            Completed
-          </p>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-white">
-            {sprint.remaining_issues_count ?? 0}
-          </p>
-          <p className="text-[10px] text-zinc-500 font-sans tracking-wide">
-            Remaining
-          </p>
+        <div className="w-full sm:w-48 space-y-1 shrink-0">
+          <div className="flex items-center justify-between text-[10px]">
+            <span className="text-zinc-500 uppercase tracking-wider">
+              Progress
+            </span>
+            <span className="text-white font-semibold">{progressPercent}%</span>
+          </div>
+          <div className="w-full bg-zinc-900 h-1 border border-white/5 overflow-hidden rounded-none">
+            <div
+              className="bg-amber-500 h-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>

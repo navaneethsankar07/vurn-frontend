@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  completeSprint,
   createProjectSprint,
   moveIssueStatus,
   startProjectSprint,
@@ -167,6 +168,25 @@ export function useUpdateIssuePosition() {
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to update issue position.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useCompleteSprint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: completeSprint,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["sprint-detail", variables.sprintId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["project-sprints"] });
+      toast.success("Sprint completed successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error || "Failed to complete sprint.";
       toast.error(message);
     },
   });

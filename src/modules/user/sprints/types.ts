@@ -268,3 +268,38 @@ export interface SprintIssueItem {
   story_points: number | null;
   updated_at: string;
 }
+
+export interface IncompleteIssue {
+  id: number;
+  key: string;
+  title: string;
+  issue_type: string;
+  status_id: number;
+  status_name: string;
+  parent_id: number | null;
+  parent_key: string | null;
+}
+
+export interface IncompleteSubtask {
+  id: number;
+  key: string;
+  title: string;
+  issue_type: string;
+  status_id: number;
+  status_name: string;
+  parent_id: number;
+  parent_key: string;
+}
+
+export interface SprintCompletionCheckResponse {
+  can_complete: boolean;
+  requires_issue_action: boolean;
+  requires_subtask_completion: boolean;
+  incomplete_issues: IncompleteIssue[];
+  incomplete_subtasks: IncompleteSubtask[];
+}
+
+export interface CompleteSprintPayload {
+  incomplete_issue_action?: "sprint" | "new_sprint" | "backlog";
+  target_sprint_id?: number;
+}

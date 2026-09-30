@@ -8,6 +8,8 @@ import {
   X,
   ArrowUp,
   ArrowDown,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,22 +39,26 @@ export function ProjectSprintsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("active");
   const [sortField, setSortField] = useState<string>("start_date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [page, setPage] = useState(1);
 
   const createSprintModal = useModal();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       setActiveSearch(searchInput.trim());
+      setPage(1);
     }
   };
 
   const handleClearSearch = () => {
     setSearchInput("");
     setActiveSearch("");
+    setPage(1);
   };
 
   const toggleSortDirection = () => {
     setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    setPage(1);
   };
 
   const sortOrder: SprintSortOption =
@@ -62,13 +68,19 @@ export function ProjectSprintsPage() {
     search: activeSearch || undefined,
     status: statusFilter !== "all" ? (statusFilter as SprintStatus) : undefined,
     sort: sortOrder,
+    page,
   };
 
   const {
-    data: sprints = [],
+    data: sprintData,
     isLoading,
     isError,
   } = useProjectSprints(subdomain, projectSlug, queryParams);
+
+  const sprints = sprintData?.results || [];
+  const totalCount = sprintData?.count || 0;
+  const pageSize = 5;
+  const totalPages = Math.ceil(totalCount / pageSize) || 1;
 
   const sortLabels: Record<string, string> = {
     start_date: "Start Date",
@@ -85,9 +97,9 @@ export function ProjectSprintsPage() {
   };
 
   return (
-    <div className="bg-black text-white p-4 sm:p-6 lg:p-0 font-mono">
-      <div className="max-w-8xl mx-auto space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+    <div className="bg-black text-white font-mono h-full flex flex-col overflow-hidden">
+      <div className="shrink-0 bg-black pt-1 pb-4 space-y-4 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <Layers className="h-5 w-5 text-zinc-400" />
@@ -134,7 +146,10 @@ export function ProjectSprintsPage() {
           <div className="flex items-center gap-2 shrink-0">
             <Select
               value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value ?? "all")}
+              onValueChange={(value) => {
+                setStatusFilter(value ?? "all");
+                setPage(1);
+              }}
             >
               <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none cursor-pointer">
                 <SelectValue>
@@ -177,7 +192,10 @@ export function ProjectSprintsPage() {
             <div className="flex items-center gap-1">
               <Select
                 value={sortField}
-                onValueChange={(value) => setSortField(value ?? "start_date")}
+                onValueChange={(value) => {
+                  setSortField(value ?? "start_date");
+                  setPage(1);
+                }}
               >
                 <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none cursor-pointer">
                   <SelectValue>
@@ -232,7 +250,9 @@ export function ProjectSprintsPage() {
             </div>
           </div>
         </div>
+      </div>
 
+      <div className="flex-1 min-h-0 overflow-y-auto py-4 space-y-4">
         {isLoading ? (
           <div className="min-h-64 flex items-center justify-center text-zinc-400 text-xs border border-white/10 bg-[#09090B]">
             <Loader2 className="h-5 w-5 animate-spin mr-2 text-amber-500" />
@@ -249,18 +269,52 @@ export function ProjectSprintsPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {sprints.map((sprint: Sprint) => (
-              <SprintCard
-                key={sprint.id}
-                sprint={sprint}
-                onOpenSprint={(sprint) => {
-                  navigate(`/projects/${projectSlug}/sprints/${sprint.id}`);
-                }}
-                onEditSprint={(s) => console.log("Edit sprint:", s)}
-                onDeleteSprint={(s) => console.log("Delete sprint:", s)}
-              />
-            ))}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-3">
+              {sprints.map((sprint: Sprint) => (
+                <SprintCard
+                  key={sprint.id}
+                  sprint={sprint}
+                  onOpenSprint={(sprint) => {
+                    navigate(`/projects/${projectSlug}/sprints/${sprint.id}`);
+                  }}
+                  onEditSprint={(s) => console.log("Edit sprint:", s)}
+                  onDeleteSprint={(s) => console.log("Delete sprint:", s)}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-4 border-t border-white/10 text-xs text-zinc-400">
+                <span>
+                  Showing page <strong className="text-white">{page}</strong> of{" "}
+                  <strong className="text-white">{totalPages}</strong> (
+                  {totalCount} total)
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    className="h-8 px-3 border-white/10 bg-black text-zinc-300 hover:text-white rounded-none disabled:opacity-40 cursor-pointer"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Prev
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={page >= totalPages}
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    className="h-8 px-3 border-white/10 bg-black text-zinc-300 hover:text-white rounded-none disabled:opacity-40 cursor-pointer"
+                  >
+                    Next <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

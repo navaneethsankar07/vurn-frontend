@@ -1,5 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
+  checkSprintCompletion,
   fetchBoardSprints,
   fetchColumnIssues,
   fetchKanbanBoard,
@@ -97,5 +98,23 @@ export function useBoardSprints(subdomain: string, projectSlug: string) {
     queryKey: ["kanban-board-sprints", subdomain, projectSlug],
     queryFn: () => fetchBoardSprints(subdomain, projectSlug),
     enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+export function useSprintCompletionCheck(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+  enabled: boolean,
+) {
+  return useQuery({
+    queryKey: [
+      "sprint-completion-check",
+      subdomain,
+      projectSlug,
+      String(sprintId),
+    ],
+    queryFn: () => checkSprintCompletion(subdomain, projectSlug, sprintId),
+    enabled: Boolean(subdomain && projectSlug && sprintId && enabled),
   });
 }

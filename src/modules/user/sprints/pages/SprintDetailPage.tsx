@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Loader2, AlertCircle } from "lucide-react";
-import { useSprintDetail, useSprintIssues } from "../api/sprintQueries";
+import {
+  useSprintDetail,
+  useSprintIssues,
+  useProjectSprints,
+} from "../api/sprintQueries";
 import { useStartProjectSprint } from "../api/sprintMutations";
 import { SprintHeader } from "../components/SprintHeader";
 import { SprintOverviewSection } from "../components/SprintOverviewSection";
 import { SprintIssuesTable } from "../components/SprintIssuesTable";
 import { SprintSidebar } from "../components/SprintSidebar";
 import { EditSprintModal } from "../components/modals/EditSprintModal";
+import { CompleteSprintModal } from "../components/modals/CompleteSprintModal";
 import { CreateIssueModal } from "../../issues/components/modals/CreateIssueModal";
 import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
@@ -15,7 +20,7 @@ import {
   calculateSprintProgress,
   formatRelativeTime,
 } from "@/utils/sprintHelpers";
-import type { SprintIssue } from "../types";
+import type { SprintIssue, Sprint } from "../types";
 import { DUMMY_SPRINT_EXTENDED } from "../constants";
 
 export function SprintDetailPage() {
@@ -31,6 +36,7 @@ export function SprintDetailPage() {
     closeModal: closeEditModal,
   } = useModal();
 
+  const completeSprintModal = useModal();
   const createIssueModal = useModal();
 
   const {
@@ -44,6 +50,12 @@ export function SprintDetailPage() {
     projectSlug,
     sprintId,
     page,
+  );
+
+  const { data: projectSprintsData } = useProjectSprints(
+    subdomain,
+    projectSlug,
+    { status: "planned" },
   );
 
   const { mutate: startSprint, isPending: isStarting } =
@@ -119,6 +131,11 @@ export function SprintDetailPage() {
     remainingIssuesCount: openIssuesCount,
   };
 
+  const projectSprintsList: Sprint[] = projectSprintsData?.results || [];
+  const plannedSprintOptions = projectSprintsList
+    .filter((s: Sprint) => String(s.id) !== String(sprintId))
+    .map((s: Sprint) => ({ id: s.id, name: s.name }));
+
   return (
     <div className="space-y-6 font-mono p-6 max-w-7xl mx-auto">
       <SprintHeader
@@ -136,7 +153,7 @@ export function SprintDetailPage() {
         onBack={() => navigate(`/projects/${projectSlug}/sprints`)}
         onEdit={openEditModal}
         onStart={handleStartSprint}
-        onComplete={() => {}}
+        onComplete={completeSprintModal.openModal}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -183,6 +200,15 @@ export function SprintDetailPage() {
         subdomain={subdomain}
         projectSlug={projectSlug}
         sprint={sprint}
+      />
+
+      <CompleteSprintModal
+        isOpen={completeSprintModal.isOpen}
+        onClose={completeSprintModal.closeModal}
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        sprintId={sprintId}
+        plannedSprints={plannedSprintOptions}
       />
 
       <CreateIssueModal
