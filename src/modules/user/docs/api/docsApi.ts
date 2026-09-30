@@ -2,8 +2,12 @@ import api from "@/api/axios";
 import type {
   CreateDocumentFolderPayload,
   CreateDocumentFolderResponse,
+  CreateDocumentPayload,
+  CreateDocumentResponse,
   DocumentFoldersQueryParams,
   DocumentFoldersResponse,
+  DocumentsQueryParams,
+  DocumentsResponse,
 } from "../types";
 
 export async function fetchDocumentFolders(
@@ -29,6 +33,34 @@ export async function createDocumentFolder({
 }): Promise<CreateDocumentFolderResponse> {
   const { data } = await api.post(
     `/organizations/${subdomain}/projects/${projectSlug}/document-folders/`,
+    payload,
+  );
+  return data;
+}
+
+export async function fetchProjectDocuments(
+  subdomain: string,
+  projectSlug: string,
+  params?: DocumentsQueryParams,
+): Promise<DocumentsResponse> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/`,
+    { params },
+  );
+  return data;
+}
+
+export async function createProjectDocument({
+  subdomain,
+  projectSlug,
+  payload,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  payload: CreateDocumentPayload;
+}): Promise<CreateDocumentResponse> {
+  const { data } = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/`,
     payload,
   );
   return data;
