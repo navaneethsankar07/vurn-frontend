@@ -4,12 +4,13 @@ import { ProjectHeader } from "@/modules/user/projects/components/ProjectHeader"
 import { IssueDetailPanel } from "@/modules/user/issues/components/IssueDetailPanel";
 import { getSubdomain } from "@/utils/subdomain";
 
-const PROJECT_TABS = [
+export const PROJECT_TABS = [
   { label: "Overview", path: "" },
   { label: "Board", path: "board" },
   { label: "Sprints", path: "sprints" },
   { label: "Issues", path: "issues" },
   { label: "Workflow", path: "workflow" },
+  { label: "Knowledge Base", path: "docs" },
   { label: "Repository", path: "repository" },
   { label: "Members", path: "members" },
   { label: "Settings", path: "settings" },
@@ -70,7 +71,7 @@ export function ProjectLayout() {
             <ProjectHeader />
 
             <div className="border-b border-white/10">
-              <nav className="flex items-center gap-6 overflow-x-auto no-scrollbar text-xs font-medium">
+              <nav className="flex items-center gap-6 lg:p-1 overflow-x-auto no-scrollbar text-xs font-medium">
                 {PROJECT_TABS.map((tab) => {
                   const fullPath = tab.path
                     ? `/projects/${projectSlug}/${tab.path}`

@@ -108,7 +108,7 @@ export function KanbanColumnComponent({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex-1 min-w-70 max-w-85 max-h-140 flex flex-col bg-black/40 border rounded-xs font-mono select-none transition-colors ${
+      className={`flex-1 min-w-70 max-w-85 max-h-130 flex flex-col bg-black/40 border rounded-xs font-mono select-none transition-colors ${
         isDragOver ? "border-amber-500/50 bg-amber-500/5" : "border-white/10"
       }`}
     >

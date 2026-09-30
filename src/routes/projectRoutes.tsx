@@ -12,6 +12,7 @@ import { ProjectSprintsPage } from "@/modules/user/sprints/pages/ProjectSprintsP
 import { SprintDetailPage } from "@/modules/user/sprints/pages/SprintDetailPage";
 import { ProjectKanbanPage } from "@/modules/user/sprints/pages/ProjectKanbanPage";
 import { ProjectIssuesPage } from "@/modules/user/issues/pages/ProjectIssuesPage";
+import { KnowledgePage } from "@/modules/user/docs/pages/KnowledgePage";
 
 export const projectRoutes: RouteObject[] = [
   {
@@ -53,6 +54,10 @@ export const projectRoutes: RouteObject[] = [
           {
             path: "issues",
             element: <ProjectIssuesPage />,
+          },
+          {
+            path: "docs",
+            element: <KnowledgePage />,
           },
           {
             path: "workflow",
