@@ -34,7 +34,7 @@ export function ProjectSprintsPage() {
 
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("active");
   const [sortField, setSortField] = useState<string>("start_date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
@@ -77,9 +77,16 @@ export function ProjectSprintsPage() {
     name: "Name",
   };
 
+  const statusLabels: Record<string, string> = {
+    all: "Status: All",
+    active: "Active",
+    planned: "Planned",
+    completed: "Completed",
+  };
+
   return (
-    <div className="bg-black text-white p-4 sm:p-6 lg:p-8 font-mono">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="bg-black text-white p-4 sm:p-6 lg:p-0 font-mono">
+      <div className="max-w-8xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
           <div>
             <div className="flex items-center gap-2">
@@ -96,7 +103,7 @@ export function ProjectSprintsPage() {
           <Button
             type="button"
             onClick={createSprintModal.openModal}
-            className="h-9 gap-2 bg-amber-500 text-black hover:bg-amber-400 font-semibold text-xs rounded-none transition-all shadow-sm shrink-0"
+            className="h-9 gap-2 bg-amber-500 text-black hover:bg-amber-400 font-semibold text-xs rounded-none transition-all shadow-sm shrink-0 cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             New Sprint
@@ -117,7 +124,7 @@ export function ProjectSprintsPage() {
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -129,14 +136,41 @@ export function ProjectSprintsPage() {
               value={statusFilter}
               onValueChange={(value) => setStatusFilter(value ?? "all")}
             >
-              <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none">
-                <SelectValue placeholder="Status: All" />
+              <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none cursor-pointer">
+                <SelectValue>
+                  {statusLabels[statusFilter] ?? "Status: All"}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs">
-                <SelectItem value="all">Status: All</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="planned">Planned</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+              <SelectContent
+                side="bottom"
+                sideOffset={4}
+                alignItemWithTrigger={false}
+                className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs"
+              >
+                <SelectItem
+                  value="all"
+                  className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                >
+                  Status: All
+                </SelectItem>
+                <SelectItem
+                  value="active"
+                  className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                >
+                  Active
+                </SelectItem>
+                <SelectItem
+                  value="planned"
+                  className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                >
+                  Planned
+                </SelectItem>
+                <SelectItem
+                  value="completed"
+                  className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                >
+                  Completed
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -145,16 +179,41 @@ export function ProjectSprintsPage() {
                 value={sortField}
                 onValueChange={(value) => setSortField(value ?? "start_date")}
               >
-                <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none">
+                <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-none cursor-pointer">
                   <SelectValue>
                     {sortLabels[sortField] ?? "Start Date"}
                   </SelectValue>
                 </SelectTrigger>
-                <SelectContent className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs">
-                  <SelectItem value="start_date">Start Date</SelectItem>
-                  <SelectItem value="end_date">End Date</SelectItem>
-                  <SelectItem value="created">Created</SelectItem>
-                  <SelectItem value="name">Name</SelectItem>
+                <SelectContent
+                  side="bottom"
+                  sideOffset={4}
+                  alignItemWithTrigger={false}
+                  className="bg-[#09090B] border-white/10 text-white font-mono rounded-none text-xs"
+                >
+                  <SelectItem
+                    value="start_date"
+                    className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                  >
+                    Start Date
+                  </SelectItem>
+                  <SelectItem
+                    value="end_date"
+                    className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                  >
+                    End Date
+                  </SelectItem>
+                  <SelectItem
+                    value="created"
+                    className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                  >
+                    Created
+                  </SelectItem>
+                  <SelectItem
+                    value="name"
+                    className="cursor-pointer text-zinc-200 focus:bg-white/10 focus:text-white rounded-none"
+                  >
+                    Name
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
@@ -162,7 +221,7 @@ export function ProjectSprintsPage() {
                 type="button"
                 variant="outline"
                 onClick={toggleSortDirection}
-                className="h-9 w-9 p-0 border-white/10 bg-black text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-none shrink-0"
+                className="h-9 w-9 p-0 border-white/10 bg-black text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-none shrink-0 cursor-pointer"
               >
                 {sortDirection === "asc" ? (
                   <ArrowUp className="h-4 w-4 text-amber-500" />

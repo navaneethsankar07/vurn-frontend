@@ -64,9 +64,9 @@ export function ProjectLayout() {
 
   return (
     <div className="bg-black text-white font-mono h-full flex overflow-hidden">
-      <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 flex flex-col overflow-hidden">
+      <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-3 flex flex-col overflow-hidden">
         <div className="max-w-380 my-5 mx-auto space-y-6 w-full flex flex-col flex-1 min-h-0">
-          <div className="shrink-0 space-y-6">
+          <div className="shrink-0 space-y-2">
             <ProjectHeader />
 
             <div className="border-b border-white/10">
@@ -96,7 +96,7 @@ export function ProjectLayout() {
             </div>
           </div>
 
-          <div className="pt-2 flex-1 min-h-0 overflow-y-auto">
+          <div className="pt-0 flex-1 min-h-0 overflow-y-auto">
             <Outlet />
           </div>
         </div>

@@ -107,8 +107,8 @@ export function ProjectMembersPage() {
   };
 
   return (
-    <div className="bg-black text-white p-4 sm:p-6 lg:p-8 font-mono">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="bg-black text-white p-4 sm:p-6 lg:p-0 font-mono">
+      <div className="max-w-8xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight">

@@ -28,14 +28,7 @@ export const createIssueSchema = z.object({
       (val) => !val || !isNaN(Date.parse(val)),
       "Invalid due date format",
     ),
-  estimated_time: z
-    .string()
-    .optional()
-    .nullable()
-    .refine(
-      (val) => !val || !isNaN(Date.parse(val)),
-      "Invalid estimated date format",
-    ),
+  estimated_time: z.union([z.string(), z.number()]).optional().nullable(),
 });
 
 export type CreateIssueFormValues = z.infer<typeof createIssueSchema>;

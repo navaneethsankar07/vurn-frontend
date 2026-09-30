@@ -7,6 +7,7 @@ export interface Sprint {
   description: string;
   start_date: string | null;
   end_date: string | null;
+  estimated_days: number | null;
   status: SprintStatus;
   created_by_id: number;
   created_at: string;
@@ -29,6 +30,7 @@ export interface SprintDetailAPIResponse {
   description: string;
   start_date: string;
   end_date: string;
+  estimated_days: number | null;
   status: SprintStatus;
   created_by_id: number;
   created_by_name: string;
@@ -160,6 +162,7 @@ export interface KanbanColumnIssuesResponse {
 export interface KanbanColumnIssuesParams {
   search?: string;
   sprint_id?: number | string;
+  parent_id?: number | string;
   issue_type?: IssueType;
   assignee_id?: number | string;
   priority?: IssuePriority;
@@ -248,4 +251,5 @@ export interface UpdateIssuePositionResponse {
 export interface BoardSprintOption {
   id: number;
   name: string;
+  status: string;
 }

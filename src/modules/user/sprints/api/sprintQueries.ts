@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   fetchBoardSprints,
   fetchColumnIssues,
@@ -8,6 +8,7 @@ import {
 } from "./sprintApi";
 import type {
   KanbanColumnIssuesParams,
+  KanbanColumnIssuesResponse,
   ProjectSprintsQueryParams,
 } from "../types";
 
@@ -49,7 +50,7 @@ export function useColumnIssues(
   statusId: number | string,
   params?: KanbanColumnIssuesParams,
 ) {
-  return useQuery({
+  return useInfiniteQuery<KanbanColumnIssuesResponse>({
     queryKey: [
       "kanban-column-issues",
       subdomain,
@@ -57,7 +58,22 @@ export function useColumnIssues(
       statusId,
       params,
     ],
-    queryFn: () => fetchColumnIssues(subdomain, projectSlug, statusId, params),
+    queryFn: ({ pageParam = 1 }) =>
+      fetchColumnIssues(subdomain, projectSlug, statusId, {
+        ...params,
+        page: pageParam as number,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.next) return undefined;
+      try {
+        const url = new URL(lastPage.next);
+        const nextPage = url.searchParams.get("page");
+        return nextPage ? Number(nextPage) : undefined;
+      } catch {
+        return undefined;
+      }
+    },
     enabled: Boolean(subdomain && projectSlug && statusId),
   });
 }

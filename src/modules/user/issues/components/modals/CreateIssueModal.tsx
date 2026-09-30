@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -60,6 +60,8 @@ interface CreateIssueModalProps {
     title: string;
     issue_type: string;
   }[];
+  defaultSprintId?: string;
+  defaultParentId?: string;
 }
 
 const MONTH_NAMES = [
@@ -233,6 +235,8 @@ export function CreateIssueModal({
   statuses = [],
   sprints = [],
   parentCandidates = [],
+  defaultSprintId,
+  defaultParentId,
 }: CreateIssueModalProps) {
   const defaultStatus = statuses.find((s) => s.is_default) || statuses[0];
 
@@ -242,7 +246,6 @@ export function CreateIssueModal({
     control,
     reset,
     watch,
-    setValue,
     setError,
     formState: { errors },
   } = useForm<CreateIssueFormValues>({
@@ -251,8 +254,8 @@ export function CreateIssueModal({
       issue_type: defaultType,
       title: "",
       description: "",
-      parent_id: "",
-      sprint_id: "",
+      parent_id: defaultParentId || "",
+      sprint_id: defaultSprintId || "",
       status_id: defaultStatus?.id ? String(defaultStatus.id) : "",
       assignee_id: "",
       priority: "medium",
@@ -270,13 +273,28 @@ export function CreateIssueModal({
 
   useEffect(() => {
     if (isOpen) {
-      setValue("issue_type", defaultType);
-      const fallbackStatus = statuses.find((s) => s.is_default) || statuses[0];
-      if (fallbackStatus && !selectedStatusId) {
-        setValue("status_id", String(fallbackStatus.id));
-      }
+      reset({
+        issue_type: defaultType,
+        title: "",
+        description: "",
+        parent_id: defaultParentId || "",
+        sprint_id: defaultSprintId || "",
+        status_id: defaultStatus?.id ? String(defaultStatus.id) : "",
+        assignee_id: "",
+        priority: "medium",
+        story_points: "",
+        due_date: "",
+        estimated_time: "",
+      });
     }
-  }, [isOpen, defaultType, statuses, setValue, selectedStatusId]);
+  }, [
+    isOpen,
+    defaultType,
+    defaultStatus,
+    defaultSprintId,
+    defaultParentId,
+    reset,
+  ]);
 
   const { mutate: createIssue, isPending } = useCreateProjectIssue();
 

@@ -9,6 +9,7 @@ export const DUMMY_SPRINT_EXTENDED: Omit<
   | "start_date"
   | "end_date"
   | "status"
+  | "estimated_days"
   | "created_by_id"
   | "created_by_name"
   | "created_at"

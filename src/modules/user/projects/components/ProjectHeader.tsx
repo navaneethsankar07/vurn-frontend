@@ -15,7 +15,7 @@ export function ProjectHeader() {
   const { projectSlug } = useParams<{ projectSlug: string }>();
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-5">
       <div className="flex items-start gap-3.5">
         <div className="h-10 w-10 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 mt-0.5">
           <Folder className="h-5 w-5" />

@@ -9,7 +9,6 @@ import {
   Layers,
 } from "lucide-react";
 import type { KanbanIssue, IssuePriority, IssueType } from "../types";
-import { formatRelativeTime } from "@/utils/sprintHelpers";
 
 interface KanbanCardProps {
   issue: KanbanIssue;
@@ -63,18 +62,27 @@ export function KanbanCard({ issue, index }: KanbanCardProps) {
       draggable
       onDragStart={handleDragStart}
       data-issue-index={index}
-      className="bg-[#09090B] border border-white/10 hover:border-white/20 p-3 rounded-xs space-y-2.5 transition-all text-xs cursor-grab active:cursor-grabbing group active:opacity-40"
+      className="bg-[#09090B] border border-white/10 hover:border-white/20 p-2.5 rounded-xs space-y-2 transition-all text-xs cursor-grab active:cursor-grabbing group active:opacity-40"
     >
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 min-w-0">
           {getTypeIcon(issue.issue_type)}
-          <span className="font-mono text-amber-500 font-semibold text-[11px]">
+          <span className="font-mono text-amber-500 font-semibold text-[11px] truncate">
             {issue.key}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] text-zinc-400 font-mono capitalize">
-          {getPriorityIcon(issue.priority)}
-          <span>{issue.priority}</span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {issue.story_points !== null && issue.story_points !== undefined && (
+            <span className="bg-zinc-800 text-zinc-300 px-1.5 py-0.2 rounded-xs font-mono text-[10px] border border-white/5">
+              {issue.story_points}pt
+            </span>
+          )}
+          <div
+            title={`priority: ${issue.priority}`}
+            className="flex items-center gap-1 text-[10px] text-zinc-400 font-mono capitalize cursor-pointer"
+          >
+            {getPriorityIcon(issue.priority)}
+          </div>
         </div>
       </div>
 
@@ -94,15 +102,6 @@ export function KanbanCard({ issue, index }: KanbanCardProps) {
           ))}
         </div>
       )}
-
-      <div className="flex items-center justify-between border-t border-white/5 pt-2 text-[10px] text-zinc-500 font-mono">
-        <span>{formatRelativeTime(issue.updated_at)}</span>
-        {issue.story_points !== undefined && (
-          <span className="bg-zinc-800 px-1 rounded-xs text-zinc-400">
-            {issue.story_points}pt
-          </span>
-        )}
-      </div>
     </div>
   );
 }
