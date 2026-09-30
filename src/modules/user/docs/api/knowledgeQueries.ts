@@ -3,7 +3,8 @@ import type {
   DocumentFoldersQueryParams,
   DocumentsQueryParams,
 } from "../types";
-import { fetchDocumentFolders, fetchProjectDocuments } from "./docsApi";
+import { fetchDocumentDetail, fetchDocumentFolders, fetchProjectDocuments } from "./docsApi";
+import { toast } from "sonner";
 
 export function useDocumentFolders(
   subdomain: string,
@@ -26,5 +27,29 @@ export function useProjectDocuments(
     queryKey: ["documents", subdomain, projectSlug, params],
     queryFn: () => fetchProjectDocuments(subdomain, projectSlug, params),
     enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+export function useDocumentDetail(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  return useQuery({
+    queryKey: ["document", subdomain, projectSlug, documentId],
+    queryFn: () => fetchDocumentDetail(subdomain, projectSlug, documentId!),
+    enabled: Boolean(subdomain && projectSlug && documentId),
+    meta: {
+      onError: (error: any) => {
+        const status = error?.response?.status;
+        if (status === 403) {
+          toast.error("You don't have permission to view the knowledge base.");
+        } else if (status === 404) {
+          toast.error("Document not found.");
+        } else {
+          toast.error("Failed to load document details.");
+        }
+      },
+    },
   });
 }

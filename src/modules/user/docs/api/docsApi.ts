@@ -4,6 +4,7 @@ import type {
   CreateDocumentFolderResponse,
   CreateDocumentPayload,
   CreateDocumentResponse,
+  DocumentDetail,
   DocumentFoldersQueryParams,
   DocumentFoldersResponse,
   DocumentsQueryParams,
@@ -62,6 +63,17 @@ export async function createProjectDocument({
   const { data } = await api.post(
     `/organizations/${subdomain}/projects/${projectSlug}/documents/`,
     payload,
+  );
+  return data;
+}
+
+export async function fetchDocumentDetail(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | string,
+): Promise<DocumentDetail> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
   );
   return data;
 }

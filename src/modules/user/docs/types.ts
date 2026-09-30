@@ -74,3 +74,16 @@ export interface CreateDocumentResponse {
   id: number;
   message: string;
 }
+
+export interface DocumentDetail {
+  id: number;
+  folder_id: number;
+  folder_name: string;
+  title: string;
+  content: string;
+  created_by_id: number;
+  created_by_name: string;
+  current_version: string | null;
+  created_at: string;
+  updated_at: string;
+}
