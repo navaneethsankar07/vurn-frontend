@@ -4,10 +4,13 @@ import { Loader2 } from "lucide-react";
 
 import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
+import { useAppSelector } from "@/app/hooks";
 import { useProjectWorkflow } from "../../projects/api/projectQueries";
 import { useBoardSprints } from "../../sprints/api/sprintQueries";
+import { useProjectMembers } from "../../projects/api/projectQueries";
 import { useProjectIssues } from "../api/issueQueries";
 import { CreateIssueModal } from "../components/modals/CreateIssueModal";
+import { FilterSortModal } from "../components/modals/FilterSortModal";
 import { WorkItemsTable } from "../components/WorkItemsTable";
 import { ProjectIssuesHeader } from "../components/ProjectIssuesHeader";
 import { ProjectIssuesToolbar } from "../components/ProjectIssuesToolbar";
@@ -28,6 +31,8 @@ export function ProjectIssuesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const subdomain = getSubdomain() || "";
 
+  const currentUser = useAppSelector((state) => state.auth.user);
+
   const [activeTab, setActiveTab] = useState<"issues" | "epics">("issues");
   const [selectedCreationType, setSelectedCreationType] =
     useState<WorkItemType>("task");
@@ -39,13 +44,23 @@ export function ProjectIssuesPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sprintFilter, setSprintFilter] = useState<string>("all");
   const [selectedEpicFilter, setSelectedEpicFilter] = useState<string>("all");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [sortOption, setSortOption] = useState<string>("created_desc");
   const [currentPage, setCurrentPage] = useState(1);
 
   const createModal = useModal();
+  const filterModal = useModal();
 
   const { data: workflowData } = useProjectWorkflow(subdomain, projectSlug);
   const { data: boardSprints = [] } = useBoardSprints(subdomain, projectSlug);
+  const { data: membersData } = useProjectMembers(subdomain, projectSlug);
+  const members = membersData?.results || [];
+
+  const currentMember = members.find(
+    (m: any) => Number(m.user_id) === Number(currentUser?.id),
+  );
+  const isUserProjectLead = Boolean(currentMember?.is_project_lead);
+  const currentUserId = currentUser?.id;
 
   const { data: epicsData } = useProjectIssues(subdomain, projectSlug, {
     issue_type: "epic",
@@ -53,6 +68,22 @@ export function ProjectIssuesPage() {
   });
 
   const availableEpics = epicsData?.results || [];
+
+  let activeFilterCount = 0;
+  if (typeFilter !== "all") activeFilterCount++;
+  if (priorityFilter !== "all") activeFilterCount++;
+  if (statusFilter !== "all") activeFilterCount++;
+  if (assigneeFilter !== "all") activeFilterCount++;
+  if (sortOption !== "created_desc") activeFilterCount++;
+
+  const handleResetFilters = () => {
+    setTypeFilter("all");
+    setPriorityFilter("all");
+    setStatusFilter("all");
+    setAssigneeFilter("all");
+    setSortOption("created_desc");
+    setCurrentPage(1);
+  };
 
   const queryParams: IssueListParams = {
     search: activeSearch || undefined,
@@ -75,6 +106,7 @@ export function ProjectIssuesPage() {
       activeTab === "issues" && sprintFilter !== "all"
         ? sprintFilter
         : undefined,
+    assignee_id: assigneeFilter !== "all" ? assigneeFilter : undefined,
     sort: sortOption,
     page: currentPage,
     page_size: 20,
@@ -153,6 +185,15 @@ export function ProjectIssuesPage() {
       : (availableEpics.find((e) => String(e.id) === selectedEpicFilter)
           ?.title ?? "Epic Scope");
 
+  const selectedAssigneeLabel =
+    assigneeFilter === "all"
+      ? "Assignee: All"
+      : assigneeFilter === String(currentUserId)
+        ? "Assigned to you"
+        : (members.find(
+            (m: any) => String(m.user_id || m.id) === assigneeFilter,
+          )?.full_name ?? "Assignee");
+
   const selectedSortLabel =
     WORK_ITEM_SORT_OPTIONS.find((s) => s.value === sortOption)?.label ??
     "Created Newest";
@@ -190,32 +231,8 @@ export function ProjectIssuesPage() {
           onSearchInputChange={setSearchInput}
           onSearchSubmit={handleKeyDown}
           onClearSearch={handleClearSearch}
-          typeFilter={typeFilter}
-          onTypeFilterChange={(val) => {
-            setTypeFilter(val ?? "all");
-            setCurrentPage(1);
-          }}
-          selectedTypeLabel={selectedTypeLabel}
-          nonEpicTypes={nonEpicTypes}
-          priorityFilter={priorityFilter}
-          onPriorityFilterChange={(val) => {
-            setPriorityFilter(val ?? "all");
-            setCurrentPage(1);
-          }}
-          selectedPriorityLabel={selectedPriorityLabel}
-          statusFilter={statusFilter}
-          onStatusFilterChange={(val) => {
-            setStatusFilter(val ?? "all");
-            setCurrentPage(1);
-          }}
-          selectedStatusLabel={selectedStatusLabel}
-          statuses={statuses}
-          sortOption={sortOption}
-          onSortOptionChange={(val) => {
-            setSortOption(val ?? "created_desc");
-            setCurrentPage(1);
-          }}
-          selectedSortLabel={selectedSortLabel}
+          onOpenFilterModal={filterModal.openModal}
+          activeFilterCount={activeFilterCount}
         />
       </div>
 
@@ -255,6 +272,48 @@ export function ProjectIssuesPage() {
           title: e.title,
           issue_type: e.issue_type,
         }))}
+      />
+
+      <FilterSortModal
+        isOpen={filterModal.isOpen}
+        onClose={filterModal.closeModal}
+        activeTab={activeTab}
+        typeFilter={typeFilter}
+        onTypeFilterChange={(val) => {
+          setTypeFilter(val ?? "all");
+          setCurrentPage(1);
+        }}
+        selectedTypeLabel={selectedTypeLabel}
+        nonEpicTypes={nonEpicTypes}
+        priorityFilter={priorityFilter}
+        onPriorityFilterChange={(val) => {
+          setPriorityFilter(val ?? "all");
+          setCurrentPage(1);
+        }}
+        selectedPriorityLabel={selectedPriorityLabel}
+        statusFilter={statusFilter}
+        onStatusFilterChange={(val) => {
+          setStatusFilter(val ?? "all");
+          setCurrentPage(1);
+        }}
+        selectedStatusLabel={selectedStatusLabel}
+        statuses={statuses}
+        assigneeFilter={assigneeFilter}
+        onAssigneeFilterChange={(val) => {
+          setAssigneeFilter(val ?? "all");
+          setCurrentPage(1);
+        }}
+        selectedAssigneeLabel={selectedAssigneeLabel}
+        members={members}
+        isUserProjectLead={isUserProjectLead}
+        currentUserId={currentUserId}
+        sortOption={sortOption}
+        onSortOptionChange={(val) => {
+          setSortOption(val ?? "created_desc");
+          setCurrentPage(1);
+        }}
+        selectedSortLabel={selectedSortLabel}
+        onReset={handleResetFilters}
       />
     </div>
   );

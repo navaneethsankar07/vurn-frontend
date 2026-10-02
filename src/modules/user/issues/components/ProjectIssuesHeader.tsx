@@ -17,7 +17,7 @@ import { WORK_ITEM_TYPES } from "../constants";
 import type { WorkItemType, IssueItem } from "../types";
 import type { BoardSprintOption } from "@/modules/user/sprints/types";
 
-interface ProjectIssuesHeaderProps {
+export interface ProjectIssuesHeaderProps {
   activeTab: "issues" | "epics";
   onTabChange: (tab: "issues" | "epics") => void;
   availableEpics: IssueItem[];
@@ -98,14 +98,17 @@ export function ProjectIssuesHeader({
                     side="bottom"
                     sideOffset={6}
                     alignItemWithTrigger={false}
-                    className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs min-w-44"
+                    className="bg-[#09090B] border-white/10 text-zinc-300 font-mono rounded-xs text-xs min-w-44"
                   >
-                    <SelectItem className="rounded-xs" value="all">
+                    <SelectItem
+                      className="text-xs text-zinc-300 focus:bg-amber-500/15 focus:text-white rounded-xs"
+                      value="all"
+                    >
                       All Sprints
                     </SelectItem>
                     {boardSprints.map((s) => (
                       <SelectItem
-                        className="rounded-xs"
+                        className="text-xs text-zinc-300 focus:bg-amber-500/15 focus:text-white rounded-xs"
                         key={s.id}
                         value={String(s.id)}
                       >
@@ -134,14 +137,17 @@ export function ProjectIssuesHeader({
                     side="bottom"
                     sideOffset={6}
                     alignItemWithTrigger={false}
-                    className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs min-w-48"
+                    className="bg-[#09090B] border-white/10 text-zinc-300 font-mono rounded-xs text-xs min-w-48"
                   >
-                    <SelectItem className="rounded-xs" value="all">
+                    <SelectItem
+                      className="text-xs text-zinc-300 focus:bg-amber-500/15 focus:text-white rounded-xs"
+                      value="all"
+                    >
                       All Epics
                     </SelectItem>
                     {availableEpics.map((e) => (
                       <SelectItem
-                        className="rounded-xs"
+                        className="text-xs text-zinc-300 focus:bg-amber-500/15 focus:text-white rounded-xs"
                         key={e.id}
                         value={String(e.id)}
                       >
@@ -180,7 +186,7 @@ export function ProjectIssuesHeader({
           <DropdownMenuContent
             align="end"
             sideOffset={4}
-            className="bg-[#09090B] border-white/10 text-white font-mono min-w-44 rounded-xs"
+            className="bg-[#09090B] border-white/10 text-zinc-300 font-mono min-w-44 rounded-xs"
           >
             {WORK_ITEM_TYPES.filter((t) => t.value !== "subtask").map((t) => {
               const Icon = t.icon;
@@ -188,7 +194,7 @@ export function ProjectIssuesHeader({
                 <DropdownMenuItem
                   key={t.value}
                   onClick={() => onOpenCreateWithType(t.value)}
-                  className="text-xs cursor-pointer focus:bg-white/10 focus:text-white rounded-xs font-sans flex items-center gap-2 py-2"
+                  className="text-xs cursor-pointer focus:bg-amber-500/15 focus:text-white rounded-xs font-sans flex items-center gap-2 py-2"
                 >
                   <Icon className="h-3.5 w-3.5" style={{ color: t.color }} />
                   <span>Create {t.label}</span>

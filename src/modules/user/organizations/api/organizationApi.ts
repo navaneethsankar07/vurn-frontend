@@ -60,7 +60,6 @@ export const getOrganizationAccess = async (
   slug: string,
 ): Promise<OrganizationAccess> => {
   const response = await api.get(`/organizations/${slug}/access/`);
-  console.log(response.data);
 
   return response.data;
 };
@@ -127,7 +126,6 @@ export const getOrganizationPreferences = async (
   slug: string,
 ): Promise<OrganizationPreferences> => {
   const response = await api.get(`/organizations/${slug}/preferences/`);
-  console.log(response.data);
 
   return response.data;
 };

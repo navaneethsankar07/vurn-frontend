@@ -1,14 +1,6 @@
-import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { WORK_ITEM_PRIORITIES, WORK_ITEM_SORT_OPTIONS } from "../constants";
-import type { WorkflowStatus } from "@/modules/user/projects/types";
+import { Filter, Search, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@base-ui/react";
 
 interface ProjectIssuesToolbarProps {
   activeTab: "issues" | "epics";
@@ -16,20 +8,8 @@ interface ProjectIssuesToolbarProps {
   onSearchInputChange: (val: string) => void;
   onSearchSubmit: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onClearSearch: () => void;
-  typeFilter: string;
-  onTypeFilterChange: (val: string | null) => void;
-  selectedTypeLabel: string;
-  nonEpicTypes: { value: string; label: string }[];
-  priorityFilter: string;
-  onPriorityFilterChange: (val: string | null) => void;
-  selectedPriorityLabel: string;
-  statusFilter: string;
-  onStatusFilterChange: (val: string | null) => void;
-  selectedStatusLabel: string;
-  statuses: WorkflowStatus[];
-  sortOption: string;
-  onSortOptionChange: (val: string | null) => void;
-  selectedSortLabel: string;
+  onOpenFilterModal: () => void;
+  activeFilterCount: number;
 }
 
 export function ProjectIssuesToolbar({
@@ -38,20 +18,8 @@ export function ProjectIssuesToolbar({
   onSearchInputChange,
   onSearchSubmit,
   onClearSearch,
-  typeFilter,
-  onTypeFilterChange,
-  selectedTypeLabel,
-  nonEpicTypes,
-  priorityFilter,
-  onPriorityFilterChange,
-  selectedPriorityLabel,
-  statusFilter,
-  onStatusFilterChange,
-  selectedStatusLabel,
-  statuses,
-  sortOption,
-  onSortOptionChange,
-  selectedSortLabel,
+  onOpenFilterModal,
+  activeFilterCount,
 }: ProjectIssuesToolbarProps) {
   return (
     <div className="border border-white/10 bg-[#09090B] p-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-xs">
@@ -79,83 +47,20 @@ export function ProjectIssuesToolbar({
         )}
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap">
-        {activeTab === "issues" && (
-          <Select value={typeFilter} onValueChange={onTypeFilterChange}>
-            <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
-              <SelectValue>{selectedTypeLabel}</SelectValue>
-            </SelectTrigger>
-            <SelectContent
-              side="bottom"
-              sideOffset={4}
-              alignItemWithTrigger={false}
-              className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs"
-            >
-              <SelectItem value="all">Type: All</SelectItem>
-              {nonEpicTypes.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
-                  {t.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-
-        <Select value={priorityFilter} onValueChange={onPriorityFilterChange}>
-          <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
-            <SelectValue>{selectedPriorityLabel}</SelectValue>
-          </SelectTrigger>
-          <SelectContent
-            side="bottom"
-            sideOffset={4}
-            alignItemWithTrigger={false}
-            className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs"
-          >
-            <SelectItem value="all">Priority: All</SelectItem>
-            {WORK_ITEM_PRIORITIES.map((p) => (
-              <SelectItem key={p.value} value={p.value}>
-                {p.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-          <SelectTrigger className="w-36 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
-            <SelectValue>{selectedStatusLabel}</SelectValue>
-          </SelectTrigger>
-          <SelectContent
-            side="bottom"
-            sideOffset={4}
-            alignItemWithTrigger={false}
-            className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs"
-          >
-            <SelectItem value="all">Status: All</SelectItem>
-            {statuses.map((s) => (
-              <SelectItem key={s.id} value={String(s.id)}>
-                {s.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={sortOption} onValueChange={onSortOptionChange}>
-          <SelectTrigger className="w-48 h-9 border-white/10 bg-black text-xs text-zinc-300 rounded-xs">
-            <SelectValue>{selectedSortLabel}</SelectValue>
-          </SelectTrigger>
-          <SelectContent
-            side="bottom"
-            sideOffset={4}
-            alignItemWithTrigger={false}
-            className="bg-[#09090B] border-white/10 text-white font-mono rounded-xs text-xs"
-          >
-            {WORK_ITEM_SORT_OPTIONS.map((s) => (
-              <SelectItem key={s.value} value={s.value}>
-                {s.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          onClick={onOpenFilterModal}
+          className="h-9 px-3 gap-2 bg-black border border-white/10 text-zinc-300 hover:text-white hover:bg-white/5 text-xs rounded-xs font-mono cursor-pointer relative"
+        >
+          <Filter className="h-3.5 w-3.5 text-amber-500" />
+          <span>Filters & Sort</span>
+          {activeFilterCount > 0 && (
+            <span className="flex items-center justify-center h-4 w-4 rounded-full bg-amber-500 text-black text-[10px] font-bold">
+              {activeFilterCount}
+            </span>
+          )}
+        </Button>
       </div>
     </div>
   );

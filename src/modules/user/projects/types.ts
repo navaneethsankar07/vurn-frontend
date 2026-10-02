@@ -112,6 +112,7 @@ export interface ProjectMember {
   avatar: string | null;
   project_role: string;
   joined_at: string;
+  is_project_lead: boolean;
 }
 
 export interface ProjectMemberListResponse {
