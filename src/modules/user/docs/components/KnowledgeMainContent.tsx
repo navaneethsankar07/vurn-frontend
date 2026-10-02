@@ -12,6 +12,7 @@ import {
   Save,
   Edit3,
   Eye,
+  Trash2,
   Bold,
   Italic,
   Underline as UnderlineIcon,
@@ -33,8 +34,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { KnowledgeHeader } from "./KnowledgeHeader";
+import { DeleteDocumentModal } from "./modal/DeleteDocumentModal";
 import { useDocumentDetail } from "../api/knowledgeQueries";
-import { useUpdateProjectDocument } from "../api/knowledgeMutations";
+import {
+  useUpdateProjectDocument,
+  useDeleteProjectDocument,
+} from "../api/knowledgeMutations";
+import { useModal } from "@/hooks/useModal";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
 
 interface KnowledgeMainContentProps {
@@ -42,6 +48,7 @@ interface KnowledgeMainContentProps {
   projectSlug: string;
   selectedFolderId: number | null;
   selectedDocumentId: number | null;
+  onDocumentDeleted?: () => void;
 }
 
 export function KnowledgeMainContent({
@@ -49,9 +56,12 @@ export function KnowledgeMainContent({
   projectSlug,
   selectedFolderId,
   selectedDocumentId,
+  onDocumentDeleted,
 }: KnowledgeMainContentProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
+
+  const deleteModal = useModal();
 
   const {
     data: document,
@@ -61,6 +71,9 @@ export function KnowledgeMainContent({
 
   const { mutate: updateDocument, isPending: isUpdating } =
     useUpdateProjectDocument(subdomain, projectSlug, selectedDocumentId);
+
+  const { mutate: deleteDocument, isPending: isDeleting } =
+    useDeleteProjectDocument(subdomain, projectSlug, selectedDocumentId);
 
   const editor = useEditor({
     extensions: [
@@ -129,6 +142,17 @@ export function KnowledgeMainContent({
     );
   };
 
+  const handleDelete = () => {
+    deleteDocument(undefined, {
+      onSuccess: () => {
+        deleteModal.closeModal();
+        if (onDocumentDeleted) {
+          onDocumentDeleted();
+        }
+      },
+    });
+  };
+
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-[#060608] font-mono">
       <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-[#09090B]">
@@ -170,15 +194,26 @@ export function KnowledgeMainContent({
                 </Button>
               </>
             ) : (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-                className="h-8 text-xs border-white/10 bg-black text-zinc-300 hover:text-white rounded-xs cursor-pointer"
-              >
-                <Edit3 className="h-3.5 w-3.5 mr-1" /> Edit
-              </Button>
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                  className="h-8 text-xs border-white/10 bg-black text-zinc-300 hover:text-white rounded-xs cursor-pointer"
+                >
+                  <Edit3 className="h-3.5 w-3.5 mr-1" /> Edit
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={deleteModal.openModal}
+                  className="h-8 text-xs border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-xs cursor-pointer"
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+                </Button>
+              </>
             )}
           </div>
         )}
@@ -446,6 +481,14 @@ export function KnowledgeMainContent({
           </div>
         )}
       </div>
+
+      <DeleteDocumentModal
+        isOpen={deleteModal.isOpen}
+        onClose={deleteModal.closeModal}
+        onConfirm={handleDelete}
+        isPending={isDeleting}
+        documentTitle={document?.title || "Document"}
+      />
     </div>
   );
 }

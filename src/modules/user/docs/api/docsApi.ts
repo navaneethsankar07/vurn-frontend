@@ -4,6 +4,7 @@ import type {
   CreateDocumentFolderResponse,
   CreateDocumentPayload,
   CreateDocumentResponse,
+  DeleteDocumentResponse,
   DocumentDetail,
   DocumentFoldersQueryParams,
   DocumentFoldersResponse,
@@ -94,6 +95,21 @@ export async function updateProjectDocument({
   const { data } = await api.patch(
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
     payload,
+  );
+  return data;
+}
+
+export async function deleteProjectDocument({
+  subdomain,
+  projectSlug,
+  documentId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number | string;
+}): Promise<DeleteDocumentResponse> {
+  const { data } = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
   );
   return data;
 }

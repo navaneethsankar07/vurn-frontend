@@ -98,3 +98,7 @@ export interface UpdateDocumentResponse {
   id: number;
   message: string;
 }
+
+export interface DeleteDocumentResponse {
+  message: string;
+}

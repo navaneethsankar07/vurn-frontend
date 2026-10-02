@@ -179,10 +179,30 @@ export function useCompleteSprint() {
     mutationFn: completeSprint,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["sprint-detail", variables.sprintId],
+        queryKey: [
+          "sprint-detail",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.sprintId),
+        ],
       });
-      queryClient.invalidateQueries({ queryKey: ["project-sprints"] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-sprints",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "sprint-issues",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.sprintId),
+        ],
+      });
       toast.success("Sprint completed successfully.");
+      // window.location.reload();
     },
     onError: (error: any) => {
       const message =

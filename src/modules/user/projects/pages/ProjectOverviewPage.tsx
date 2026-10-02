@@ -115,9 +115,8 @@ export function ProjectOverviewPage() {
               <ExternalLink className="h-3 w-3 shrink-0" />
             </div>
             <p className="text-[10px] text-[#8A8A8A] mt-1">
-              Status: 
-              <span className=" text-[#22C55E]"> Connected</span> 
-              
+              Status:
+              <span className=" text-[#22C55E]"> Connected</span>
             </p>
           </div>
         </div>
