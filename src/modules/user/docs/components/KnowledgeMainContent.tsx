@@ -67,6 +67,7 @@ export function KnowledgeMainContent({
     data: document,
     isLoading,
     isError,
+    error,
   } = useDocumentDetail(subdomain, projectSlug, selectedDocumentId);
 
   const { mutate: updateDocument, isPending: isUpdating } =
@@ -153,6 +154,8 @@ export function KnowledgeMainContent({
     });
   };
 
+  const isNotFound = (error as any)?.response?.status === 404;
+
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-[#060608] font-mono">
       <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-[#09090B]">
@@ -163,7 +166,7 @@ export function KnowledgeMainContent({
           </span>
         </div>
 
-        {document && !isLoading && (
+        {document && !isLoading && !isNotFound && (
           <div className="flex items-center gap-2">
             {isEditing ? (
               <>
@@ -224,6 +227,10 @@ export function KnowledgeMainContent({
           <div className="py-24 flex items-center justify-center text-xs text-zinc-500 gap-1.5">
             <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
             <span>Loading document editor...</span>
+          </div>
+        ) : isNotFound ? (
+          <div className="h-64 border border-dashed border-white/10 rounded-xs flex items-center justify-center text-center p-6 text-zinc-500 text-xs">
+            Select a document from the sidebar to view content.
           </div>
         ) : isError || !document ? (
           <div className="h-64 border border-red-500/20 bg-red-500/5 rounded-xs flex items-center justify-center text-center p-6 text-red-400 text-xs">

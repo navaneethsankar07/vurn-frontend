@@ -91,7 +91,6 @@ export function useUpdateProjectDocument(
         queryKey: ["documents", subdomain, projectSlug],
       });
       toast.success(data?.message || "Document updated successfully.");
-      window.location.reload();
     },
     onError: (error: any) => {
       const status = error?.response?.status;
@@ -127,6 +126,9 @@ export function useDeleteProjectDocument(
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["documents", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["document", subdomain, projectSlug],
       });
       toast.success(data?.message || "Document deleted successfully.");
     },
