@@ -7,6 +7,14 @@ export interface IssueLabel {
   color: string;
 }
 
+export interface SprintInfo {
+  id: number;
+  name: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+}
+
 export interface IssueItem {
   id: number;
   key: string;
@@ -76,6 +84,7 @@ export interface IssueListResponse {
 }
 
 export interface IssueDetailResponse extends IssueItem {
+  sprint: SprintInfo | null;
   assignee_name?: string | null;
   reporter_name?: string | null;
   parent_id?: number | string;
