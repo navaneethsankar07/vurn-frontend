@@ -102,3 +102,15 @@ export interface UpdateDocumentResponse {
 export interface DeleteDocumentResponse {
   message: string;
 }
+
+export interface DocumentFolder {
+  id: number;
+  name: string;
+  project_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UpdateFolderInput {
+  name: string;
+}

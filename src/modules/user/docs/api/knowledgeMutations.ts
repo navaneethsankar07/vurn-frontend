@@ -5,11 +5,14 @@ import type {
   CreateDocumentFolderPayload,
   CreateDocumentPayload,
   UpdateDocumentPayload,
+  UpdateFolderInput,
 } from "../types";
 import {
   createDocumentFolder,
   createProjectDocument,
+  deleteDocumentFolder,
   deleteProjectDocument,
+  updateDocumentFolder,
   updateProjectDocument,
 } from "./docsApi";
 
@@ -144,6 +147,66 @@ export function useDeleteProjectDocument(
           error?.response?.data?.detail ||
           "Failed to delete document.";
         toast.error(message);
+      }
+    },
+  });
+}
+
+export function useUpdateDocumentFolder(
+  subdomain: string,
+  projectSlug: string,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      folderId,
+      data,
+    }: {
+      folderId: number;
+      data: UpdateFolderInput;
+    }) => updateDocumentFolder({ subdomain, projectSlug, folderId, data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["document-folders", subdomain, projectSlug],
+      });
+      toast.success("Folder updated successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.name?.[0] ||
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update folder.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useDeleteDocumentFolder(
+  subdomain: string,
+  projectSlug: string,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (folderId: number) =>
+      deleteDocumentFolder({ subdomain, projectSlug, folderId }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["document-folders", subdomain, projectSlug],
+      });
+      toast.success(data?.message || "Document folder deleted successfully.");
+    },
+    onError: (error: any) => {
+      const status = error?.response?.status;
+      const errorMessage = error?.response?.data?.error;
+      if (status === 400 && errorMessage) {
+        toast.error(errorMessage);
+      } else if (status === 404) {
+        toast.error("Document folder not found.");
+      } else {
+        toast.error("Failed to delete folder.");
       }
     },
   });

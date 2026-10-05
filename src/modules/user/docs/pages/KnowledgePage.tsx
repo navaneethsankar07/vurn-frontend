@@ -32,6 +32,11 @@ export function KnowledgePage() {
     setActiveCreatingFolderId(null);
   };
 
+  const handleFolderDeleted = () => {
+    setSelectedFolderId(null);
+    setSelectedDocumentId(null);
+  };
+
   return (
     <div className="bg-black text-white flex h-170 font-mono overflow-hidden">
       <KnowledgeSidebar
@@ -45,6 +50,7 @@ export function KnowledgePage() {
         activeCreatingFolderId={activeCreatingFolderId}
         setActiveCreatingFolderId={setActiveCreatingFolderId}
         onDocumentCreated={handleDocumentCreated}
+        onFolderDeleted={handleFolderDeleted}
       />
 
       <KnowledgeMainContent

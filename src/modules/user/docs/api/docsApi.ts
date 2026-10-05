@@ -12,6 +12,7 @@ import type {
   DocumentsResponse,
   UpdateDocumentPayload,
   UpdateDocumentResponse,
+  UpdateFolderInput,
 } from "../types";
 
 export async function fetchDocumentFolders(
@@ -112,4 +113,37 @@ export async function deleteProjectDocument({
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
   );
   return data;
+}
+
+export async function updateDocumentFolder({
+  subdomain,
+  projectSlug,
+  folderId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  folderId: number;
+  data: UpdateFolderInput;
+}) {
+  const response = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/document-folders/${folderId}/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteDocumentFolder({
+  subdomain,
+  projectSlug,
+  folderId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  folderId: number;
+}) {
+  const response = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/document-folders/${folderId}/`,
+  );
+  return response.data;
 }

@@ -9,14 +9,20 @@ import {
   X,
   Plus,
   FileText,
+  Edit2,
+  Trash2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { CreateFolderModal } from "./modal/CreateFolderModal";
+import { EditFolderModal } from "./modal/EditFolderModal";
+import { DeleteFolderModal } from "./modal/DeleteFolderModal";
 import { CreateDocumentModal } from "./modal/CreateDocumentModal";
 import {
   useDocumentFolders,
   useProjectDocuments,
 } from "../api/knowledgeQueries";
+import { useModal } from "@/hooks/useModal";
+import type { DocumentFolder } from "../types";
 
 interface KnowledgeSidebarProps {
   subdomain: string;
@@ -29,6 +35,7 @@ interface KnowledgeSidebarProps {
   activeCreatingFolderId: number | null;
   setActiveCreatingFolderId: (folderId: number | null) => void;
   onDocumentCreated: (docId: number) => void;
+  onFolderDeleted?: () => void;
 }
 
 export function KnowledgeSidebar({
@@ -41,11 +48,20 @@ export function KnowledgeSidebar({
   activeCreatingFolderId,
   setActiveCreatingFolderId,
   onDocumentCreated,
+  onFolderDeleted,
 }: KnowledgeSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
+
+  const [activeFolderToEdit, setActiveFolderToEdit] =
+    useState<DocumentFolder | null>(null);
+  const [activeFolderToDelete, setActiveFolderToDelete] =
+    useState<DocumentFolder | null>(null);
+
+  const editFolderModal = useModal();
+  const deleteFolderModal = useModal();
 
   const { data: folderData, isLoading: isFoldersLoading } = useDocumentFolders(
     subdomain,
@@ -152,6 +168,23 @@ export function KnowledgeSidebar({
         />
       )}
 
+      <EditFolderModal
+        isOpen={editFolderModal.isOpen}
+        onClose={editFolderModal.closeModal}
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        folder={activeFolderToEdit}
+      />
+
+      <DeleteFolderModal
+        isOpen={deleteFolderModal.isOpen}
+        onClose={deleteFolderModal.closeModal}
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        folder={activeFolderToDelete}
+        onFolderDeleted={onFolderDeleted}
+      />
+
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {isFoldersLoading ? (
           <div className="py-8 flex items-center justify-center text-xs text-zinc-500 gap-1.5">
@@ -179,18 +212,44 @@ export function KnowledgeSidebar({
                     <Folder className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                     <span className="truncate">{folder.name}</span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectFolder(folder.id);
-                      setActiveCreatingFolderId(folder.id);
-                    }}
-                    title="New Document in Folder"
-                    className="p-1 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-amber-400 rounded-xs transition-opacity cursor-pointer"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveFolderToEdit(folder);
+                        editFolderModal.openModal();
+                      }}
+                      title="Edit Folder"
+                      className="p-1 text-zinc-400 hover:text-amber-400 rounded-xs transition-colors cursor-pointer"
+                    >
+                      <Edit2 className="h-3 w-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveFolderToDelete(folder);
+                        deleteFolderModal.openModal();
+                      }}
+                      title="Delete Folder"
+                      className="p-1 text-zinc-400 hover:text-red-400 rounded-xs transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectFolder(folder.id);
+                        setActiveCreatingFolderId(folder.id);
+                      }}
+                      title="New Document in Folder"
+                      className="p-1 text-zinc-400 hover:text-amber-400 rounded-xs transition-colors cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 {isFolderSelected && (
