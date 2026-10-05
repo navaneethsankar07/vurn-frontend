@@ -23,6 +23,7 @@ import { IssueInfoCard } from "./IssueInfoCard";
 import { IssueLabelsCard } from "./IssueLabelsCard";
 import { IssueSubtasksSection } from "./IssueSubtasksSection";
 import { IssueCommentsSection } from "./IssueCommentsSection";
+import { IssueSprintHistoryCard } from "./IssueSprintHistoryCard";
 import { DeleteIssueConfirmationModal } from "./modals/DeleteIssueConfirmModal";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
 import type { WorkItemPriority, IssueLabel, IssueItem } from "../types";
@@ -569,6 +570,12 @@ export function IssueDetailPanel({
             onAttachExistingLabel={handleAttachExistingLabel}
             onCreateAndAttachLabel={handleCreateAndAttachLabel}
             onRemoveLabel={handleRemoveLabel}
+          />
+
+          <IssueSprintHistoryCard
+            subdomain={subdomain}
+            projectSlug={projectSlug}
+            issueId={currentIssueId}
           />
 
           <div className="space-y-3">

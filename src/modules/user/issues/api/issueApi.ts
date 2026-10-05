@@ -32,6 +32,7 @@ import type {
   RemoveIssueLabelParams,
   SetReactionParams,
   SetReactionResponse,
+  SprintHistoryItem,
   SubtaskListResponse,
   UpdateCommentParams,
   UpdateCommentResponse,
@@ -84,6 +85,17 @@ export async function updateProjectIssue({
     data,
   );
   return response.data;
+}
+
+export async function fetchIssueSprintHistory(
+  subdomain: string,
+  projectSlug: string,
+  issueId: number | string,
+): Promise<SprintHistoryItem[]> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/sprint-history/`,
+  );
+  return data;
 }
 
 export async function fetchLabelSuggestions(

@@ -3,6 +3,7 @@ import {
   fetchCommentReactions,
   fetchIssueAttachments,
   fetchIssueComments,
+  fetchIssueSprintHistory,
   fetchIssueSubtasks,
   fetchLabelSuggestions,
   fetchProjectIssueDetail,
@@ -201,5 +202,17 @@ export function useIssueAttachments({
         issueId: issueId as number | string,
       }),
     enabled: Boolean(enabled && subdomain && projectSlug && issueId),
+  });
+}
+
+export function useIssueSprintHistory(
+  subdomain: string,
+  projectSlug: string,
+  issueId: number | null | string,
+) {
+  return useQuery({
+    queryKey: ["issue-sprint-history", subdomain, projectSlug, issueId],
+    queryFn: () => fetchIssueSprintHistory(subdomain, projectSlug, issueId!),
+    enabled: Boolean(subdomain && projectSlug && issueId),
   });
 }

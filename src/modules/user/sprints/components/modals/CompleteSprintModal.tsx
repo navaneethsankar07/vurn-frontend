@@ -183,7 +183,7 @@ export function CompleteSprintModal({
             </p>
           )}
 
-          <DialogFooter className="pt-4 border-t border-white/10 flex items-center justify-end gap-2">
+          <DialogFooter className="pt-4 border-t rounded-none bg-transparent border-white/10 flex items-center justify-end gap-2">
             <Button
               type="button"
               variant="outline"

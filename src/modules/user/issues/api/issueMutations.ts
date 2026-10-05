@@ -206,6 +206,13 @@ export function useUpdateProjectIssue() {
         ],
       });
       queryClient.invalidateQueries({
+        queryKey: [
+          "issue-sprint-history",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      queryClient.invalidateQueries({
         queryKey: ["kanban-board", variables.subdomain, variables.projectSlug],
       });
       queryClient.invalidateQueries({

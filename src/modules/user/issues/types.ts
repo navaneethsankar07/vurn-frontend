@@ -403,3 +403,9 @@ export interface DeleteAttachmentParams {
 export interface DeleteAttachmentResponse {
   message: string;
 }
+
+export interface SprintHistoryItem {
+  sprint_id: number;
+  sprint_name: string;
+  moved_at: string;
+}
