@@ -7,6 +7,7 @@ import {
   Trash2,
   FileUp,
 } from "lucide-react";
+import { toast } from "sonner";
 import { useModal } from "@/hooks/useModal";
 import { useIssueAttachments } from "../api/issueQueries";
 import {
@@ -14,7 +15,26 @@ import {
   useDeleteIssueAttachment,
 } from "../api/issueMutations";
 import { DeleteAttachmentConfirmationModal } from "./modals/DeleteAttachmentConfirmationModal";
+import { issueAttachmentUploadSchema } from "../schemas/issueAttachmentUploadSchema";
 import type { AttachmentItem } from "../types";
+
+const AttachmentPreview = ({ attachment }: { attachment: AttachmentItem }) => {
+  const [imgError, setImgError] = useState(false);
+  const isImage = attachment.mime_type?.startsWith("image/");
+
+  if (isImage && !imgError) {
+    return (
+      <img
+        src={attachment.download_url}
+        alt={attachment.file_name}
+        className="h-full w-full object-cover"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+
+  return <FileText className="h-4 w-4 text-amber-500 shrink-0" />;
+};
 
 interface IssueAttachmentsSectionProps {
   subdomain: string;
@@ -50,6 +70,15 @@ export function IssueAttachmentsSection({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    const validation = issueAttachmentUploadSchema.safeParse({ file });
+    if (!validation.success) {
+      toast.error(validation.error.issues[0].message);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
 
     setActiveFileName(file.name);
     setProgress(0);
@@ -175,7 +204,9 @@ export function IssueAttachmentsSection({
                 rel="noopener noreferrer"
                 className="flex items-center gap-2.5 min-w-0 pr-2 flex-1 cursor-pointer"
               >
-                <FileText className="h-4 w-4 text-amber-500 shrink-0" />
+                <div className="h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10 rounded-xs shrink-0 overflow-hidden">
+                  <AttachmentPreview attachment={file} />
+                </div>
                 <div className="min-w-0">
                   <p className="text-xs text-zinc-200 font-sans truncate group-hover:text-white transition-colors">
                     {file.file_name}
