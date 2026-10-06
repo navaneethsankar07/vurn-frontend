@@ -4,6 +4,7 @@ import type {
   CreateDocumentFolderResponse,
   CreateDocumentPayload,
   CreateDocumentResponse,
+  CreateTagResponse,
   DeleteDocumentResponse,
   DocumentDetail,
   DocumentFoldersQueryParams,
@@ -15,6 +16,7 @@ import type {
   UpdateDocumentResponse,
   UpdateFolderInput,
 } from "../types";
+import type { CreateTagInput } from "../schemas/createTagSchema";
 
 export async function fetchDocumentFolders(
   subdomain: string,
@@ -158,4 +160,22 @@ export async function fetchDocumentTags(
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/`,
   );
   return data;
+}
+
+export async function createDocumentTag({
+  subdomain,
+  projectSlug,
+  documentId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  data: CreateTagInput;
+}): Promise<CreateTagResponse> {
+  const response = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/`,
+    data,
+  );
+  return response.data;
 }

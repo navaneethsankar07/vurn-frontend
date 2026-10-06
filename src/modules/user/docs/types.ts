@@ -120,3 +120,13 @@ export interface DocumentTag {
   name: string;
   created_at: string;
 }
+
+export interface CreateTagInput {
+  name: string;
+}
+
+export interface CreateTagResponse {
+  id: number;
+  name: string;
+  message: string;
+}

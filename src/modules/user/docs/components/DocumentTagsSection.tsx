@@ -1,5 +1,7 @@
-import { Tag, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { Tag, Loader2, Plus } from "lucide-react";
 import { useDocumentTags } from "../api/knowledgeQueries";
+import { CreateDocumentTagForm } from "./CreateDocumentTagForm";
 
 interface DocumentTagsSectionProps {
   subdomain: string;
@@ -12,6 +14,8 @@ export function DocumentTagsSection({
   projectSlug,
   documentId,
 }: DocumentTagsSectionProps) {
+  const [isAdding, setIsAdding] = useState(false);
+
   const { data, isLoading } = useDocumentTags(
     subdomain,
     projectSlug,
@@ -35,15 +39,37 @@ export function DocumentTagsSection({
 
   return (
     <div className="space-y-2.5">
-      <div className="flex items-center gap-1.5">
-        <Tag className="h-3.5 w-3.5 text-amber-500" />
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
-          Tags ({tags.length})
-        </span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <Tag className="h-3.5 w-3.5 text-amber-500" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+            Tags ({tags.length})
+          </span>
+        </div>
+
+        {documentId && !isAdding && (
+          <button
+            type="button"
+            onClick={() => setIsAdding(true)}
+            title="Add Tag"
+            className="p-1 text-zinc-400 hover:text-amber-400 transition-colors cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
-      <div className="p-3.5 bg-black/40 border border-white/5 rounded-xs">
-        {tags.length === 0 ? (
+      <div className="p-3.5 bg-black/40 border border-white/5 rounded-xs space-y-2.5">
+        {isAdding && documentId && (
+          <CreateDocumentTagForm
+            subdomain={subdomain}
+            projectSlug={projectSlug}
+            documentId={documentId}
+            onClose={() => setIsAdding(false)}
+          />
+        )}
+
+        {tags.length === 0 && !isAdding ? (
           <p className="text-xs text-zinc-600 italic">No tags attached.</p>
         ) : (
           <div className="flex flex-wrap gap-1.5">

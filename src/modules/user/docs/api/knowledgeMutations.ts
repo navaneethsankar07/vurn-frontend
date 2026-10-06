@@ -9,12 +9,14 @@ import type {
 } from "../types";
 import {
   createDocumentFolder,
+  createDocumentTag,
   createProjectDocument,
   deleteDocumentFolder,
   deleteProjectDocument,
   updateDocumentFolder,
   updateProjectDocument,
 } from "./docsApi";
+import type { CreateTagInput } from "../schemas/createTagSchema";
 
 export function useCreateDocumentFolder(
   subdomain: string,
@@ -208,6 +210,37 @@ export function useDeleteDocumentFolder(
       } else {
         toast.error("Failed to delete folder.");
       }
+    },
+  });
+}
+
+export function useCreateDocumentTag(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateTagInput) =>
+      createDocumentTag({
+        subdomain,
+        projectSlug,
+        documentId: documentId!,
+        data,
+      }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["document-tags", subdomain, projectSlug, documentId],
+      });
+      toast.success(data?.message || "Document tag created successfully.");
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.name?.[0] ||
+        "Failed to create tag.";
+      toast.error(errorMessage);
     },
   });
 }
