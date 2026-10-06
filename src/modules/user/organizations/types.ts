@@ -92,8 +92,9 @@ export interface OrganizationMetrics {
 }
 
 export interface OrganizationProject {
-  id: string;
-  code: string;
+  id: number;
+  key: string;
+  slug: string;
   name: string;
   description: string;
   updated_at: string;
@@ -132,7 +133,7 @@ export interface OrganizationDashboardData {
   open_issues: number;
   completed_issues: number;
 
-  recent_projects?: any[];
+  latest_projects?: OrganizationProject[];
   active_sprints?: ActiveSprint[];
   recent_activities?: any[];
 }
@@ -153,6 +154,7 @@ export interface BackendDashboardResponse {
   active_sprint_count: number;
   open_issues: number;
   completed_issues: number;
+  latest_projects: OrganizationProject[];
 }
 
 export interface OrganizationSettings {

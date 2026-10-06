@@ -189,7 +189,7 @@ export function useOrganizationDashboardQuery(slug?: string) {
         open_issues: data.open_issues,
         completed_issues: data.completed_issues,
 
-        recent_projects: [...MOCK_EXTRAS.recent_projects],
+        latest_projects: data.latest_projects || [],
         active_sprints: data.active_sprints,
         recent_activities: [...MOCK_EXTRAS.recent_activities],
       };

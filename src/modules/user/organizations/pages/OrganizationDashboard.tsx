@@ -6,9 +6,11 @@ import { QuickActions } from "../components/QuickActions";
 import { RecentActivity } from "../components/RecentActivity";
 import { getSubdomain } from "@/utils/subdomain";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
+import { useNavigate } from "react-router-dom";
 
 export function OrganizationDashboard() {
   const subdomain = getSubdomain();
+  const navigate = useNavigate();
   const { data, isLoading, isError, error } = useOrganizationDashboardQuery(
     subdomain ?? undefined,
   );
@@ -69,6 +71,7 @@ export function OrganizationDashboard() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
+            onClick={() => navigate("/settings/general")}
             className="flex items-center gap-1.5 rounded border border-white/10 bg-[#09090b] px-3 py-1.5 text-xs text-gray-300 hover:bg-white/5 hover:text-white transition-colors"
           >
             <Settings className="h-3.5 w-3.5" />
@@ -76,7 +79,8 @@ export function OrganizationDashboard() {
           </button>
           <button
             type="button"
-            className="flex items-center gap-1.5 rounded bg-amber-500 px-3 py-1.5 text-xs font-semibold text-black hover:bg-amber-400 transition-colors"
+            onClick={() => navigate("/projects/create")}
+            className="flex items-center gap-1.5 rounded border border-primary/70 px-3 py-1.5 text-xs font-semibold text-primary/70 hover:border-primary hover:text-primary transition-colors"
           >
             <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
             <span>New Project</span>
@@ -123,7 +127,7 @@ export function OrganizationDashboard() {
           </div>
           <div className="rounded border border-white/10 bg-[#09090b] p-3.5">
             <span className="text-xl font-bold text-white block">
-              {data.completed_issues?.toLocaleString()}
+              {data.completed_issues}
             </span>
             <span className="text-[10px] text-gray-500 uppercase mt-1 block">
               Completed Issues
@@ -134,7 +138,7 @@ export function OrganizationDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <RecentProjects projects={data.recent_projects || []} />
+          <RecentProjects projects={data.latest_projects || []} />
           <ActiveSprints sprints={data.active_sprints || []} />
         </div>
 

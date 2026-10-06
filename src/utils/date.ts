@@ -1,5 +1,15 @@
 import type { DateInput } from "../types/date";
+import { formatDistanceToNow, parseISO } from "date-fns";
 
+export function formatRelativeTime(dateString: string): string {
+  if (!dateString) return "";
+  try {
+    const parsedDate = parseISO(dateString);
+    return formatDistanceToNow(parsedDate, { addSuffix: true });
+  } catch (error) {
+    return dateString;
+  }
+}
 
 export function formatDate(date: DateInput): string {
   if (!date) return "N/A";
@@ -43,7 +53,6 @@ export function formatMonthYear(date: DateInput): string {
     year: "numeric",
   });
 }
-
 
 export function formatTimeAgo(date: DateInput): string {
   if (!date) return "";

@@ -1,12 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import type { OrganizationProject } from "../types";
+import { formatRelativeTime } from "@/utils/date";
 
 export function RecentProjects({
   projects,
 }: {
   projects: OrganizationProject[];
 }) {
+  const navigate = useNavigate();
   return (
     <div className="space-y-3 font-mono">
       <div className="flex items-center justify-between">
@@ -30,20 +32,21 @@ export function RecentProjects({
             <div>
               <div className="flex items-center justify-between text-xs mb-1.5">
                 <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-bold text-gray-400">
-                  {project.code}
+                  {project.key}
                 </span>
                 <span className="text-[10px] text-gray-500">
-                  {project.updated_at}
+                  {formatRelativeTime(project.updated_at)}
                 </span>
               </div>
               <h4 className="text-xs font-bold text-white">{project.name}</h4>
               <p className="text-[11px] text-gray-400 mt-1 line-clamp-2 leading-relaxed">
-                {project.description}
+                {project.description || "No description provided for this project."}
               </p>
             </div>
 
             <button
               type="button"
+              onClick={() => navigate(`/projects/${project.slug}`)}
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-400 hover:text-amber-500 transition-colors pt-2 border-t border-white/5"
             >
               <span>Open Project</span>

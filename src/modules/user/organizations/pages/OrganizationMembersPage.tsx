@@ -10,8 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/useModal";
-import { InviteMemberModal } from "../modals/InviteMemberModal";
-import { InvitationSuccessModal } from "../modals/InvitationSuccessModal";
+import { InviteMemberModal } from "../components/modals/InviteMemberModal";
+import { InvitationSuccessModal } from "../components/modals/InvitationSuccessModal";
 import { type CreateInvitationResponse } from "../types";
 import { getSubdomain } from "@/utils/subdomain";
 import {

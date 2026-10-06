@@ -10,10 +10,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   inviteMemberSchema,
   type InviteMemberFormData,
-} from "../schemas/invitationSchema";
-import { useCreateInvitationMutation } from "../api/organizationMutations";
-import { useOrganizationRolesQuery } from "../api/organizationQueries";
-import { type CreateInvitationResponse } from "../types";
+} from "../../schemas/invitationSchema";
+import { useCreateInvitationMutation } from "../../api/organizationMutations";
+import { useOrganizationRolesQuery } from "../../api/organizationQueries";
+import { type CreateInvitationResponse } from "../../types";
 
 interface InviteMemberModalProps {
   slug: string;
