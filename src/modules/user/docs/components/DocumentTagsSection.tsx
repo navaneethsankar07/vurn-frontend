@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Tag, Loader2, Plus } from "lucide-react";
+import { Tag, Loader2, Plus, X } from "lucide-react";
 import { useDocumentTags } from "../api/knowledgeQueries";
+import { useRemoveDocumentTag } from "../api/knowledgeMutations";
 import { CreateDocumentTagForm } from "./CreateDocumentTagForm";
 
 interface DocumentTagsSectionProps {
@@ -22,6 +23,12 @@ export function DocumentTagsSection({
     documentId,
   );
   const tags = data?.results || [];
+
+  const { mutate: removeTag, isPending: isRemoving } = useRemoveDocumentTag(
+    subdomain,
+    projectSlug,
+    documentId,
+  );
 
   if (isLoading) {
     return (
@@ -72,13 +79,24 @@ export function DocumentTagsSection({
         {tags.length === 0 && !isAdding ? (
           <p className="text-xs text-zinc-600 italic">No tags attached.</p>
         ) : (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <span
                 key={tag.id}
-                className="px-2 py-0.5 bg-white/5 border border-white/10 text-zinc-300 text-[11px] rounded-xs font-mono"
+                className="group relative inline-flex items-center px-2.5 py-1 bg-white/5 border border-white/10 text-zinc-300 text-[11px] rounded-xs font-mono pr-5"
               >
-                {tag.name}
+                <span>{tag.name}</span>
+                {documentId && (
+                  <button
+                    type="button"
+                    disabled={isRemoving}
+                    onClick={() => removeTag(tag.id)}
+                    title="Remove tag"
+                    className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-zinc-800 border border-white/20 text-zinc-400 hover:text-red-500 hover:border-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+                  >
+                    <X className="h-2.5 w-2.5" />
+                  </button>
+                )}
               </span>
             ))}
           </div>

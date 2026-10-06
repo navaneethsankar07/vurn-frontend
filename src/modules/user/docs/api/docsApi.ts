@@ -12,6 +12,7 @@ import type {
   DocumentsQueryParams,
   DocumentsResponse,
   DocumentTag,
+  RemoveTagResponse,
   UpdateDocumentPayload,
   UpdateDocumentResponse,
   UpdateFolderInput,
@@ -176,6 +177,23 @@ export async function createDocumentTag({
   const response = await api.post(
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/`,
     data,
+  );
+  return response.data;
+}
+
+export async function removeDocumentTag({
+  subdomain,
+  projectSlug,
+  documentId,
+  tagId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  tagId: number;
+}): Promise<RemoveTagResponse> {
+  const response = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/${tagId}/`,
   );
   return response.data;
 }

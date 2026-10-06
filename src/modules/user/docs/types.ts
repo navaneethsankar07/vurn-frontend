@@ -130,3 +130,7 @@ export interface CreateTagResponse {
   name: string;
   message: string;
 }
+
+export interface RemoveTagResponse {
+  message: string;
+}

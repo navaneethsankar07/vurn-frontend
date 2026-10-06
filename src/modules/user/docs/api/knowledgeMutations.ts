@@ -13,6 +13,7 @@ import {
   createProjectDocument,
   deleteDocumentFolder,
   deleteProjectDocument,
+  removeDocumentTag,
   updateDocumentFolder,
   updateProjectDocument,
 } from "./docsApi";
@@ -240,6 +241,37 @@ export function useCreateDocumentTag(
         error?.response?.data?.error ||
         error?.response?.data?.name?.[0] ||
         "Failed to create tag.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+export function useRemoveDocumentTag(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (tagId: number) =>
+      removeDocumentTag({
+        subdomain,
+        projectSlug,
+        documentId: documentId!,
+        tagId,
+      }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["document-tags", subdomain, projectSlug, documentId],
+      });
+      toast.success(data?.message || "Document tag removed successfully.");
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to remove tag.";
       toast.error(errorMessage);
     },
   });
