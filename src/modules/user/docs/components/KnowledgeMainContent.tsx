@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { useEditor } from "@tiptap/react";
+import { useEditor, Extension } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import Strike from "@tiptap/extension-strike";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { FontFamily } from "@tiptap/extension-font-family";
+import { Link } from "@tiptap/extension-link";
 import { Loader2 } from "lucide-react";
 import { KnowledgeHeader } from "./KnowledgeHeader";
 import { KnowledgeToolbar } from "./KnowledgeToolbar";
@@ -18,6 +21,57 @@ import {
   useDeleteProjectDocument,
 } from "../api/knowledgeMutations";
 import { useModal } from "@/hooks/useModal";
+
+declare module "@tiptap/core" {
+  interface Commands<ReturnType> {
+    fontSize: {
+      setFontSize: (size: string) => ReturnType;
+      unsetFontSize: () => ReturnType;
+    };
+  }
+}
+
+const FontSize = Extension.create({
+  name: "fontSize",
+  addOptions() {
+    return { types: ["textStyle"] };
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: (element) =>
+              element.style.fontSize?.replace(/['"]+/g, ""),
+            renderHTML: (attributes) => {
+              if (!attributes.fontSize) return {};
+              return { style: `font-size: ${attributes.fontSize}` };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setFontSize:
+        (fontSize) =>
+        ({ chain }) => {
+          return chain().setMark("textStyle", { fontSize }).run();
+        },
+      unsetFontSize:
+        () =>
+        ({ chain }) => {
+          return chain()
+            .setMark("textStyle", { fontSize: null })
+            .removeEmptyTextStyle()
+            .run();
+        },
+    };
+  },
+});
 
 interface KnowledgeMainContentProps {
   subdomain: string;
@@ -61,6 +115,10 @@ export function KnowledgeMainContent({
       Strike,
       Highlight.configure({ multicolor: true }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      TextStyle,
+      FontFamily,
+      FontSize,
+      Link.configure({ openOnClick: false }),
       Placeholder.configure({
         placeholder: "Write documentation content here...",
       }),
