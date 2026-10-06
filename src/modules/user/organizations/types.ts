@@ -100,13 +100,14 @@ export interface OrganizationProject {
 }
 
 export interface ActiveSprint {
-  id: string;
-  project_code: string;
+  id: number;
   name: string;
+  goal: string;
   start_date: string;
   end_date: string;
-  progress: number;
-  status: "Active" | "Planning" | "Completed";
+  status: string;
+  project_id: number;
+  project_name: string;
 }
 
 export interface RecentActivity {
@@ -127,13 +128,13 @@ export interface OrganizationDashboardData {
   accent_color?: string | null;
   total_projects: number;
   total_members: number;
-  active_sprints_count: number;
+  active_sprint_count: number;
   open_issues: number;
   completed_issues: number;
 
-  recent_projects?: OrganizationProject[];
+  recent_projects?: any[];
   active_sprints?: ActiveSprint[];
-  recent_activities?: RecentActivity[];
+  recent_activities?: any[];
 }
 
 export interface BackendDashboardResponse {
@@ -148,7 +149,8 @@ export interface BackendDashboardResponse {
   role: string;
   total_projects: number;
   total_members: number;
-  active_sprints: number;
+  active_sprints: ActiveSprint[];
+  active_sprint_count: number;
   open_issues: number;
   completed_issues: number;
 }
