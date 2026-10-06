@@ -6,6 +6,7 @@ import type {
   CreateDocumentResponse,
   CreateTagResponse,
   DeleteDocumentResponse,
+  DocumentAttachment,
   DocumentDetail,
   DocumentFoldersQueryParams,
   DocumentFoldersResponse,
@@ -206,6 +207,17 @@ export async function fetchTagSuggestions(
 ): Promise<TagSuggestionsResponse> {
   const { data } = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tag-suggestions/`,
+  );
+  return data;
+}
+
+export async function fetchDocumentAttachments(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+): Promise<{ count: number; results: DocumentAttachment[] }> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/`,
   );
   return data;
 }

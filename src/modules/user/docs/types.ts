@@ -138,3 +138,15 @@ export interface RemoveTagResponse {
 export interface TagSuggestionsResponse {
   tags: DocumentTag[];
 }
+
+export interface DocumentAttachment {
+  id: number;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  uploaded_by_id: number;
+  uploaded_by_name: string;
+  uploaded_by_avatar: string | null;
+  created_at: string;
+  download_url: string;
+}

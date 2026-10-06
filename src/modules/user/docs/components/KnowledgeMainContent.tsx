@@ -14,6 +14,7 @@ import { KnowledgeHeader } from "./KnowledgeHeader";
 import { KnowledgeToolbar } from "./KnowledgeToolbar";
 import { KnowledgeEditorCard } from "./KnowledgeEditorCard";
 import { DocumentTagsSection } from "./DocumentTagsSection";
+import { DocumentAttachmentsSection } from "./DocumentAttachmentsSection";
 import { DeleteDocumentModal } from "./modal/DeleteDocumentModal";
 import { useDocumentDetail } from "../api/knowledgeQueries";
 import {
@@ -234,6 +235,11 @@ export function KnowledgeMainContent({
             </div>
             <div className="lg:col-span-1 space-y-6">
               <DocumentTagsSection
+                subdomain={subdomain}
+                projectSlug={projectSlug}
+                documentId={selectedDocumentId}
+              />
+              <DocumentAttachmentsSection
                 subdomain={subdomain}
                 projectSlug={projectSlug}
                 documentId={selectedDocumentId}

@@ -4,6 +4,7 @@ import type {
   DocumentsQueryParams,
 } from "../types";
 import {
+  fetchDocumentAttachments,
   fetchDocumentDetail,
   fetchDocumentFolders,
   fetchDocumentTags,
@@ -80,6 +81,18 @@ export function useTagSuggestions(
   return useQuery({
     queryKey: ["tag-suggestions", subdomain, projectSlug, documentId],
     queryFn: () => fetchTagSuggestions(subdomain, projectSlug, documentId),
+    enabled: Boolean(subdomain && projectSlug && documentId),
+  });
+}
+
+export function useDocumentAttachments(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  return useQuery({
+    queryKey: ["document-attachments", subdomain, projectSlug, documentId],
+    queryFn: () => fetchDocumentAttachments(subdomain, projectSlug, documentId),
     enabled: Boolean(subdomain && projectSlug && documentId),
   });
 }
