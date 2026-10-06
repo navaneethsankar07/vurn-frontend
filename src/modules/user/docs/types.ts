@@ -175,3 +175,7 @@ export interface CompleteDocumentAttachmentUploadResponse {
   message: string;
   attachment: DocumentAttachment;
 }
+
+export interface DeleteDocumentAttachmentResponse {
+  message: string;
+}

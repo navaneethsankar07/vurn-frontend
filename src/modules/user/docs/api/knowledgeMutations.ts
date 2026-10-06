@@ -14,6 +14,7 @@ import {
   createDocumentFolder,
   createDocumentTag,
   createProjectDocument,
+  deleteDocumentAttachment,
   deleteDocumentFolder,
   deleteProjectDocument,
   initDocumentAttachmentUpload,
@@ -336,6 +337,37 @@ export function useCompleteDocumentAttachmentUpload(
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to complete attachment upload.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+export function useDeleteDocumentAttachment(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (attachmentId: number) =>
+      deleteDocumentAttachment({
+        subdomain,
+        projectSlug,
+        documentId: documentId!,
+        attachmentId,
+      }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["document-attachments", subdomain, projectSlug, documentId],
+      });
+      toast.success(data?.message || "Attachment deleted successfully.");
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to delete attachment.";
       toast.error(errorMessage);
     },
   });

@@ -5,14 +5,40 @@ import {
   Download,
   File as FileIcon,
   Plus,
+  Trash2,
 } from "lucide-react";
 import { useDocumentAttachments } from "../api/knowledgeQueries";
 import {
   useInitDocumentAttachmentUpload,
   useCompleteDocumentAttachmentUpload,
+  useDeleteDocumentAttachment,
 } from "../api/knowledgeMutations";
 import { uploadFileToS3 } from "@/utils/uploadToS3";
 import { toast } from "sonner";
+import { DeleteAttachmentModal } from "./modal/DeleteAttachmentModal";
+import type { DocumentAttachment } from "../types";
+
+const AttachmentPreview = ({
+  attachment,
+}: {
+  attachment: DocumentAttachment;
+}) => {
+  const [imgError, setImgError] = useState(false);
+  const isImage = attachment.mime_type?.startsWith("image/");
+
+  if (isImage && !imgError) {
+    return (
+      <img
+        src={attachment.download_url}
+        alt={attachment.file_name}
+        className="h-full w-full object-cover"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+
+  return <FileIcon className="h-3.5 w-3.5" />;
+};
 
 interface DocumentAttachmentsSectionProps {
   subdomain: string;
@@ -28,6 +54,8 @@ export function DocumentAttachmentsSection({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [attachmentToDelete, setAttachmentToDelete] =
+    useState<DocumentAttachment | null>(null);
 
   const { data, isLoading } = useDocumentAttachments(
     subdomain,
@@ -48,6 +76,9 @@ export function DocumentAttachmentsSection({
     documentId,
   );
 
+  const { mutate: deleteAttachment, isPending: isDeleting } =
+    useDeleteDocumentAttachment(subdomain, projectSlug, documentId);
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -64,21 +95,18 @@ export function DocumentAttachmentsSection({
     setUploadProgress(0);
 
     try {
-      // 1. Initialize upload (Get Pre-signed URL)
       const initData = await initUpload({
         file_name: file.name,
         file_size: file.size,
         mime_type: file.type || "application/octet-stream",
       });
 
-      // 2. Upload file directly to S3
       await uploadFileToS3({
         uploadUrl: initData.upload_url,
         file,
         onProgress: (percent) => setUploadProgress(percent),
       });
 
-      // 3. Complete the upload (Notify Backend)
       await completeUpload({
         object_key: initData.object_key,
       });
@@ -92,6 +120,15 @@ export function DocumentAttachmentsSection({
         fileInputRef.current.value = "";
       }
     }
+  };
+
+  const handleConfirmDelete = () => {
+    if (!attachmentToDelete) return;
+    deleteAttachment(attachmentToDelete.id, {
+      onSuccess: () => {
+        setAttachmentToDelete(null);
+      },
+    });
   };
 
   if (isLoading) {
@@ -169,8 +206,8 @@ export function DocumentAttachmentsSection({
                 className="p-2.5 hover:bg-white/5 transition-colors group flex items-start justify-between gap-3 font-mono"
               >
                 <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="p-1.5 bg-white/5 border border-white/10 rounded-xs shrink-0 text-zinc-400 group-hover:text-amber-500 transition-colors">
-                    <FileIcon className="h-3.5 w-3.5" />
+                  <div className="h-7 w-7 flex items-center justify-center bg-white/5 border border-white/10 rounded-xs shrink-0 text-zinc-400 group-hover:text-amber-500 transition-colors overflow-hidden">
+                    <AttachmentPreview attachment={attachment} />
                   </div>
                   <div className="min-w-0 space-y-0.5">
                     <p
@@ -188,20 +225,38 @@ export function DocumentAttachmentsSection({
                     </div>
                   </div>
                 </div>
-                <a
-                  href={attachment.download_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1.5 text-zinc-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-xs transition-colors shrink-0"
-                  title="Download"
-                >
-                  <Download className="h-3.5 w-3.5" />
-                </a>
+                <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <a
+                    href={attachment.download_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 text-zinc-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-xs transition-colors"
+                    title="Download"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setAttachmentToDelete(attachment)}
+                    className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-xs transition-colors cursor-pointer"
+                    title="Delete"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      <DeleteAttachmentModal
+        isOpen={!!attachmentToDelete}
+        onClose={() => setAttachmentToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        isPending={isDeleting}
+        fileName={attachmentToDelete?.file_name || ""}
+      />
     </div>
   );
 }

@@ -261,3 +261,20 @@ export async function completeDocumentAttachmentUpload({
   );
   return response.data;
 }
+
+export async function deleteDocumentAttachment({
+  subdomain,
+  projectSlug,
+  documentId,
+  attachmentId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  attachmentId: number;
+}): Promise<{ message: string }> {
+  const response = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/${attachmentId}/`,
+  );
+  return response.data;
+}
