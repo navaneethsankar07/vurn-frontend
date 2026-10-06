@@ -91,6 +91,14 @@ export function DocumentAttachmentsSection({
     const file = e.target.files?.[0];
     if (!file || !documentId) return;
 
+    if (attachments.length >= 5) {
+      toast.error("A document can have a maximum of 5 attachments.");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
     setIsUploading(true);
     setUploadProgress(0);
 
@@ -110,9 +118,10 @@ export function DocumentAttachmentsSection({
       await completeUpload({
         object_key: initData.object_key,
       });
-    } catch (error) {
-      console.error("Upload process failed:", error);
-      toast.error("Failed to upload the file to storage.");
+    } catch (error: any) {
+      if (!error?.response) {
+        toast.error("Failed to upload the file to storage.");
+      }
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
