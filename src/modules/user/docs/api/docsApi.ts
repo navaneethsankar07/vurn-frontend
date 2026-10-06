@@ -10,6 +10,7 @@ import type {
   DocumentFoldersResponse,
   DocumentsQueryParams,
   DocumentsResponse,
+  DocumentTag,
   UpdateDocumentPayload,
   UpdateDocumentResponse,
   UpdateFolderInput,
@@ -146,4 +147,15 @@ export async function deleteDocumentFolder({
     `/organizations/${subdomain}/projects/${projectSlug}/document-folders/${folderId}/`,
   );
   return response.data;
+}
+
+export async function fetchDocumentTags(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+): Promise<{ count: number; results: DocumentTag[] }> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/`,
+  );
+  return data;
 }

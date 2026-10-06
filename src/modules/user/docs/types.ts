@@ -114,3 +114,9 @@ export interface DocumentFolder {
 export interface UpdateFolderInput {
   name: string;
 }
+
+export interface DocumentTag {
+  id: number;
+  name: string;
+  created_at: string;
+}

@@ -3,7 +3,12 @@ import type {
   DocumentFoldersQueryParams,
   DocumentsQueryParams,
 } from "../types";
-import { fetchDocumentDetail, fetchDocumentFolders, fetchProjectDocuments } from "./docsApi";
+import {
+  fetchDocumentDetail,
+  fetchDocumentFolders,
+  fetchDocumentTags,
+  fetchProjectDocuments,
+} from "./docsApi";
 import { toast } from "sonner";
 
 export function useDocumentFolders(
@@ -51,5 +56,17 @@ export function useDocumentDetail(
         }
       },
     },
+  });
+}
+
+export function useDocumentTags(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  return useQuery({
+    queryKey: ["document-tags", subdomain, projectSlug, documentId],
+    queryFn: () => fetchDocumentTags(subdomain, projectSlug, documentId),
+    enabled: Boolean(subdomain && projectSlug && documentId),
   });
 }

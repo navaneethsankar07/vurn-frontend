@@ -68,13 +68,7 @@ export function EditFolderModal({
               Edit Folder
             </DialogTitle>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
-          >
-            ✕
-          </button>
+          
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
