@@ -234,6 +234,9 @@ export function useCreateDocumentTag(
       queryClient.invalidateQueries({
         queryKey: ["document-tags", subdomain, projectSlug, documentId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["tag-suggestions", subdomain, projectSlug, documentId],
+      });
       toast.success(data?.message || "Document tag created successfully.");
     },
     onError: (error: any) => {
@@ -264,6 +267,9 @@ export function useRemoveDocumentTag(
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["document-tags", subdomain, projectSlug, documentId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["tag-suggestions", subdomain, projectSlug, documentId],
       });
       toast.success(data?.message || "Document tag removed successfully.");
     },

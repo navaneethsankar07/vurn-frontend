@@ -13,6 +13,7 @@ import type {
   DocumentsResponse,
   DocumentTag,
   RemoveTagResponse,
+  TagSuggestionsResponse,
   UpdateDocumentPayload,
   UpdateDocumentResponse,
   UpdateFolderInput,
@@ -196,4 +197,15 @@ export async function removeDocumentTag({
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/${tagId}/`,
   );
   return response.data;
+}
+
+export async function fetchTagSuggestions(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+): Promise<TagSuggestionsResponse> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tag-suggestions/`,
+  );
+  return data;
 }

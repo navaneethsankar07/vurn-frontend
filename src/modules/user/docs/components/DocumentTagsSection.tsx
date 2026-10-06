@@ -3,6 +3,7 @@ import { Tag, Loader2, Plus, X } from "lucide-react";
 import { useDocumentTags } from "../api/knowledgeQueries";
 import { useRemoveDocumentTag } from "../api/knowledgeMutations";
 import { CreateDocumentTagForm } from "./CreateDocumentTagForm";
+import { DocumentTagSuggestions } from "./DocumentTagSuggestions";
 
 interface DocumentTagsSectionProps {
   subdomain: string;
@@ -68,12 +69,19 @@ export function DocumentTagsSection({
 
       <div className="p-3.5 bg-black/40 border border-white/5 rounded-xs space-y-2.5">
         {isAdding && documentId && (
-          <CreateDocumentTagForm
-            subdomain={subdomain}
-            projectSlug={projectSlug}
-            documentId={documentId}
-            onClose={() => setIsAdding(false)}
-          />
+          <>
+            <CreateDocumentTagForm
+              subdomain={subdomain}
+              projectSlug={projectSlug}
+              documentId={documentId}
+              onClose={() => setIsAdding(false)}
+            />
+            <DocumentTagSuggestions
+              subdomain={subdomain}
+              projectSlug={projectSlug}
+              documentId={documentId}
+            />
+          </>
         )}
 
         {tags.length === 0 && !isAdding ? (

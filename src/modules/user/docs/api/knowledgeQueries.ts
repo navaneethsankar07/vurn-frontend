@@ -8,6 +8,7 @@ import {
   fetchDocumentFolders,
   fetchDocumentTags,
   fetchProjectDocuments,
+  fetchTagSuggestions,
 } from "./docsApi";
 import { toast } from "sonner";
 
@@ -67,6 +68,18 @@ export function useDocumentTags(
   return useQuery({
     queryKey: ["document-tags", subdomain, projectSlug, documentId],
     queryFn: () => fetchDocumentTags(subdomain, projectSlug, documentId),
+    enabled: Boolean(subdomain && projectSlug && documentId),
+  });
+}
+
+export function useTagSuggestions(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  return useQuery({
+    queryKey: ["tag-suggestions", subdomain, projectSlug, documentId],
+    queryFn: () => fetchTagSuggestions(subdomain, projectSlug, documentId),
     enabled: Boolean(subdomain && projectSlug && documentId),
   });
 }

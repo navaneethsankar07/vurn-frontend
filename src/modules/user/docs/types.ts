@@ -134,3 +134,7 @@ export interface CreateTagResponse {
 export interface RemoveTagResponse {
   message: string;
 }
+
+export interface TagSuggestionsResponse {
+  tags: DocumentTag[];
+}
