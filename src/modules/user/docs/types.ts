@@ -150,3 +150,28 @@ export interface DocumentAttachment {
   created_at: string;
   download_url: string;
 }
+
+export interface InitDocumentAttachmentUploadInput {
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+}
+
+export interface InitDocumentAttachmentUploadResponse {
+  message: string;
+  upload_url: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  expires_in: number;
+  object_key: string;
+}
+
+export interface CompleteDocumentAttachmentUploadInput {
+  object_key: string;
+}
+
+export interface CompleteDocumentAttachmentUploadResponse {
+  message: string;
+  attachment: DocumentAttachment;
+}

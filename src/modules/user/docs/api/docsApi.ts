@@ -1,5 +1,7 @@
 import api from "@/api/axios";
 import type {
+  CompleteDocumentAttachmentUploadInput,
+  CompleteDocumentAttachmentUploadResponse,
   CreateDocumentFolderPayload,
   CreateDocumentFolderResponse,
   CreateDocumentPayload,
@@ -13,6 +15,8 @@ import type {
   DocumentsQueryParams,
   DocumentsResponse,
   DocumentTag,
+  InitDocumentAttachmentUploadInput,
+  InitDocumentAttachmentUploadResponse,
   RemoveTagResponse,
   TagSuggestionsResponse,
   UpdateDocumentPayload,
@@ -220,4 +224,40 @@ export async function fetchDocumentAttachments(
     `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/`,
   );
   return data;
+}
+
+export async function initDocumentAttachmentUpload({
+  subdomain,
+  projectSlug,
+  documentId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  data: InitDocumentAttachmentUploadInput;
+}): Promise<InitDocumentAttachmentUploadResponse> {
+  const response = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/upload/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function completeDocumentAttachmentUpload({
+  subdomain,
+  projectSlug,
+  documentId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  data: CompleteDocumentAttachmentUploadInput;
+}): Promise<CompleteDocumentAttachmentUploadResponse> {
+  const response = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/upload/complete/`,
+    data,
+  );
+  return response.data;
 }

@@ -27,5 +27,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/modules/public/auth/pages/ForgotPasswordPage.tsx", "src/modules/user/organizations/schemas/generalSettingsSchema.ts"]
+  "include": ["src", "src/modules/public/auth/pages/ForgotPasswordPage.tsx", "src/modules/user/organizations/schemas/generalSettingsSchema.ts", "src/modules/user/docs/schemas/attachmentSchemas.ts"]
 }

@@ -2,17 +2,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type {
+  CompleteDocumentAttachmentUploadInput,
   CreateDocumentFolderPayload,
   CreateDocumentPayload,
+  InitDocumentAttachmentUploadInput,
   UpdateDocumentPayload,
   UpdateFolderInput,
 } from "../types";
 import {
+  completeDocumentAttachmentUpload,
   createDocumentFolder,
   createDocumentTag,
   createProjectDocument,
   deleteDocumentFolder,
   deleteProjectDocument,
+  initDocumentAttachmentUpload,
   removeDocumentTag,
   updateDocumentFolder,
   updateProjectDocument,
@@ -278,6 +282,60 @@ export function useRemoveDocumentTag(
         error?.response?.data?.error ||
         error?.response?.data?.detail ||
         "Failed to remove tag.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+export function useInitDocumentAttachmentUpload(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  return useMutation({
+    mutationFn: (data: InitDocumentAttachmentUploadInput) =>
+      initDocumentAttachmentUpload({
+        subdomain,
+        projectSlug,
+        documentId: documentId!,
+        data,
+      }),
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to initialize attachment upload.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+export function useCompleteDocumentAttachmentUpload(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CompleteDocumentAttachmentUploadInput) =>
+      completeDocumentAttachmentUpload({
+        subdomain,
+        projectSlug,
+        documentId: documentId!,
+        data,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["document-attachments", subdomain, projectSlug, documentId],
+      });
+      toast.success("Attachment uploaded successfully.");
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to complete attachment upload.";
       toast.error(errorMessage);
     },
   });
