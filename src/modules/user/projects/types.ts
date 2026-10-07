@@ -8,6 +8,29 @@ export interface CreateProjectPayload {
   target_date?: string;
 }
 
+export interface ActiveSprintSummary {
+  id: number;
+  name: string;
+  goal: string;
+  description: string;
+  created_by_name: string;
+  created_at: string;
+  updated_at: string;
+  start_date: string;
+  end_date: string;
+  status: string;
+}
+
+export interface ProjectDashboardData {
+  name: string;
+  key: string;
+  status: string;
+  description: string;
+  open_issues: number;
+  completed_issues: number;
+  active_sprint: ActiveSprintSummary | null;
+}
+
 export interface ProjectResponse {
   id: number;
   name: string;

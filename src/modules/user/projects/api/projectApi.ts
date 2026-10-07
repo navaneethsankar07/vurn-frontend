@@ -7,6 +7,7 @@ import type {
   GetProjectMembersParams,
   PaginatedProjectsResponse,
   ProjectArchiveStatusResponse,
+  ProjectDashboardData,
   ProjectDeleteRequest,
   ProjectDetail,
   ProjectListParams,
@@ -258,4 +259,14 @@ export async function unarchiveProject({
     `/organizations/${subdomain}/projects/${projectSlug}/unarchive/`,
   );
   return response.data;
+}
+
+export async function fetchProjectDashboard(
+  subdomain: string,
+  projectSlug: string,
+): Promise<ProjectDashboardData> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/`,
+  );
+  return data;
 }

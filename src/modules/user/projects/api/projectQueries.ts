@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   fetchProjectArchiveStatus,
+  fetchProjectDashboard,
   getProjectMembers,
   getProjectOptions,
   getProjects,
@@ -67,3 +68,11 @@ export const useProjectWorkflow = (orgSlug: string, projectSlug: string) => {
     enabled: Boolean(orgSlug && projectSlug),
   });
 };
+
+export function useProjectDashboard(subdomain: string, projectSlug: string) {
+  return useQuery({
+    queryKey: ["project-dashboard", subdomain, projectSlug],
+    queryFn: () => fetchProjectDashboard(subdomain, projectSlug),
+    enabled: Boolean(subdomain && projectSlug),
+  });
+}
