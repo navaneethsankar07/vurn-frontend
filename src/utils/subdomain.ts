@@ -21,3 +21,12 @@ export function getSubdomain(): string | null {
 
   return null;
 }
+
+export function getOrganizationUrl(
+  organizationSlug: string,
+  path: string = "",
+) {
+  const frontendUrl = import.meta.env.VITE_APP_BASE_DOMAIN;
+
+  return `${window.location.protocol}//${organizationSlug}.${frontendUrl}${path}`;
+}

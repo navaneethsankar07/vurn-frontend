@@ -13,6 +13,7 @@ import { SprintDetailPage } from "@/modules/user/sprints/pages/SprintDetailPage"
 import { ProjectKanbanPage } from "@/modules/user/sprints/pages/ProjectKanbanPage";
 import { ProjectIssuesPage } from "@/modules/user/issues/pages/ProjectIssuesPage";
 import { KnowledgePage } from "@/modules/user/docs/pages/KnowledgePage";
+import { ProjectRepositoryPage } from "@/modules/user/integrations/github/pages/ProjectRepositoryPage";
 
 export const projectRoutes: RouteObject[] = [
   {
@@ -65,11 +66,7 @@ export const projectRoutes: RouteObject[] = [
           },
           {
             path: "repository",
-            element: (
-              <div className="p-4 text-xs text-gray-400">
-                Repository View (Coming Soon)
-              </div>
-            ),
+            element: <ProjectRepositoryPage />,
           },
           {
             path: "members",
