@@ -7,6 +7,7 @@ import type {
   GitHubCompleteResponse,
   GitHubConnectResponse,
   GitHubIntegrationStatus,
+  GitHubPullRequestsResponse,
   GitHubRepositoriesResponse,
   GitHubRepository,
 } from "../types";
@@ -100,6 +101,25 @@ export async function fetchGitHubCommits(
 
   const { data } = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/integrations/github/repositories/${repositoryId}/commits/?${params.toString()}`,
+  );
+  return data;
+}
+
+export async function fetchGitHubPullRequests(
+  subdomain: string,
+  projectSlug: string,
+  repositoryId: number | string,
+  state: string = "open",
+  page: number = 1,
+  pageSize: number = 5,
+): Promise<GitHubPullRequestsResponse> {
+  const params = new URLSearchParams();
+  params.append("state", state);
+  params.append("page", page.toString());
+  params.append("page_size", pageSize.toString());
+
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/integrations/github/repositories/${repositoryId}/pull-requests/?${params.toString()}`,
   );
   return data;
 }

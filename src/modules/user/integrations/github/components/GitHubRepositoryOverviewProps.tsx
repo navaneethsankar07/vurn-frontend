@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { format, parseISO } from "date-fns";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
 import { GitHubCommitsList } from "./GitHubCommitsList";
+import { GitHubPullRequestsList } from "./GitHubPullRequestsList";
 import type { GitHubRepository } from "../types";
 
 interface GitHubRepositoryOverviewProps {
@@ -190,6 +191,12 @@ export function GitHubRepositoryOverview({
           projectSlug={projectSlug}
           repositoryId={repository.id}
           defaultBranch={repository.default_branch}
+        />
+
+        <GitHubPullRequestsList
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          repositoryId={repository.id}
         />
 
         <div className="space-y-3 pt-2">

@@ -98,3 +98,29 @@ export interface GitHubCommitsResponse {
   pagination: GitHubPaginationLinks;
   commits: GitHubCommitItem[];
 }
+
+export interface GitHubPullRequestItem {
+  id: number;
+  external_id: string;
+  pr_number: number;
+  title: string;
+  description: string | null;
+  state: string;
+  draft: boolean;
+  author_username: string;
+  source_branch: string;
+  target_branch: string;
+  url: string;
+  opened_at: string;
+  merged_at: string | null;
+  closed_at: string | null;
+  created_at: string;
+}
+
+export interface GitHubPullRequestsResponse {
+  state: string;
+  page: number;
+  page_size: number;
+  pagination: GitHubPaginationLinks;
+  pull_requests: GitHubPullRequestItem[];
+}
