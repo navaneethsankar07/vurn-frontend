@@ -34,7 +34,6 @@ export function GitHubIntegrationHub({
     projectSlug,
   );
 
-  // Determine active repository ID: either from route URL or if there's only 1 repository linked
   const repositories = statusData?.repositories || [];
   const effectiveRepoId =
     repositoryIdRoute ??
@@ -77,31 +76,8 @@ export function GitHubIntegrationHub({
     );
   }
 
-  if (effectiveRepoId !== null) {
-    if (isLoadingDetail) {
-      return (
-        <div className="h-64 flex items-center justify-center font-mono text-xs text-zinc-500 gap-2">
-          <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
-          <span>Loading repository overview...</span>
-        </div>
-      );
-    }
-
-    if (detailData) {
-      return (
-        <GitHubRepositoryOverview
-          repository={detailData}
-          subdomain={subdomain}
-          projectSlug={projectSlug}
-          showBack={repositories.length > 1}
-          onBackToList={() => navigate(`/projects/${projectSlug}/repository`)}
-        />
-      );
-    }
-  }
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pr-5">
       <GitHubConnectedAccountView
         account={account ?? null}
         status={statusData?.status ?? null}
@@ -111,6 +87,21 @@ export function GitHubIntegrationHub({
           navigate(`/projects/${projectSlug}/repository/${repo.id}`)
         }
       />
+
+      {effectiveRepoId !== null &&
+        (isLoadingDetail ? (
+          <div className="h-64 flex items-center justify-center font-mono text-xs text-zinc-500 gap-2">
+            <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
+            <span>Loading repository overview...</span>
+          </div>
+        ) : detailData ? (
+          <GitHubRepositoryOverview
+            repository={detailData}
+            subdomain={subdomain}
+            projectSlug={projectSlug}
+            showBack={false}
+          />
+        ) : null)}
 
       <RepositorySelectorModal
         isOpen={isRepoModalOpen}
