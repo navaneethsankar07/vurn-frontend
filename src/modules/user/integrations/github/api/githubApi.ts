@@ -1,6 +1,7 @@
 import api from "@/api/axios";
 import type {
   ConnectRepositoryResponse,
+  GitHubBranchesResponse,
   GitHubCompleteInput,
   GitHubCompleteResponse,
   GitHubConnectResponse,
@@ -70,4 +71,15 @@ export async function completeGitHubConnect(
     data,
   );
   return response;
+}
+
+export async function fetchGitHubBranches(
+  subdomain: string,
+  projectSlug: string,
+  repositoryId: number | string,
+): Promise<GitHubBranchesResponse> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/integrations/github/repositories/${repositoryId}/branches/`,
+  );
+  return data;
 }

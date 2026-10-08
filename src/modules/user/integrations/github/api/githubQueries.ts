@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  fetchGitHubBranches,
   fetchGitHubRepositories,
   fetchGitHubRepositoryDetails,
   fetchGitHubStatus,
@@ -39,6 +40,18 @@ export function useGitHubRepositoryDetails(
     ],
     queryFn: () =>
       fetchGitHubRepositoryDetails(subdomain, projectSlug, repositoryId!),
+    enabled: Boolean(subdomain && projectSlug && repositoryId !== null),
+  });
+}
+
+export function useGitHubBranches(
+  subdomain: string,
+  projectSlug: string,
+  repositoryId: number | null,
+) {
+  return useQuery({
+    queryKey: ["github-branches", subdomain, projectSlug, repositoryId],
+    queryFn: () => fetchGitHubBranches(subdomain, projectSlug, repositoryId!),
     enabled: Boolean(subdomain && projectSlug && repositoryId !== null),
   });
 }

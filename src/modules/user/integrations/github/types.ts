@@ -56,3 +56,16 @@ export interface GitHubCompleteResponse {
   project_slug: string;
   account: GitHubAccount;
 }
+
+export interface GitHubBranch {
+  name: string;
+  commit: {
+    sha: string;
+    url: string;
+  };
+  protected: boolean;
+}
+
+export interface GitHubBranchesResponse {
+  branches: GitHubBranch[];
+}
