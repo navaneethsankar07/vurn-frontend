@@ -130,7 +130,7 @@ export function GitHubIntegrationHub({
                 </span>
                 <p className="text-xs font-bold text-emerald-400 flex items-center gap-1.5 pt-0.5">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  <span>Active & Healthy</span>
+                  <span>{statusData?.status}</span>
                 </p>
               </div>
             </div>
@@ -171,7 +171,7 @@ export function GitHubIntegrationHub({
                       </div>
 
                       <a
-                        href={repo.html_url}
+                        href={repo.repository_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded transition-colors shrink-0"

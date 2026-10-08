@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchGitHubRepositories, fetchGitHubRepositoryDetails, fetchGitHubStatus } from "./githubApi";
+import {
+  fetchGitHubRepositories,
+  fetchGitHubRepositoryDetails,
+  fetchGitHubStatus,
+} from "./githubApi";
 
 export function useGitHubStatus(subdomain: string, projectSlug: string) {
   return useQuery({

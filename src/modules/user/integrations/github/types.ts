@@ -5,12 +5,20 @@ export interface GitHubAccount {
 
 export interface GitHubRepository {
   id: number;
+  external_repository_id: string;
   name: string;
   full_name: string;
-  private: boolean;
-  html_url: string;
-  description: string | null;
+  repository_url: string;
   default_branch: string;
+  visibility: string;
+  description: string | null;
+  is_archived: boolean;
+  stars: number;
+  forks: number;
+  open_issues: number;
+  language: string | null;
+  github_created_at: string;
+  github_updated_at: string;
 }
 
 export interface GitHubIntegrationStatus {
@@ -29,19 +37,9 @@ export interface GitHubRepositoriesResponse {
   repositories: GitHubRepository[];
 }
 
-export interface ConnectedRepositoryDetails {
-  id: number;
-  external_repository_id: string;
-  name: string;
-  full_name: string;
-  repository_url: string;
-  default_branch: string;
-  visibility: string;
-}
-
 export interface ConnectRepositoryResponse {
   message: string;
-  repository: ConnectedRepositoryDetails;
+  repository: GitHubRepository;
 }
 
 export interface GitHubCompleteInput {
