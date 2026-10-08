@@ -2,6 +2,7 @@ import api from "@/api/axios";
 import type {
   ConnectRepositoryResponse,
   GitHubBranchesResponse,
+  GitHubCommitsResponse,
   GitHubCompleteInput,
   GitHubCompleteResponse,
   GitHubConnectResponse,
@@ -80,6 +81,25 @@ export async function fetchGitHubBranches(
 ): Promise<GitHubBranchesResponse> {
   const { data } = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/integrations/github/repositories/${repositoryId}/branches/`,
+  );
+  return data;
+}
+
+export async function fetchGitHubCommits(
+  subdomain: string,
+  projectSlug: string,
+  repositoryId: number | string,
+  branch?: string,
+  page: number = 1,
+  pageSize: number = 5,
+): Promise<GitHubCommitsResponse> {
+  const params = new URLSearchParams();
+  if (branch) params.append("branch", branch);
+  params.append("page", page.toString());
+  params.append("page_size", pageSize.toString());
+
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/integrations/github/repositories/${repositoryId}/commits/?${params.toString()}`,
   );
   return data;
 }

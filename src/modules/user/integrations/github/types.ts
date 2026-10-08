@@ -69,3 +69,32 @@ export interface GitHubBranch {
 export interface GitHubBranchesResponse {
   branches: GitHubBranch[];
 }
+
+export interface GitHubCommitAuthor {
+  name: string;
+  email: string;
+  date: string;
+}
+
+export interface GitHubCommitItem {
+  sha: string;
+  message: string;
+  author: GitHubCommitAuthor;
+  url: string;
+  linked_issue?: string | null;
+}
+
+export interface GitHubPaginationLinks {
+  next: string | null;
+  previous: string | null;
+  first: string | null;
+  last: string | null;
+}
+
+export interface GitHubCommitsResponse {
+  branch: string;
+  page: number;
+  page_size: number;
+  pagination: GitHubPaginationLinks;
+  commits: GitHubCommitItem[];
+}

@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { format, parseISO } from "date-fns";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
+import { GitHubCommitsList } from "./GitHubCommitsList";
 import type { GitHubRepository } from "../types";
 
 interface GitHubRepositoryOverviewProps {
@@ -44,6 +45,8 @@ const DUMMY_ISSUES = [
 
 export function GitHubRepositoryOverview({
   repository,
+  subdomain,
+  projectSlug,
   onBackToList,
   showBack,
 }: GitHubRepositoryOverviewProps) {
@@ -181,6 +184,13 @@ export function GitHubRepositoryOverview({
             </p>
           </div>
         </div>
+
+        <GitHubCommitsList
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          repositoryId={repository.id}
+          defaultBranch={repository.default_branch}
+        />
 
         <div className="space-y-3 pt-2">
           <h3 className="text-xs font-semibold text-white uppercase tracking-wider">

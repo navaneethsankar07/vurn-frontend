@@ -76,17 +76,21 @@ export function GitHubIntegrationHub({
     );
   }
 
+  const isSingleRepo = repositories.length === 1;
+
   return (
     <div className="space-y-6 pr-5">
-      <GitHubConnectedAccountView
-        account={account ?? null}
-        status={statusData?.status ?? null}
-        repositories={repositories}
-        onOpenLinkModal={() => setIsRepoModalOpen(true)}
-        onSelectRepo={(repo) =>
-          navigate(`/projects/${projectSlug}/repository/${repo.id}`)
-        }
-      />
+      {(isSingleRepo || repositoryIdRoute === undefined) && (
+        <GitHubConnectedAccountView
+          account={account ?? null}
+          status={statusData?.status ?? null}
+          repositories={repositories}
+          onOpenLinkModal={() => setIsRepoModalOpen(true)}
+          onSelectRepo={(repo) =>
+            navigate(`/projects/${projectSlug}/repository/${repo.id}`)
+          }
+        />
+      )}
 
       {effectiveRepoId !== null &&
         (isLoadingDetail ? (
@@ -99,7 +103,8 @@ export function GitHubIntegrationHub({
             repository={detailData}
             subdomain={subdomain}
             projectSlug={projectSlug}
-            showBack={false}
+            showBack={!isSingleRepo}
+            onBackToList={() => navigate(`/projects/${projectSlug}/repository`)}
           />
         ) : null)}
 
