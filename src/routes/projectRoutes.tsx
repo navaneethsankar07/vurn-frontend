@@ -69,6 +69,10 @@ export const projectRoutes: RouteObject[] = [
             element: <ProjectRepositoryPage />,
           },
           {
+            path: "repository/:repositoryId",
+            element: <ProjectRepositoryPage />,
+          },
+          {
             path: "members",
             element: <ProjectMembersPage />,
           },

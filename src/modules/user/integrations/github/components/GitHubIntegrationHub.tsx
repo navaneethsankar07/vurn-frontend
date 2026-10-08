@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   useGitHubStatus,
   useGitHubRepositoryDetails,
@@ -17,21 +18,30 @@ import type { GitHubRepository } from "../types";
 interface GitHubIntegrationHubProps {
   subdomain: string;
   projectSlug: string;
+  repositoryIdRoute?: number;
 }
 
 export function GitHubIntegrationHub({
   subdomain,
   projectSlug,
+  repositoryIdRoute,
 }: GitHubIntegrationHubProps) {
+  const navigate = useNavigate();
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
-  const [selectedRepoId, setSelectedRepoId] = useState<number | null>(null);
 
   const { data: statusData, isLoading } = useGitHubStatus(
     subdomain,
     projectSlug,
   );
+
+  // Determine active repository ID: either from route URL or if there's only 1 repository linked
+  const repositories = statusData?.repositories || [];
+  const effectiveRepoId =
+    repositoryIdRoute ??
+    (repositories.length === 1 ? repositories[0].id : null);
+
   const { data: detailData, isLoading: isLoadingDetail } =
-    useGitHubRepositoryDetails(subdomain, projectSlug, selectedRepoId);
+    useGitHubRepositoryDetails(subdomain, projectSlug, effectiveRepoId);
 
   const { mutate: startConnect, isPending: isConnectingGitHub } =
     useStartGitHubConnect(subdomain, projectSlug);
@@ -57,7 +67,6 @@ export function GitHubIntegrationHub({
 
   const isConnected = statusData?.connected ?? false;
   const account = statusData?.account;
-  const repositories = statusData?.repositories || [];
 
   if (!isConnected) {
     return (
@@ -68,7 +77,7 @@ export function GitHubIntegrationHub({
     );
   }
 
-  if (selectedRepoId !== null) {
+  if (effectiveRepoId !== null) {
     if (isLoadingDetail) {
       return (
         <div className="h-64 flex items-center justify-center font-mono text-xs text-zinc-500 gap-2">
@@ -85,21 +94,10 @@ export function GitHubIntegrationHub({
           subdomain={subdomain}
           projectSlug={projectSlug}
           showBack={repositories.length > 1}
-          onBackToList={() => setSelectedRepoId(null)}
+          onBackToList={() => navigate(`/projects/${projectSlug}/repository`)}
         />
       );
     }
-  }
-
-  if (repositories.length === 1) {
-    return (
-      <GitHubRepositoryOverview
-        repository={repositories[0] as unknown as GitHubRepository}
-        subdomain={subdomain}
-        projectSlug={projectSlug}
-        showBack={false}
-      />
-    );
   }
 
   return (
@@ -109,7 +107,9 @@ export function GitHubIntegrationHub({
         status={statusData?.status ?? null}
         repositories={repositories}
         onOpenLinkModal={() => setIsRepoModalOpen(true)}
-        onSelectRepo={(repo) => setSelectedRepoId(repo.id)}
+        onSelectRepo={(repo) =>
+          navigate(`/projects/${projectSlug}/repository/${repo.id}`)
+        }
       />
 
       <RepositorySelectorModal

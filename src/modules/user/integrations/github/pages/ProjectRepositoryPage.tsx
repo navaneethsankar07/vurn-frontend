@@ -4,13 +4,17 @@ import { GitHubIntegrationHub } from "../components/GitHubIntegrationHub";
 
 export function ProjectRepositoryPage() {
   const subdomain = getSubdomain() || "";
-  const { projectSlug } = useParams<{ projectSlug: string }>();
+  const { projectSlug, repositoryId } = useParams<{
+    projectSlug: string;
+    repositoryId?: string;
+  }>();
 
   return (
     <div className="space-y-6">
       <GitHubIntegrationHub
         subdomain={subdomain}
         projectSlug={projectSlug || ""}
+        repositoryIdRoute={repositoryId ? Number(repositoryId) : undefined}
       />
     </div>
   );
