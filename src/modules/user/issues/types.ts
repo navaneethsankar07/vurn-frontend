@@ -83,6 +83,21 @@ export interface IssueListResponse {
   results: IssueItem[];
 }
 
+export interface GitHubLinkedIssueRef {
+  id: number;
+  linked_at: string;
+  git_issue: {
+    id: number;
+    external_id: string;
+    issue_number: number;
+    title: string;
+    state: string;
+    author_username: string;
+    url: string;
+    repository_name: string;
+  };
+}
+
 export interface IssueDetailResponse extends IssueItem {
   sprint: SprintInfo | null;
   assignee_name?: string | null;
@@ -92,6 +107,7 @@ export interface IssueDetailResponse extends IssueItem {
   due_date: string | null;
   estimated_time: number | null;
   labels?: IssueLabel[];
+  linked_github_issues?: GitHubLinkedIssueRef[];
 }
 
 export interface UpdateIssuePayload {

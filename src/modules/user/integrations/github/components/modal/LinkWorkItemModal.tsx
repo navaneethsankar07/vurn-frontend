@@ -132,7 +132,7 @@ export function LinkWorkItemModal({
           </div>
         )}
 
-        <DialogFooter className="flex items-center gap-2 pt-2">
+        <DialogFooter className="flex bg-transparent items-center gap-2 pt-2">
           <Button
             type="button"
             variant="outline"

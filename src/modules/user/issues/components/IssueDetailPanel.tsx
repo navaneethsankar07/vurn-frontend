@@ -26,8 +26,14 @@ import { IssueCommentsSection } from "./IssueCommentsSection";
 import { IssueSprintHistoryCard } from "./IssueSprintHistoryCard";
 import { IssueCurrentSprintCard } from "./IssueCurrentSprintCard";
 import { DeleteIssueConfirmationModal } from "./modals/DeleteIssueConfirmModal";
+import { IssueLinkedGitHubIssues } from "./IssueLinkedGitHubIssues";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
-import type { WorkItemPriority, IssueLabel, IssueItem } from "../types";
+import type {
+  WorkItemPriority,
+  IssueLabel,
+  IssueItem,
+  IssueDetailResponse,
+} from "../types";
 import { IssueAttachmentsSection } from "./IssueAttachmentsSection";
 
 interface IssueDetailPanelProps {
@@ -78,7 +84,11 @@ export function IssueDetailPanel({
     data: issue,
     isLoading,
     isError,
-  } = useProjectIssueDetail(subdomain, projectSlug, currentIssueId);
+  } = useProjectIssueDetail(subdomain, projectSlug, currentIssueId) as {
+    data: IssueDetailResponse | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   const { data: workflowData } = useProjectWorkflow(subdomain, projectSlug);
   const { data: boardSprints = [] } = useBoardSprints(subdomain, projectSlug);
@@ -494,6 +504,10 @@ export function IssueDetailPanel({
               </div>
             )}
           </div>
+
+          <IssueLinkedGitHubIssues
+            linkedIssues={issue.linked_github_issues || []}
+          />
 
           {!isSubtask && (
             <IssueSubtasksSection
