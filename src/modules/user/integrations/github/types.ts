@@ -149,3 +149,17 @@ export interface GitHubIssuesResponse {
   pagination: GitHubPaginationLinks;
   issues: GitHubIssueItem[];
 }
+
+export interface WorkItemOptionItem {
+  id: number;
+  key: string;
+  title: string;
+  status_name: string;
+}
+
+export interface WorkItemOptionsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: WorkItemOptionItem[];
+}

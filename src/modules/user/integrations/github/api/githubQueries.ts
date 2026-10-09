@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   fetchGitHubBranches,
   fetchGitHubCommits,
@@ -7,6 +7,7 @@ import {
   fetchGitHubRepositories,
   fetchGitHubRepositoryDetails,
   fetchGitHubStatus,
+  fetchWorkItemOptions,
 } from "./githubApi";
 
 export function useGitHubStatus(subdomain: string, projectSlug: string) {
@@ -155,5 +156,35 @@ export function useGitHubIssues(
         pageSize,
       ),
     enabled: Boolean(subdomain && projectSlug && repositoryId !== null),
+  });
+}
+
+export function useInfiniteWorkItemOptions(
+  subdomain: string,
+  projectSlug: string,
+  search?: string,
+) {
+  return useInfiniteQuery({
+    queryKey: ["work-item-options-infinite", subdomain, projectSlug, search],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchWorkItemOptions(
+        subdomain,
+        projectSlug,
+        search,
+        pageParam as number,
+        10,
+      ),
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.next) return undefined;
+      try {
+        const url = new URL(lastPage.next);
+        const nextParam = url.searchParams.get("page");
+        return nextParam ? Number(nextParam) : undefined;
+      } catch {
+        return undefined;
+      }
+    },
+    initialPageParam: 1,
+    enabled: Boolean(subdomain && projectSlug),
   });
 }

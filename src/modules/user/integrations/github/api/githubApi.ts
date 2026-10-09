@@ -11,6 +11,7 @@ import type {
   GitHubPullRequestsResponse,
   GitHubRepositoriesResponse,
   GitHubRepository,
+  WorkItemOptionsResponse,
 } from "../types";
 
 export async function fetchGitHubStatus(
@@ -144,6 +145,24 @@ export async function fetchGitHubIssues(
 
   const { data } = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/integrations/github/repositories/${repositoryId}/issues/?${params.toString()}`,
+  );
+  return data;
+}
+
+export async function fetchWorkItemOptions(
+  subdomain: string,
+  projectSlug: string,
+  search?: string,
+  page: number = 1,
+  pageSize: number = 10,
+): Promise<WorkItemOptionsResponse> {
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+  params.append("page", page.toString());
+  params.append("page_size", pageSize.toString());
+
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/work-item-options/?${params.toString()}`,
   );
   return data;
 }
