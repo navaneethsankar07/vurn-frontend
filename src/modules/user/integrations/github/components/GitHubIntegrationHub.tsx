@@ -9,7 +9,7 @@ import {
   useConnectGitHubRepository,
   useStartGitHubConnect,
 } from "../api/githubMutations";
-import { RepositorySelectorModal } from "./modal/RepositorySelectorModal";
+import { RepositorySelectorModal } from "./modals/RepositorySelectorModal";
 import { GitHubConnectHero } from "./GitHubConnectHero";
 import { GitHubConnectedAccountView } from "./GitHubConnectedAccountViewProps";
 import { GitHubRepositoryOverview } from "./GitHubRepositoryOverviewProps";

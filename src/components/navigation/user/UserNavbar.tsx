@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useAppSelector } from "@/app/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bell, ChevronDown, Plus, Search, Sparkles } from "lucide-react";
 
 import { UserProfileMenu } from "@/modules/user/account/components/UserProfileMenu";
+import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
 
 interface UserNavbarProps {
   hasUnreadNotifications?: boolean;
@@ -14,6 +15,22 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
   const avatar = useAppSelector((state) => state.auth.user?.avatar);
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setIsNotificationOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-black px-4 sm:px-6">
@@ -46,17 +63,29 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           <ChevronDown />
         </Button>
 
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="relative flex h-9 w-9 items-center justify-center rounded-[3px] text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
-        >
-          <Bell className="h-4 w-4" />
+        <div className="relative" ref={notificationRef}>
+          <button
+            type="button"
+            onClick={() => setIsNotificationOpen((prev) => !prev)}
+            aria-label="Notifications"
+            aria-expanded={isNotificationOpen}
+            className="relative flex h-9 w-9 items-center justify-center rounded-[3px] text-gray-400 transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
+          >
+            <Bell className="h-4 w-4" />
 
-          {hasUnreadNotifications && (
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
+            {hasUnreadNotifications && (
+              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-amber-500" />
+            )}
+          </button>
+
+          {isNotificationOpen && (
+            <div className="absolute right-0 top-full z-50 mt-2.5">
+              <UserNotificationMenu
+                onClose={() => setIsNotificationOpen(false)}
+              />
+            </div>
           )}
-        </button>
+        </div>
 
         <div className="relative">
           <button
@@ -64,7 +93,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
             onClick={() => setIsProfileMenuOpen((previous) => !previous)}
             aria-label="Account menu"
             aria-expanded={isProfileMenuOpen}
-            className="h-10 w-10 overflow-hidden rounded-full border-2 border-[#34343A] bg-white/5 hover:border-white/60"
+            className="h-10 w-10 overflow-hidden rounded-full border-2 border-[#34343A] bg-white/5 hover:border-white/60 cursor-pointer"
           >
             <img
               src={avatar || "https://placehold.net/avatar.svg"}

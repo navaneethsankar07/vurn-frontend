@@ -1,15 +1,11 @@
-import { useState } from "react";
-import {
-  Search,
-  Plus,
-  Bell,
-  ChevronDown,
-  Building2,
-} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Search, Plus, Bell, ChevronDown, Building2 } from "lucide-react";
 import { useAppSelector } from "@/app/hooks";
 import { getSubdomain } from "@/utils/subdomain";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
+import { useModal } from "@/hooks/useModal";
+import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
 import logo from "@/assets/logo.svg";
 
 interface OrganizationSummary {
@@ -21,12 +17,16 @@ interface OrganizationSummary {
 
 interface OrganizationNavbarProps {
   currentOrgName?: string;
+  hasUnreadNotifications?: boolean;
 }
 
 export function OrganizationNavbar({
   currentOrgName,
+  hasUnreadNotifications = true,
 }: OrganizationNavbarProps) {
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
+  const notificationModal = useModal(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
   const { user } = useAppSelector((state) => state.auth);
 
@@ -37,6 +37,19 @@ export function OrganizationNavbar({
   const cleanBaseDomain = rawBaseDomain.split(":")[0];
   const baseHost = `${cleanBaseDomain}${port}`;
   const protocol = window.location.protocol;
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        notificationModal.closeModal();
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [notificationModal]);
 
   const handleBaseDomainNavigate = (path: string) => {
     window.location.href = `${protocol}//${baseHost}${path}`;
@@ -162,7 +175,9 @@ export function OrganizationNavbar({
                             }`}
                           />
                         )}
-                        <span className="truncate capitalize text-sm">{org.name}</span>
+                        <span className="truncate capitalize text-sm">
+                          {org.name}
+                        </span>
                       </button>
                     );
                   })
@@ -212,13 +227,26 @@ export function OrganizationNavbar({
             <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
           </button>
 
-          <button
-            type="button"
-            className="relative p-2 text-gray-400 hover:text-white transition-colors cursor-pointer"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-500" />
-          </button>
+          <div className="relative" ref={notificationRef}>
+            <button
+              type="button"
+              onClick={notificationModal.toggleModal}
+              aria-label="Notifications"
+              aria-expanded={notificationModal.isOpen}
+              className="relative p-2 text-gray-400 hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+            >
+              <Bell className="h-5 w-5" />
+              {hasUnreadNotifications && (
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-500" />
+              )}
+            </button>
+
+            {notificationModal.isOpen && (
+              <div className="absolute right-0 top-full z-50 mt-2.5">
+                <UserNotificationMenu onClose={notificationModal.closeModal} />
+              </div>
+            )}
+          </div>
 
           <div className="h-5 w-px bg-white/10 hidden sm:block" />
 

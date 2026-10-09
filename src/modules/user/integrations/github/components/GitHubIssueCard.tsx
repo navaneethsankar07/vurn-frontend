@@ -1,7 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import { formatRelativeTime } from "@/utils/date";
 import type { GitHubIssueItem } from "../types";
-import { GitHubIssueDetailModal } from "./modal/GitHubIssueDetailModal";
+import { GitHubIssueDetailModal } from "./modals/GitHubIssueDetailModal";
 import { useModal } from "@/hooks/useModal";
 
 interface GitHubIssueCardProps {
