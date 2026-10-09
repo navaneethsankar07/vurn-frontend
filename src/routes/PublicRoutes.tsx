@@ -10,6 +10,7 @@ import LoginPage from "@/modules/public/auth/pages/LoginPage";
 import ForgotPasswordPage from "@/modules/public/auth/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/modules/public/auth/pages/ResetPasswordPage";
 import { LandingPage } from "@/modules/public/landing/pages/LandingPage";
+import { DocsPage } from "@/modules/public/docs/pages/DocsPage";
 
 export const PublicRoutes: RouteObject[] = [
   {
@@ -20,7 +21,11 @@ export const PublicRoutes: RouteObject[] = [
         children: [
           {
             path: "/",
-            element: <LandingPage/>,
+            element: <LandingPage />,
+          },
+          {
+            path: "/docs",
+            element: <DocsPage />,
           },
           {
             path: "/login",

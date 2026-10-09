@@ -55,7 +55,7 @@ export function HeroSection() {
         </div>
 
         <div className="lg:col-span-6">
-          <div className="border h-100 border-white/10 rounded-xs bg-[#0C0C0E] p-1 shadow-2xl overflow-hidden aspect-16/10 flex items-center justify-center relative group w-2xl">
+          <div className="border h-90 border-white/10 rounded-xs bg-[#0C0C0E] p-1 shadow-2xl overflow-hidden aspect-16/10 flex items-center justify-center relative group w-2xl">
             <div className="absolute inset-0 bg-linear-to-tr from-amber-500/5 via-transparent to-transparent pointer-events-none" />
             <img
               src={vurnDash}
