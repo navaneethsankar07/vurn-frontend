@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   fetchGitHubBranches,
   fetchGitHubCommits,
+  fetchGitHubIssues,
   fetchGitHubPullRequests,
   fetchGitHubRepositories,
   fetchGitHubRepositoryDetails,
@@ -113,6 +114,43 @@ export function useGitHubPullRequests(
         projectSlug,
         repositoryId!,
         state,
+        page,
+        pageSize,
+      ),
+    enabled: Boolean(subdomain && projectSlug && repositoryId !== null),
+  });
+}
+
+export function useGitHubIssues(
+  subdomain: string,
+  projectSlug: string,
+  repositoryId: number | null,
+  state: string = "open",
+  sort: string = "updated",
+  direction: string = "desc",
+  page: number = 1,
+  pageSize: number = 5,
+) {
+  return useQuery({
+    queryKey: [
+      "github-issues",
+      subdomain,
+      projectSlug,
+      repositoryId,
+      state,
+      sort,
+      direction,
+      page,
+      pageSize,
+    ],
+    queryFn: () =>
+      fetchGitHubIssues(
+        subdomain,
+        projectSlug,
+        repositoryId!,
+        state,
+        sort,
+        direction,
         page,
         pageSize,
       ),

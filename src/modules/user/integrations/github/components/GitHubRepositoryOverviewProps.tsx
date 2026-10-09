@@ -13,6 +13,7 @@ import { format, parseISO } from "date-fns";
 import { formatRelativeTime } from "@/utils/sprintHelpers";
 import { GitHubCommitsList } from "./GitHubCommitsList";
 import { GitHubPullRequestsList } from "./GitHubPullRequestsList";
+import { GitHubIssuesList } from "./GitHubIssuesList";
 import type { GitHubRepository } from "../types";
 
 interface GitHubRepositoryOverviewProps {
@@ -22,27 +23,6 @@ interface GitHubRepositoryOverviewProps {
   onBackToList?: () => void;
   showBack?: boolean;
 }
-
-const DUMMY_ISSUES = [
-  {
-    id: "ISSUE-101",
-    title: "Refactor database connection pool timeout logic",
-    status: "Open",
-    time: "2h ago",
-  },
-  {
-    id: "ISSUE-98",
-    title: "Update dependencies and resolve vulnerability alerts",
-    status: "Open",
-    time: "1d ago",
-  },
-  {
-    id: "ISSUE-92",
-    title: "Add unit tests for payment gateway integration",
-    status: "Closed",
-    time: "3d ago",
-  },
-];
 
 export function GitHubRepositoryOverview({
   repository,
@@ -199,42 +179,11 @@ export function GitHubRepositoryOverview({
           repositoryId={repository.id}
         />
 
-        <div className="space-y-3 pt-2">
-          <h3 className="text-xs font-semibold text-white uppercase tracking-wider">
-            Repository Issues Area (Synced)
-          </h3>
-          <div className="border border-white/10 rounded bg-black/40 divide-y divide-white/5 overflow-hidden">
-            {DUMMY_ISSUES.map((issue) => (
-              <div
-                key={issue.id}
-                className="p-3.5 flex items-center justify-between gap-4 text-xs"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-zinc-500 font-bold shrink-0">
-                    {issue.id}
-                  </span>
-                  <span className="text-zinc-200 font-sans truncate">
-                    {issue.title}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span
-                    className={`px-1.5 py-0.5 rounded text-[9px] uppercase border ${
-                      issue.status === "Open"
-                        ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                        : "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    }`}
-                  >
-                    {issue.status}
-                  </span>
-                  <span className="text-[10px] text-zinc-500">
-                    {issue.time}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <GitHubIssuesList
+          subdomain={subdomain}
+          projectSlug={projectSlug}
+          repositoryId={repository.id}
+        />
       </div>
     </div>
   );

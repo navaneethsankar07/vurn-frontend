@@ -124,3 +124,28 @@ export interface GitHubPullRequestsResponse {
   pagination: GitHubPaginationLinks;
   pull_requests: GitHubPullRequestItem[];
 }
+
+export interface GitHubIssueItem {
+  id: number;
+  external_id: string;
+  issue_number: number;
+  title: string;
+  description: string | null;
+  state: string;
+  author_username: string;
+  url: string;
+  opened_at: string;
+  closed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GitHubIssuesResponse {
+  state: string;
+  sort: string;
+  direction: string;
+  page: number;
+  page_size: number;
+  pagination: GitHubPaginationLinks;
+  issues: GitHubIssueItem[];
+}
