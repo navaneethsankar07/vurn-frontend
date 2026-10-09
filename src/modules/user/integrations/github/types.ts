@@ -125,6 +125,15 @@ export interface GitHubPullRequestsResponse {
   pull_requests: GitHubPullRequestItem[];
 }
 
+export interface WorkItemReference {
+  id: number;
+  key: string;
+  issue_number: number;
+  title: string;
+  issue_type: string;
+  status_name: string;
+}
+
 export interface GitHubIssueItem {
   id: number;
   external_id: string;
@@ -138,6 +147,8 @@ export interface GitHubIssueItem {
   closed_at: string | null;
   created_at: string;
   updated_at: string;
+  is_linked: boolean;
+  work_item: WorkItemReference | null;
 }
 
 export interface GitHubIssuesResponse {
