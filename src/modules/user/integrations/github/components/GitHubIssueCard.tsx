@@ -1,21 +1,22 @@
 import { ExternalLink } from "lucide-react";
-import { useState } from "react";
 import { formatRelativeTime } from "@/utils/date";
 import type { GitHubIssueItem } from "../types";
 import { GitHubIssueDetailModal } from "./modal/GitHubIssueDetailModal";
+import { useModal } from "@/hooks/useModal";
 
 interface GitHubIssueCardProps {
   issue: GitHubIssueItem;
+  repositoryId: number;
 }
 
-export function GitHubIssueCard({ issue }: GitHubIssueCardProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export function GitHubIssueCard({ issue, repositoryId }: GitHubIssueCardProps) {
+  const detailModal = useModal(false);
   const isOpen = issue.state === "open";
 
   return (
     <>
       <div
-        onClick={() => setIsModalOpen(true)}
+        onClick={detailModal.openModal}
         className="p-3.5 flex items-start justify-between gap-4 text-xs cursor-pointer hover:bg-white/5 transition-colors"
       >
         <div className="space-y-1 min-w-0 pr-2">
@@ -32,7 +33,7 @@ export function GitHubIssueCard({ issue }: GitHubIssueCardProps) {
             <span>•</span>
             <span>
               opened {formatRelativeTime(issue.opened_at || issue.created_at)}
-            </span>{" "}
+            </span>
           </div>
         </div>
 
@@ -63,8 +64,9 @@ export function GitHubIssueCard({ issue }: GitHubIssueCardProps) {
 
       <GitHubIssueDetailModal
         issue={issue}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        repositoryId={repositoryId}
+        isOpen={detailModal.isOpen}
+        onClose={detailModal.closeModal}
       />
     </>
   );

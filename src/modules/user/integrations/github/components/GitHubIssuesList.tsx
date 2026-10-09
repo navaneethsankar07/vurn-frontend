@@ -94,7 +94,11 @@ export function GitHubIssuesList({
         <div className="space-y-3">
           <div className="border border-white/10 rounded bg-black/40 divide-y divide-white/5 overflow-hidden">
             {issues.map((issue) => (
-              <GitHubIssueCard key={issue.id} issue={issue} />
+              <GitHubIssueCard
+                key={issue.id}
+                issue={issue}
+                repositoryId={repositoryId}
+              />
             ))}
           </div>
 

@@ -3,9 +3,10 @@ import { toast } from "sonner";
 import {
   completeGitHubConnect,
   connectGitHubRepository,
+  linkGitHubIssue,
   startGitHubConnect,
 } from "./githubApi";
-import type { GitHubCompleteInput, GitHubCompleteResponse } from "../types";
+import type { GitHubCompleteInput, GitHubCompleteResponse, GitHubIssueLinkPayload } from "../types";
 import { getOrganizationUrl } from "@/utils/subdomain";
 
 export function useStartGitHubConnect(subdomain: string, projectSlug: string) {
@@ -79,6 +80,48 @@ export function useCompleteGitHubConnect() {
 
         window.location.replace(url);
       }
+    },
+  });
+}
+
+interface LinkIssueParams {
+  subdomain: string;
+  projectSlug: string;
+  repositoryId: number;
+  gitIssueId: number;
+  payload: GitHubIssueLinkPayload;
+}
+
+export function useLinkGitHubIssue() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      subdomain,
+      projectSlug,
+      repositoryId,
+      gitIssueId,
+      payload,
+    }: LinkIssueParams) =>
+      linkGitHubIssue(
+        subdomain,
+        projectSlug,
+        repositoryId,
+        gitIssueId,
+        payload,
+      ),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["github-issues", variables.subdomain, variables.projectSlug],
+      });
+      toast.success(data?.message || "GitHub issue linked successfully.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.detail ||
+        error?.response?.data?.error ||
+        "Failed to link GitHub issue.";
+      toast.error(message);
     },
   });
 }

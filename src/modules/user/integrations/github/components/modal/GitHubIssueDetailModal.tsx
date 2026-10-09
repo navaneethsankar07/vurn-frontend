@@ -1,4 +1,14 @@
-import { ExternalLink, Calendar, User, Clock, AlertCircle } from "lucide-react";
+import {
+  ExternalLink,
+  Calendar,
+  User,
+  Clock,
+  AlertCircle,
+  Link2,
+  Sparkles,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { formatRelativeTime } from "@/utils/date";
 import type { GitHubIssueItem } from "../../types";
@@ -8,19 +18,34 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { CreateVurnIssueDropdown } from "../CreateVurnIssueDropdown";
+import { LinkWorkItemModal } from "./LinkWorkItemModal";
+import { useLinkGitHubIssue } from "../../api/githubMutations";
+import { getSubdomain } from "@/utils/subdomain";
+import { useParams } from "react-router-dom";
+import { useModal } from "@/hooks/useModal";
 
 interface GitHubIssueDetailModalProps {
   issue: GitHubIssueItem;
+  repositoryId: number;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function GitHubIssueDetailModal({
   issue,
+  repositoryId,
   isOpen,
   onClose,
 }: GitHubIssueDetailModalProps) {
+  const subdomain = getSubdomain() || "";
+  const { projectSlug } = useParams<{ projectSlug: string }>();
+
+  const linkModal = useModal(false);
+
+  const { mutate: linkIssue, isPending: isLinking } = useLinkGitHubIssue();
+
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return "N/A";
     try {
@@ -30,11 +55,41 @@ export function GitHubIssueDetailModal({
     }
   };
 
+  const handleAutoMatch = () => {
+    if (!projectSlug) return;
+    linkIssue({
+      subdomain,
+      projectSlug,
+      repositoryId,
+      gitIssueId: issue.id,
+      payload: { auto_match: true },
+    });
+  };
+
+  const handleManualLink = (workItemId: number) => {
+    if (!projectSlug) return;
+    linkIssue(
+      {
+        subdomain,
+        projectSlug,
+        repositoryId,
+        gitIssueId: issue.id,
+        payload: { issue_id: workItemId },
+      },
+      {
+        onSuccess: () => {
+          linkModal.closeModal();
+        },
+      },
+    );
+  };
+
   const isOpenState = issue.state === "open";
+  const isLinked = issue.is_linked && issue.work_item;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#09090B] border border-white/10 text-white font-mono max-w-2xl rounded-xs shadow-2xl p-6 space-y-6 [&>button]:rounded-xs [&>button]:top-5 [&>button]:right-5">
+      <DialogContent className="bg-[#09090B] border border-white/10 text-white font-mono w-full sm:max-w-2xl md:max-w-3xl rounded-xs shadow-2xl p-6 space-y-6 [&>button]:rounded-xs [&>button]:top-5 [&>button]:right-5">
         <DialogHeader className="space-y-2 border-b border-white/5 pb-4 pr-8">
           <div className="flex items-center gap-2">
             <span className="text-xs text-zinc-400 font-bold bg-white/5 border border-white/10 px-2 py-0.5 rounded-xs">
@@ -108,22 +163,84 @@ export function GitHubIssueDetailModal({
               </div>
             )}
           </div>
+
+          {isLinked && (
+            <div className="bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-xs space-y-2">
+              <div className="flex items-center gap-1.5 text-emerald-400 text-[11px] font-bold">
+                <CheckCircle2 className="h-4 w-4" />
+                <span>Linked Work Item</span>
+              </div>
+              <div className="flex items-center justify-between gap-4 text-xs bg-black/40 p-3 rounded-xs border border-white/5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-amber-500 font-bold shrink-0">
+                    {issue.work_item?.key}
+                  </span>
+                  <span className="text-zinc-200 font-sans truncate">
+                    {issue.work_item?.title}
+                  </span>
+                </div>
+                <span className="px-1.5 py-0.5 rounded-xs text-[9px] uppercase border border-white/10 bg-white/5 text-zinc-400 shrink-0">
+                  {issue.work_item?.status_name}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-white/5">
-          <CreateVurnIssueDropdown issue={issue} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/5">
+          <div className="flex flex-wrap items-center gap-2">
+            {!isLinked && (
+              <>
+                <Button
+                  type="button"
+                  disabled={isLinking}
+                  onClick={handleAutoMatch}
+                  className="h-8 gap-1.5 bg-amber-500 text-black hover:bg-amber-400 font-semibold text-xs rounded-xs cursor-pointer px-3"
+                >
+                  {isLinking ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3.5 w-3.5" />
+                  )}
+                  <span>Auto-match Work Item</span>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isLinking}
+                  onClick={linkModal.openModal}
+                  className="h-8 gap-1.5 border-white/10 bg-transparent text-xs text-zinc-300 hover:text-white rounded-xs cursor-pointer px-3"
+                >
+                  <Link2 className="h-3.5 w-3.5" />
+                  <span>Link Existing</span>
+                </Button>
+              </>
+            )}
+
+            <CreateVurnIssueDropdown issue={issue} />
+          </div>
 
           <a
             href={issue.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-amber-500 hover:text-amber-400 font-semibold transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-amber-500 hover:text-amber-400 font-semibold transition-colors self-end sm:self-center"
           >
             <span>View on GitHub</span>
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
       </DialogContent>
+
+      <LinkWorkItemModal
+        isOpen={linkModal.isOpen}
+        onClose={linkModal.closeModal}
+        subdomain={subdomain}
+        projectSlug={projectSlug || ""}
+        onSelectWorkItem={handleManualLink}
+        isLinking={isLinking}
+      />
     </Dialog>
   );
 }

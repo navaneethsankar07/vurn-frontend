@@ -13,7 +13,7 @@ import { RepositorySelectorModal } from "./modal/RepositorySelectorModal";
 import { GitHubConnectHero } from "./GitHubConnectHero";
 import { GitHubConnectedAccountView } from "./GitHubConnectedAccountViewProps";
 import { GitHubRepositoryOverview } from "./GitHubRepositoryOverviewProps";
-import type { GitHubRepository } from "../types";
+import type { GitHubRepositoryOption } from "../types";
 
 interface GitHubIntegrationHubProps {
   subdomain: string;
@@ -47,7 +47,7 @@ export function GitHubIntegrationHub({
   const { mutate: connectRepo, isPending: isConnectingRepo } =
     useConnectGitHubRepository(subdomain, projectSlug);
 
-  const handleSelectRepoFromModal = (repo: GitHubRepository) => {
+  const handleSelectRepoFromModal = (repo: GitHubRepositoryOption) => {
     connectRepo(repo.id, {
       onSuccess: () => {
         setIsRepoModalOpen(false);

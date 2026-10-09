@@ -29,12 +29,22 @@ export interface GitHubIntegrationStatus {
   repositories: GitHubRepository[];
 }
 
+export interface GitHubRepositoryOption {
+  id: number;
+  name: string;
+  full_name: string;
+  private: boolean;
+  html_url: string;
+  description: string | null;
+  default_branch: string;
+}
+
 export interface GitHubConnectResponse {
   authorization_url: string;
 }
 
 export interface GitHubRepositoriesResponse {
-  repositories: GitHubRepository[];
+  repositories: GitHubRepositoryOption[];
 }
 
 export interface ConnectRepositoryResponse {
@@ -173,4 +183,23 @@ export interface WorkItemOptionsResponse {
   next: string | null;
   previous: string | null;
   results: WorkItemOptionItem[];
+}
+
+export interface GitHubIssueLinkPayload {
+  auto_match?: boolean;
+  issue_id?: number;
+}
+
+export interface GitHubIssueLinkResponse {
+  message: string;
+  matched_by: string;
+  link: {
+    id: number;
+    git_issue: number;
+    issue: number;
+    issue_key: string;
+    issue_title: string;
+    issue_type: string;
+    linked_at: string;
+  };
 }

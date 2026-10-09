@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useGitHubRepositories } from "../../api/githubQueries";
-import type { GitHubRepository } from "../../types";
+import type { GitHubRepositoryOption } from "../../types";
 
 interface RepositorySelectorModalProps {
   isOpen: boolean;
   onClose: () => void;
   subdomain: string;
   projectSlug: string;
-  onSelectRepo: (repo: GitHubRepository) => void;
+  onSelectRepo: (repo: GitHubRepositoryOption) => void;
   isConnecting: boolean;
 }
 
@@ -28,7 +28,7 @@ export function RepositorySelectorModal({
   onSelectRepo,
   isConnecting,
 }: RepositorySelectorModalProps) {
-  const [selectedRepo, setSelectedRepo] = useState<GitHubRepository | null>(
+  const [selectedRepo, setSelectedRepo] = useState<GitHubRepositoryOption | null>(
     null,
   );
 

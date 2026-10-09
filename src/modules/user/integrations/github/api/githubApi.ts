@@ -7,6 +7,8 @@ import type {
   GitHubCompleteResponse,
   GitHubConnectResponse,
   GitHubIntegrationStatus,
+  GitHubIssueLinkPayload,
+  GitHubIssueLinkResponse,
   GitHubIssuesResponse,
   GitHubPullRequestsResponse,
   GitHubRepositoriesResponse,
@@ -163,6 +165,20 @@ export async function fetchWorkItemOptions(
 
   const { data } = await api.get(
     `/organizations/${subdomain}/projects/${projectSlug}/work-item-options/?${params.toString()}`,
+  );
+  return data;
+}
+
+export async function linkGitHubIssue(
+  subdomain: string,
+  projectSlug: string,
+  repositoryId: number | string,
+  gitIssueId: number | string,
+  payload: GitHubIssueLinkPayload,
+): Promise<GitHubIssueLinkResponse> {
+  const { data } = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/integrations/github/repositories/${repositoryId}/issues/${gitIssueId}/link/`,
+    payload,
   );
   return data;
 }
