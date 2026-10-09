@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CreateVurnIssueDropdown } from "../CreateVurnIssueDropdown";
 
 interface GitHubIssueDetailModalProps {
   issue: GitHubIssueItem;
@@ -109,12 +110,14 @@ export function GitHubIssueDetailModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end pt-3 border-t border-white/5">
+        <div className="flex items-center justify-between pt-3 border-t border-white/5">
+          <CreateVurnIssueDropdown issue={issue} />
+
           <a
             href={issue.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold px-3 py-1.5 rounded-xs transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-amber-500 hover:text-amber-400 font-semibold transition-colors"
           >
             <span>View on GitHub</span>
             <ExternalLink className="h-3.5 w-3.5" />
