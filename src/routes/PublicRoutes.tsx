@@ -9,6 +9,7 @@ import SignupPage from "@/modules/public/auth/pages/SignUpPage";
 import LoginPage from "@/modules/public/auth/pages/LoginPage";
 import ForgotPasswordPage from "@/modules/public/auth/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/modules/public/auth/pages/ResetPasswordPage";
+import { LandingPage } from "@/modules/public/landing/pages/LandingPage";
 
 export const PublicRoutes: RouteObject[] = [
   {
@@ -19,7 +20,7 @@ export const PublicRoutes: RouteObject[] = [
         children: [
           {
             path: "/",
-            element: <h1>Landing Page</h1>,
+            element: <LandingPage/>,
           },
           {
             path: "/login",
