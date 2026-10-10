@@ -1,5 +1,6 @@
 import { Loader2, Bell } from "lucide-react";
 import { useUserNotifications } from "../../api/notificationQueries";
+import { useMarkNotificationAsRead } from "../../api/notificationMutations";
 import { formatRelativeTime } from "@/utils/date";
 
 interface UserNotificationMenuProps {
@@ -8,7 +9,16 @@ interface UserNotificationMenuProps {
 
 export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
   const { data, isLoading } = useUserNotifications(1, 10);
+  const { mutate: markAsRead, isPending: isMarking } =
+    useMarkNotificationAsRead();
+
   const notifications = data?.results || [];
+
+  const handleNotificationClick = (item: { id: number; is_read: boolean }) => {
+    if (!item.is_read) {
+      markAsRead(item.id);
+    }
+  };
 
   return (
     <div className="w-80 sm:w-96 bg-[#09090B] border border-white/10 rounded-xs shadow-2xl font-mono text-white text-xs z-50 overflow-hidden">
@@ -38,12 +48,18 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
           notifications.map((item) => (
             <div
               key={item.id}
-              className={`p-3.5 space-y-1 transition-colors hover:bg-white/5 ${
-                !item.is_read ? "bg-amber-500/5" : ""
+              onClick={() => handleNotificationClick(item)}
+              className={`p-3.5 space-y-1 transition-colors cursor-pointer hover:bg-white/5 ${
+                !item.is_read
+                  ? "bg-amber-500/5 border-l-2 border-amber-500"
+                  : ""
               }`}
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="font-bold text-zinc-200 font-sans text-xs">
+                <span className="font-bold text-zinc-200 font-sans text-xs flex items-center gap-1.5">
+                  {!item.is_read && (
+                    <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                  )}
                   {item.title}
                 </span>
                 <span className="text-[10px] text-zinc-500 shrink-0">
@@ -62,7 +78,7 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
         <button
           type="button"
           onClick={onClose}
-          className="text-[10px] text-zinc-400 hover:text-white uppercase tracking-wider font-semibold transition-colors"
+          className="text-[10px] text-zinc-400 hover:text-white uppercase tracking-wider font-semibold transition-colors cursor-pointer"
         >
           Close
         </button>

@@ -8,6 +8,7 @@ import {
   CheckSquare,
   Layers,
 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import type { KanbanIssue, IssuePriority, IssueType } from "../types";
 
 interface KanbanCardProps {
@@ -45,6 +46,8 @@ const getTypeIcon = (type: IssueType) => {
 };
 
 export function KanbanCard({ issue, index }: KanbanCardProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData(
       "application/json",
@@ -57,12 +60,18 @@ export function KanbanCard({ issue, index }: KanbanCardProps) {
     e.dataTransfer.effectAllowed = "move";
   };
 
+  const handleClick = () => {
+    searchParams.set("selectedIssue", String(issue.id));
+    setSearchParams(searchParams);
+  };
+
   return (
     <div
       draggable
       onDragStart={handleDragStart}
+      onClick={handleClick}
       data-issue-index={index}
-      className="bg-[#09090B] border border-white/10 hover:border-white/20 p-2.5 rounded-xs space-y-2 transition-all text-xs cursor-grab active:cursor-grabbing group active:opacity-40"
+      className="bg-[#09090B] border border-white/10 hover:border-white/20 p-2.5 rounded-xs space-y-2 transition-all text-xs cursor-pointer active:cursor-grabbing group active:opacity-40"
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">

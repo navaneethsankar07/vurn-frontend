@@ -162,8 +162,8 @@ export function ProjectKanbanPage() {
     })) || [];
 
   return (
-    <div className="bg-black fixed text-white p-4 lg:w-380 sm:p-6 lg:p-0 font-mono flex flex-col gap-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-3">
+    <div className="bg-black text-white p-4 sm:p-6 lg:p-0 font-mono flex flex-col gap-4 w-full h-full overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-3 shrink-0">
         <div className="space-y-1">
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export function ProjectKanbanPage() {
         </Button>
       </div>
 
-      <div className="border border-white/10 bg-[#09090B] p-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-xs">
+      <div className="border border-white/10 bg-[#09090B] p-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-xs shrink-0">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
           <Input
@@ -419,34 +419,36 @@ export function ProjectKanbanPage() {
         </div>
       </div>
 
-      {isBoardLoading ? (
-        <div className="min-h-96 flex items-center justify-center text-zinc-400 text-xs border border-white/10 bg-[#09090B] rounded-xs">
-          <Loader2 className="h-5 w-5 animate-spin mr-2 text-amber-500" />
-          Loading kanban board...
-        </div>
-      ) : isBoardError || !boardData ? (
-        <div className="p-4 border border-red-500/20 bg-red-500/5 text-red-400 text-xs text-center font-sans rounded-xs">
-          Failed to load kanban columns.
-        </div>
-      ) : (
-        <div className="flex gap-4 overflow-x-auto pb-4 items-start flex-1">
-          {boardData.columns
-            .sort((a, b) => a.position - b.position)
-            .map((col) => (
-              <KanbanColumnComponent
-                key={col.id}
-                subdomain={subdomain}
-                projectSlug={projectSlug}
-                column={col}
-                filters={columnFilters}
-                onAddIssue={(statusId) => {
-                  setDefaultCreateStatusId(statusId);
-                  createIssueModal.openModal();
-                }}
-              />
-            ))}
-        </div>
-      )}
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+        {isBoardLoading ? (
+          <div className="h-full min-h-96 flex items-center justify-center text-zinc-400 text-xs border border-white/10 bg-[#09090B] rounded-xs">
+            <Loader2 className="h-5 w-5 animate-spin mr-2 text-amber-500" />
+            Loading kanban board...
+          </div>
+        ) : isBoardError || !boardData ? (
+          <div className="p-4 border border-red-500/20 bg-red-500/5 text-red-400 text-xs text-center font-sans rounded-xs">
+            Failed to load kanban columns.
+          </div>
+        ) : (
+          <div className="flex gap-4 overflow-x-auto pb-4 items-start h-full">
+            {boardData.columns
+              .sort((a, b) => a.position - b.position)
+              .map((col) => (
+                <KanbanColumnComponent
+                  key={col.id}
+                  subdomain={subdomain}
+                  projectSlug={projectSlug}
+                  column={col}
+                  filters={columnFilters}
+                  onAddIssue={(statusId) => {
+                    setDefaultCreateStatusId(statusId);
+                    createIssueModal.openModal();
+                  }}
+                />
+              ))}
+          </div>
+        )}
+      </div>
 
       <CreateIssueModal
         isOpen={createIssueModal.isOpen}
