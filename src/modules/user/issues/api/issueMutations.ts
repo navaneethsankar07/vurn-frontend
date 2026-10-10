@@ -199,6 +199,10 @@ export function useUpdateProjectIssue() {
         data,
       );
       queryClient.invalidateQueries({
+        queryKey: ["sprint-issues", variables.subdomain, variables.projectSlug],
+      });
+
+      queryClient.invalidateQueries({
         queryKey: [
           "project-issues",
           variables.subdomain,
