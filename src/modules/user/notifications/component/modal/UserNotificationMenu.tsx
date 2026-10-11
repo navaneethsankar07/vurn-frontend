@@ -1,7 +1,13 @@
+import { useState } from "react";
 import { Loader2, Bell } from "lucide-react";
 import { useUserNotifications } from "../../api/notificationQueries";
 import { useMarkNotificationAsRead } from "../../api/notificationMutations";
 import { formatRelativeTime } from "@/utils/date";
+
+
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { disablePushNotifications, enablePushNotifications } from "@/utils/pushNotifications";
 
 interface UserNotificationMenuProps {
   onClose: () => void;
@@ -9,8 +15,10 @@ interface UserNotificationMenuProps {
 
 export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
   const { data, isLoading } = useUserNotifications(1, 10);
-  const { mutate: markAsRead, isPending: isMarking } =
-    useMarkNotificationAsRead();
+  const { mutate: markAsRead } = useMarkNotificationAsRead();
+
+  const [isEnabling, setIsEnabling] = useState(false);
+  const [isDisabling, setIsDisabling] = useState(false);
 
   const notifications = data?.results || [];
 
@@ -19,6 +27,37 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
       markAsRead(item.id);
     }
   };
+
+  const handleEnablePush = async () => {
+    try {
+      setIsEnabling(true);
+      const token = await enablePushNotifications();
+      localStorage.setItem("vurn_fcm_token", token);
+      toast.success("Push notifications enabled successfully.");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to enable push notifications.");
+    } finally {
+      setIsEnabling(false);
+    }
+  };
+
+  const handleDisablePush = async () => {
+    try {
+      setIsDisabling(true);
+      const token = localStorage.getItem("vurn_fcm_token");
+      if (token) {
+        await disablePushNotifications(token);
+        localStorage.removeItem("vurn_fcm_token");
+      }
+      toast.success("Push notifications disabled.");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to disable push notifications.");
+    } finally {
+      setIsDisabling(false);
+    }
+  };
+
+  const hasToken = Boolean(localStorage.getItem("vurn_fcm_token"));
 
   return (
     <div className="w-80 sm:w-96 bg-[#09090B] border border-white/10 rounded-xs shadow-2xl font-mono text-white text-xs z-50 overflow-hidden">
@@ -29,9 +68,31 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
             Notifications
           </span>
         </div>
-        <span className="text-[10px] text-zinc-500">
-          {data?.count ?? 0} total
-        </span>
+        <div className="flex items-center gap-2">
+          {!hasToken ? (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isEnabling}
+              onClick={handleEnablePush}
+              className="h-6 text-[10px] px-2 bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 rounded-xs cursor-pointer"
+            >
+              {isEnabling && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+              Enable Push
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isDisabling}
+              onClick={handleDisablePush}
+              className="h-6 text-[10px] px-2 bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 rounded-xs cursor-pointer"
+            >
+              {isDisabling && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+              Disable Push
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="max-h-80 overflow-y-auto divide-y divide-white/5">
