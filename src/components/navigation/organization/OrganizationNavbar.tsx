@@ -72,6 +72,11 @@ export function OrganizationNavbar({
     onNotifications: () => {
       notificationModal.toggleModal();
     },
+    onEscape: () => {
+      createNewModal.closeModal();
+      notificationModal.closeModal();
+      setOrgDropdownOpen(false);
+    },
   });
 
   const handleBaseDomainNavigate = (path: string) => {

@@ -4,12 +4,14 @@ interface ShortcutHandlers {
   onSearch?: () => void;
   onNew?: () => void;
   onNotifications?: () => void;
+  onEscape?: () => void;
 }
 
 export function useKeyboardShortcuts({
   onSearch,
   onNew,
   onNotifications,
+  onEscape,
 }: ShortcutHandlers) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -18,6 +20,11 @@ export function useKeyboardShortcuts({
         target.tagName === "INPUT" ||
         target.tagName === "TEXTAREA" ||
         target.isContentEditable;
+
+      if (event.key === "Escape") {
+        onEscape?.();
+        return;
+      }
 
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
@@ -53,5 +60,5 @@ export function useKeyboardShortcuts({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onSearch, onNew, onNotifications]);
+  }, [onSearch, onNew, onNotifications, onEscape]);
 }

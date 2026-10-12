@@ -35,6 +35,11 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
     onNotifications: () => {
       setIsNotificationOpen((prev) => !prev);
     },
+    onEscape: () => {
+      createNewModal.closeModal();
+      setIsNotificationOpen(false);
+      setIsProfileMenuOpen(false);
+    },
   });
 
   useEffect(() => {
