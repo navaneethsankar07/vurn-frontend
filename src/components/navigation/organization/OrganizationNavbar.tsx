@@ -12,6 +12,7 @@ import { useUnreadNotificationCount } from "@/modules/user/notifications/api/not
 import logo from "@/assets/logo.svg";
 import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useNavigate } from "react-router-dom";
 
 interface OrganizationSummary {
   name: string;
@@ -39,6 +40,7 @@ export function OrganizationNavbar({
   const unreadCount = unreadData?.unread_count ?? 0;
 
   const currentSubdomain = getSubdomain();
+  const navigate = useNavigate()
 
   const port = window.location.port ? `:${window.location.port}` : "";
   const rawBaseDomain = import.meta.env.VITE_APP_BASE_DOMAIN || "lvh.me";
@@ -76,6 +78,9 @@ export function OrganizationNavbar({
       createNewModal.closeModal();
       notificationModal.closeModal();
       setOrgDropdownOpen(false);
+    },
+    onGoToProjects: () => {
+      navigate("/projects");
     },
   });
 

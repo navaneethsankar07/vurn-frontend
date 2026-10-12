@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface ShortcutHandlers {
   onSearch?: () => void;
   onNew?: () => void;
   onNotifications?: () => void;
   onEscape?: () => void;
+  onGoToProjects?: () => void;
 }
 
 export function useKeyboardShortcuts({
@@ -12,7 +13,10 @@ export function useKeyboardShortcuts({
   onNew,
   onNotifications,
   onEscape,
+  onGoToProjects,
 }: ShortcutHandlers) {
+  const pendingKeyRef = useRef<string | null>(null);
+const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       const target = event.target as HTMLElement;
@@ -22,6 +26,8 @@ export function useKeyboardShortcuts({
         target.isContentEditable;
 
       if (event.key === "Escape") {
+        pendingKeyRef.current = null;
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
         onEscape?.();
         return;
       }
@@ -46,19 +52,44 @@ export function useKeyboardShortcuts({
 
       if (isEditing) return;
 
+      const key = event.key.toLowerCase();
+
       if (
-        event.key.toLowerCase() === "n" &&
         !event.ctrlKey &&
         !event.metaKey &&
         !event.altKey &&
         !event.shiftKey
       ) {
-        event.preventDefault();
-        onNew?.();
+        if (pendingKeyRef.current === "g") {
+          if (key === "p") {
+            event.preventDefault();
+            onGoToProjects?.();
+          }
+          pendingKeyRef.current = null;
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          return;
+        }
+
+        if (key === "g") {
+          pendingKeyRef.current = "g";
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          timeoutRef.current = setTimeout(() => {
+            pendingKeyRef.current = null;
+          }, 1000);
+          return;
+        }
+
+        if (key === "n") {
+          event.preventDefault();
+          onNew?.();
+        }
       }
     }
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onSearch, onNew, onNotifications, onEscape]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [onSearch, onNew, onNotifications, onEscape, onGoToProjects]);
 }
