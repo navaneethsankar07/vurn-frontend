@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Search,
   Plus,
@@ -32,6 +33,7 @@ const SORT_OPTIONS = [
 
 export function OrganizationRolesPage() {
   const subdomain = getSubdomain() || "";
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { data: accessData } = useOrganizationAccess(subdomain);
   const isOwner = accessData?.role === "owner";
@@ -48,6 +50,14 @@ export function OrganizationRolesPage() {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 10;
+
+  useEffect(() => {
+    if (searchParams.get("action") === "create" && isOwner) {
+      setIsCreateOpen(true);
+      searchParams.delete("action");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, isOwner, setSearchParams]);
 
   const handleSearchSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -81,7 +91,7 @@ export function OrganizationRolesPage() {
   });
 
   const roles = data?.results || [];
-  
+
   const totalCount = data?.count || 0;
   const totalPages = Math.ceil(totalCount / pageSize);
 

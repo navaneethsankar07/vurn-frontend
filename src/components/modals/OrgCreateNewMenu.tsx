@@ -26,7 +26,7 @@ export function OrgCreateNewMenu({ onClose }: OrgCreateNewMenuProps) {
     const port = window.location.port ? `:${window.location.port}` : "";
     const rawBaseDomain = import.meta.env.VITE_APP_BASE_DOMAIN || "lvh.me";
     const cleanBaseDomain = rawBaseDomain.split(":")[0];
-    window.location.href = `${protocol}//${cleanBaseDomain}${port}/organizations/new`;
+    window.location.href = `${protocol}//${cleanBaseDomain}${port}/organizations`;
   };
 
   return (
@@ -66,7 +66,7 @@ export function OrgCreateNewMenu({ onClose }: OrgCreateNewMenuProps) {
 
         <div
           onClick={() => {
-            navigate("/roles");
+            navigate("/roles?action=create");
             onClose();
           }}
           className="p-2.5 flex items-start gap-3 bg-white/3 border border-white/5 hover:border-white/20 hover:bg-white/5 transition-colors cursor-pointer group rounded-xs"
