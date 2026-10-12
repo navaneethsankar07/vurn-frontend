@@ -11,6 +11,7 @@ import { useUnreadNotificationCount } from "@/modules/user/notifications/api/not
 
 import logo from "@/assets/logo.svg";
 import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 interface OrganizationSummary {
   name: string;
@@ -63,6 +64,12 @@ export function OrganizationNavbar({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [notificationModal, createNewModal]);
+
+  useKeyboardShortcuts({
+    onNew: () => {
+      createNewModal.toggleModal();
+    },
+  });
 
   const handleBaseDomainNavigate = (path: string) => {
     window.location.href = `${protocol}//${baseHost}${path}`;

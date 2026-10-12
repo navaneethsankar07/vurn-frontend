@@ -9,6 +9,7 @@ import { CreateNewMenu } from "@/components/modals/CreateNewMenu";
 import { useUnreadNotificationCount } from "@/modules/user/notifications/api/notificationQueries";
 import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
 import { useModal } from "@/hooks/useModal";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 interface UserNavbarProps {
   hasUnreadNotifications?: boolean;
@@ -26,6 +27,12 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const createNewRef = useRef<HTMLDivElement>(null);
+
+  useKeyboardShortcuts({
+    onNew: () => {
+      createNewModal.toggleModal();
+    },
+  });
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
