@@ -32,6 +32,9 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
     onNew: () => {
       createNewModal.toggleModal();
     },
+    onNotifications: () => {
+      setIsNotificationOpen((prev) => !prev);
+    },
   });
 
   useEffect(() => {

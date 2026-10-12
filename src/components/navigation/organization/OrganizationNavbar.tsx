@@ -69,6 +69,9 @@ export function OrganizationNavbar({
     onNew: () => {
       createNewModal.toggleModal();
     },
+    onNotifications: () => {
+      notificationModal.toggleModal();
+    },
   });
 
   const handleBaseDomainNavigate = (path: string) => {

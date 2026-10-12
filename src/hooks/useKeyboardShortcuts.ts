@@ -3,9 +3,14 @@ import { useEffect } from "react";
 interface ShortcutHandlers {
   onSearch?: () => void;
   onNew?: () => void;
+  onNotifications?: () => void;
 }
 
-export function useKeyboardShortcuts({ onSearch, onNew }: ShortcutHandlers) {
+export function useKeyboardShortcuts({
+  onSearch,
+  onNew,
+  onNotifications,
+}: ShortcutHandlers) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       const target = event.target as HTMLElement;
@@ -17,6 +22,18 @@ export function useKeyboardShortcuts({ onSearch, onNew }: ShortcutHandlers) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         onSearch?.();
+        return;
+      }
+
+      if (
+        event.key.toLowerCase() === "n" &&
+        event.shiftKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey
+      ) {
+        event.preventDefault();
+        onNotifications?.();
         return;
       }
 
@@ -36,5 +53,5 @@ export function useKeyboardShortcuts({ onSearch, onNew }: ShortcutHandlers) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onSearch, onNew]);
+  }, [onSearch, onNew, onNotifications]);
 }
