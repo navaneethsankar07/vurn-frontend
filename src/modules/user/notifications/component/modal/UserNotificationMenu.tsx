@@ -4,10 +4,12 @@ import { useUserNotifications } from "../../api/notificationQueries";
 import { useMarkNotificationAsRead } from "../../api/notificationMutations";
 import { formatRelativeTime } from "@/utils/date";
 
-
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { disablePushNotifications, enablePushNotifications } from "@/utils/pushNotifications";
+import {
+  disablePushNotifications,
+  enablePushNotifications,
+} from "@/utils/pushNotifications";
 
 interface UserNotificationMenuProps {
   onClose: () => void;
@@ -22,9 +24,16 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
 
   const notifications = data?.results || [];
 
-  const handleNotificationClick = (item: { id: number; is_read: boolean }) => {
-    if (!item.is_read) {
-      markAsRead(item.id);
+  const handleNotificationClick = (item: {
+    id?: number;
+    pk?: number;
+    is_read: boolean;
+  }) => {
+    const notificationId = item.id ?? item.pk;
+    if (!item.is_read && notificationId) {
+      markAsRead(Number(notificationId));
+    } else if (!notificationId) {
+      console.error("Notification object is missing an ID:", item);
     }
   };
 

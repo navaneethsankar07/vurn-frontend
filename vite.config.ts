@@ -15,6 +15,11 @@ export default defineConfig({
       key: fs.readFileSync(path.resolve(__dirname, "certs/lvh.me-key.pem")),
       cert: fs.readFileSync(path.resolve(__dirname, "certs/lvh.me.pem")),
     },
+    hmr: {
+      host: "starlight-ventures.lvh.me",
+      protocol: "wss",
+      clientPort: 5173,
+    },
     proxy: {
       "/api": {
         target: "http://127.0.0.1:8000",
