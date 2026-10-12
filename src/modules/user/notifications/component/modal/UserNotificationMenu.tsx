@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Loader2, Bell, CheckCheck } from "lucide-react";
 import {
   useUserNotifications,
@@ -22,7 +22,8 @@ interface UserNotificationMenuProps {
 }
 
 export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
-  const { data, isLoading } = useUserNotifications(1, 10);
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useUserNotifications(10);
   const { data: unreadData } = useUnreadNotificationCount();
   const { mutate: markAsRead } = useMarkNotificationAsRead();
   const { mutate: markAllAsRead, isPending: isMarkingAll } =
@@ -30,11 +31,28 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
 
   const [isEnabling, setIsEnabling] = useState(false);
   const [isDisabling, setIsDisabling] = useState(false);
+  const loadBottomRef = useRef<HTMLDivElement>(null);
 
-  const notifications = data?.results || [];
-  console.log(notifications);
-  
+  const notifications = data?.pages.flatMap((page) => page.results) || [];
   const unreadCount = unreadData?.unread_count ?? 0;
+
+  // Infinite scroll trigger when scrolling to the bottom
+  useEffect(() => {
+    const el = loadBottomRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleNotificationClick = (item: {
     id?: number;
@@ -130,7 +148,7 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
         </div>
       </div>
 
-      <div className="max-h-80 overflow-y-auto divide-y divide-white/5">
+      <div className="max-h-80 overflow-y-auto divide-y divide-white/5 flex flex-col">
         {isLoading ? (
           <div className="py-10 flex items-center justify-center gap-2 text-zinc-500">
             <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
@@ -141,32 +159,43 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
             No notifications found.
           </div>
         ) : (
-          notifications.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => handleNotificationClick(item)}
-              className={`p-3.5 space-y-1 transition-colors cursor-pointer hover:bg-white/5 ${
-                !item.is_read
-                  ? "bg-amber-500/5 border-l-2 border-amber-500"
-                  : ""
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-bold text-zinc-200 font-sans text-xs flex items-center gap-1.5">
-                  {!item.is_read && (
-                    <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
-                  )}
-                  {item.title}
-                </span>
-                <span className="text-[10px] text-zinc-500 shrink-0">
-                  {formatRelativeTime(item.created_at)}
-                </span>
+          <div>
+            {notifications.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => handleNotificationClick(item)}
+                className={`p-3.5 space-y-1 transition-colors cursor-pointer hover:bg-white/5 ${
+                  !item.is_read
+                    ? "bg-amber-500/5 border-l-2 border-amber-500"
+                    : ""
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-zinc-200 font-sans text-xs flex items-center gap-1.5">
+                    {!item.is_read && (
+                      <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                    )}
+                    {item.title}
+                  </span>
+                  <span className="text-[10px] text-zinc-500 shrink-0">
+                    {formatRelativeTime(item.created_at)}
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-400 font-sans leading-relaxed">
+                  {item.message}
+                </p>
               </div>
-              <p className="text-[11px] text-zinc-400 font-sans leading-relaxed">
-                {item.message}
-              </p>
+            ))}
+
+            <div ref={loadBottomRef} className="py-2 text-center">
+              {isFetchingNextPage && (
+                <div className="inline-flex items-center gap-1.5 text-xs text-zinc-500">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-500" />
+                  <span>Loading older notifications...</span>
+                </div>
+              )}
             </div>
-          ))
+          </div>
         )}
       </div>
 
