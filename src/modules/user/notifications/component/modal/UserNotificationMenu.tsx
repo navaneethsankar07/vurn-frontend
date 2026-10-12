@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { Loader2, Bell } from "lucide-react";
-import { useUserNotifications } from "../../api/notificationQueries";
-import { useMarkNotificationAsRead } from "../../api/notificationMutations";
+import { Loader2, Bell, CheckCheck } from "lucide-react";
+import {
+  useUserNotifications,
+  useUnreadNotificationCount,
+} from "../../api/notificationQueries";
+import {
+  useMarkNotificationAsRead,
+  useMarkAllNotificationsAsRead,
+} from "../../api/notificationMutations";
 import { formatRelativeTime } from "@/utils/date";
 
 import { toast } from "sonner";
@@ -17,12 +23,18 @@ interface UserNotificationMenuProps {
 
 export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
   const { data, isLoading } = useUserNotifications(1, 10);
+  const { data: unreadData } = useUnreadNotificationCount();
   const { mutate: markAsRead } = useMarkNotificationAsRead();
+  const { mutate: markAllAsRead, isPending: isMarkingAll } =
+    useMarkAllNotificationsAsRead();
 
   const [isEnabling, setIsEnabling] = useState(false);
   const [isDisabling, setIsDisabling] = useState(false);
 
   const notifications = data?.results || [];
+  console.log(notifications);
+  
+  const unreadCount = unreadData?.unread_count ?? 0;
 
   const handleNotificationClick = (item: {
     id?: number;
@@ -78,6 +90,20 @@ export function UserNotificationMenu({ onClose }: UserNotificationMenuProps) {
           </span>
         </div>
         <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isMarkingAll}
+              onClick={() => markAllAsRead()}
+              className="h-6 text-[10px] px-2 bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10 rounded-xs cursor-pointer gap-1"
+              title="Mark all as read"
+            >
+              <CheckCheck className="h-3 w-3 text-amber-500" />
+              <span>Mark all read</span>
+            </Button>
+          )}
+
           {!hasToken ? (
             <Button
               type="button"

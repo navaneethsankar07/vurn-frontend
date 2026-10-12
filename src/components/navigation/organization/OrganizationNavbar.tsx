@@ -6,6 +6,7 @@ import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
 import { useModal } from "@/hooks/useModal";
 import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
+import { useUnreadNotificationCount } from "@/modules/user/notifications/api/notificationQueries";
 import logo from "@/assets/logo.svg";
 
 interface OrganizationSummary {
@@ -17,18 +18,18 @@ interface OrganizationSummary {
 
 interface OrganizationNavbarProps {
   currentOrgName?: string;
-  hasUnreadNotifications?: boolean;
 }
 
 export function OrganizationNavbar({
   currentOrgName,
-  hasUnreadNotifications = true,
 }: OrganizationNavbarProps) {
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
   const notificationModal = useModal(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
   const { user } = useAppSelector((state) => state.auth);
+  const { data: unreadData } = useUnreadNotificationCount();
+  const unreadCount = unreadData?.unread_count ?? 0;
 
   const currentSubdomain = getSubdomain();
 
@@ -236,7 +237,7 @@ export function OrganizationNavbar({
               className="relative p-2 text-gray-400 hover:text-white transition-colors cursor-pointer flex items-center justify-center"
             >
               <Bell className="h-5 w-5" />
-              {hasUnreadNotifications && (
+              {unreadCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-500" />
               )}
             </button>
