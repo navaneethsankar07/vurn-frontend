@@ -63,6 +63,22 @@ export function GlobalSearchResultsPage() {
     }
   };
 
+  const formatContextDetails = (item: any) => {
+    if (item.entity_type === "project") {
+      return item.organization_slug
+        ? `Organization: ${item.organization_slug}`
+        : "";
+    }
+    if (item.entity_type === "issue" || item.entity_type === "sprint") {
+      const parts = [];
+      if (item.organization_slug) parts.push(`Org: ${item.organization_slug}`);
+      if (item.project_slug || item.project_key)
+        parts.push(`Project: ${item.project_slug || item.project_key}`);
+      return parts.join(" • ");
+    }
+    return "";
+  };
+
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 font-mono text-white space-y-6">
       <div className="border-b border-white/10 pb-4 space-y-1">
@@ -116,6 +132,9 @@ export function GlobalSearchResultsPage() {
                             : ""}
                       </span>
                     </div>
+                    <p className="text-[11px] text-zinc-400 font-mono">
+                      {formatContextDetails(item)}
+                    </p>
                     {item.description && (
                       <p className="text-xs text-zinc-400 font-sans line-clamp-1">
                         {item.description}

@@ -99,6 +99,20 @@ export function GlobalSearchInput() {
     }
   };
 
+  const formatContextDetails = (item: any) => {
+    if (item.entity_type === "project") {
+      return item.organization_slug ? `Org: ${item.organization_slug}` : "";
+    }
+    if (item.entity_type === "issue" || item.entity_type === "sprint") {
+      const parts = [];
+      if (item.organization_slug) parts.push(`Org: ${item.organization_slug}`);
+      if (item.project_slug || item.project_key)
+        parts.push(`Project: ${item.project_slug || item.project_key}`);
+      return parts.join(" • ");
+    }
+    return "";
+  };
+
   return (
     <div className="relative mx-auto w-full max-w-xl" ref={containerRef}>
       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
@@ -159,12 +173,15 @@ export function GlobalSearchInput() {
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     {getEntityIcon(item.entity_type)}
-                    <div className="truncate flex flex-col">
+                    <div className="truncate flex flex-col space-y-0.5">
                       <span className="font-semibold text-zinc-200 group-hover:text-white truncate text-xs font-sans">
                         {item.title}
                       </span>
-                      <span className="text-[10px] text-zinc-500 uppercase tracking-wide">
+                      <span className="text-[10px] text-zinc-400 uppercase tracking-wide">
                         {item.entity_type} {item.key ? `• ${item.key}` : ""}
+                      </span>
+                      <span className="text-[10px] text-zinc-500 truncate">
+                        {formatContextDetails(item)}
                       </span>
                     </div>
                   </div>
