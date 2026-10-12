@@ -89,7 +89,7 @@ export function CreateOrganizationPage() {
   };
 
   return (
-    <div className="relative min-h-screen text-white font-mono px-4 sm:px-6 lg:px-8 py-10 sm:py-14 flex justify-center items-start">
+    <div className="relative text-white font-mono px-4 sm:px-6 lg:px-8 flex justify-center items-start">
       {isRedirecting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md transition-all duration-300">
           <div className="flex items-center gap-3.5 bg-[#09090b] border border-white/10 px-5 py-3.5 rounded-md shadow-2xl">

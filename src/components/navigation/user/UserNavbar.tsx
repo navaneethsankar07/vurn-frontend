@@ -5,8 +5,10 @@ import { Bell, ChevronDown, Plus, Sparkles } from "lucide-react";
 
 import { UserProfileMenu } from "@/modules/user/account/components/UserProfileMenu";
 import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
+import { CreateNewMenu } from "@/components/modals/CreateNewMenu";
 import { useUnreadNotificationCount } from "@/modules/user/notifications/api/notificationQueries";
 import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
+import { useModal } from "@/hooks/useModal";
 
 interface UserNavbarProps {
   hasUnreadNotifications?: boolean;
@@ -20,8 +22,10 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const createNewModal = useModal(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
+  const createNewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -31,10 +35,16 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
       ) {
         setIsNotificationOpen(false);
       }
+      if (
+        createNewRef.current &&
+        !createNewRef.current.contains(event.target as Node)
+      ) {
+        createNewModal.closeModal();
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [createNewModal]);
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-black px-4 sm:px-6">
@@ -47,12 +57,29 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
 
       <GlobalSearchInput />
 
-      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-        <Button className="hidden gap-1 rounded-0xl border-2 border-[#34343A] bg-secondary font-mono text-sm font-semibold text-white/80 hover:bg-hover-bg hover:text-text-primary sm:flex">
-          <Plus strokeLinecap="butt" />
-          New
-          <ChevronDown />
-        </Button>
+      <div className="flex shrink-0 items-center gap-2 sm:gap-8">
+        <div
+          className="relative hidden sm:block"
+          ref={createNewRef}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <Button
+            type="button"
+            onClick={createNewModal.toggleModal}
+            aria-expanded={createNewModal.isOpen}
+            className="gap-1 rounded-0xl border-2 border-[#34343A] bg-secondary font-mono text-sm font-semibold text-white/80 hover:bg-hover-bg hover:text-text-primary cursor-pointer"
+          >
+            <Plus strokeLinecap="butt" />
+            <span>New</span>
+            <ChevronDown />
+          </Button>
+
+          {createNewModal.isOpen && (
+            <div className="absolute top-full z-50 mt-4">
+              <CreateNewMenu onClose={createNewModal.closeModal} />
+            </div>
+          )}
+        </div>
 
         <div className="relative" ref={notificationRef}>
           <button
@@ -62,7 +89,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
             aria-expanded={isNotificationOpen}
             className="relative flex h-9 w-9 items-center justify-center rounded-[3px] text-gray-400 transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
           >
-            <Bell className="h-4 w-4" />
+            <Bell className="h-5 w-5" />
 
             {unreadCount > 0 && (
               <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-amber-500" />
