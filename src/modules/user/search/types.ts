@@ -17,10 +17,9 @@ export interface SearchResultItem {
 }
 
 export interface GlobalSearchResponse {
-  query: string;
-  page: number;
-  page_size: number;
-  total: number;
+  count: number;
+  next: string | null;
+  previous: string | null;
   results: SearchResultItem[];
 }
 

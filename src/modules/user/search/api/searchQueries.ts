@@ -1,14 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { globalSearch, searchSuggestions } from "./searchApi";
 
-export function useGlobalSearch(
-  query: string,
-  page: number = 1,
-  pageSize: number = 20,
-) {
-  return useQuery({
-    queryKey: ["global-search", query, page, pageSize],
-    queryFn: () => globalSearch(query, page, pageSize),
+export function useGlobalSearch(query: string, pageSize: number = 20) {
+  return useInfiniteQuery({
+    queryKey: ["global-search", query, pageSize],
+    queryFn: ({ pageParam = 1 }) => globalSearch(query, pageParam, pageSize),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
     enabled: Boolean(query && query.trim().length >= 2),
   });
 }

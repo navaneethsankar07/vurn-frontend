@@ -13,6 +13,7 @@ import { OrganizationPreferencesPage } from "@/modules/user/organizations/pages/
 import { OrganizationRolesPage } from "@/modules/user/organizations/pages/OrganizationRolesPage";
 import { OrganizationMembersPage } from "@/modules/user/organizations/pages/OrganizationMembersPage";
 import { projectRoutes } from "./projectRoutes";
+import { GlobalSearchResultsPage } from "@/modules/user/search/components/GlobalSearchResultsPage";
 
 const subdomain = getSubdomain();
 
@@ -29,6 +30,10 @@ export const OrganizationRoutes: RouteObject[] = subdomain
                 element: <OrganizationDashboard />,
               },
               ...projectRoutes,
+              {
+                path: "search",
+                element: <GlobalSearchResultsPage />,
+              },
               {
                 path: "settings",
                 element: <SettingsLayout />,
@@ -61,11 +66,11 @@ export const OrganizationRoutes: RouteObject[] = subdomain
               },
               {
                 path: "members",
-                element: <OrganizationMembersPage/>,
+                element: <OrganizationMembersPage />,
               },
               {
                 path: "roles",
-                element: <OrganizationRolesPage/>,
+                element: <OrganizationRolesPage />,
               },
             ],
           },

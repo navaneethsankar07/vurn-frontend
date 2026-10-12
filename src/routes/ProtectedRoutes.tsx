@@ -10,6 +10,7 @@ import { CreateOrganizationPage } from "@/modules/user/organizations/pages/Creat
 import { OrganizationsPage } from "@/modules/user/organizations/pages/OrganizationsPage";
 import { OrganizationInvitationsPage } from "@/modules/user/organizations/pages/OrganizationInvitationsPage";
 import { AcceptInvitationPage } from "@/modules/user/organizations/pages/AcceptInvitationPage";
+import { GlobalSearchResultsPage } from "@/modules/user/search/components/GlobalSearchResultsPage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -18,6 +19,10 @@ export const ProtectedRoutes: RouteObject[] = [
       {
         element: <UserLayout />,
         children: [
+          {
+            path: "/search",
+            element: <GlobalSearchResultsPage />,
+          },
           {
             path: "/dashboard",
             element: <h1>Dashboard</h1>,

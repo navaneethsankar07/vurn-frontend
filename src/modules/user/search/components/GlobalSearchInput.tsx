@@ -6,6 +6,7 @@ import {
   FolderKanban,
   CheckSquare,
   Layers,
+  ArrowRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearchSuggestions } from "../api/searchQueries";
@@ -73,6 +74,18 @@ export function GlobalSearchInput() {
     }
   };
 
+  const handleViewAllResults = () => {
+    if (!searchTerm.trim()) return;
+    setIsOpen(false);
+    window.location.href = `/search?q=${encodeURIComponent(searchTerm.trim())}`;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleViewAllResults();
+    }
+  };
+
   const getEntityIcon = (type: string) => {
     switch (type) {
       case "project":
@@ -94,6 +107,7 @@ export function GlobalSearchInput() {
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyDown={handleKeyDown}
         onFocus={() => {
           if (searchTerm.trim().length >= 2) setIsOpen(true);
         }}
@@ -133,28 +147,42 @@ export function GlobalSearchInput() {
               No results found for &ldquo;{searchTerm}&rdquo;
             </div>
           ) : (
-            results.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => handleSelectResult(item)}
-                className="p-3 flex items-center justify-between gap-3 hover:bg-white/5 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  {getEntityIcon(item.entity_type)}
-                  <div className="truncate flex flex-col">
-                    <span className="font-semibold text-zinc-200 group-hover:text-white truncate text-xs font-sans">
-                      {item.title}
-                    </span>
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-wide">
-                      {item.entity_type} {item.key ? `• ${item.key}` : ""}
-                    </span>
-                  </div>
-                </div>
-                <span className="text-[10px] text-zinc-600 font-mono shrink-0 capitalize">
-                  {item.status || item.priority || ""}
-                </span>
+            <>
+              <div className="py-1.5 px-3 text-[10px] uppercase text-zinc-500 font-bold bg-black/40">
+                Quick Matches
               </div>
-            ))
+              {results.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => handleSelectResult(item)}
+                  className="p-3 flex items-center justify-between gap-3 hover:bg-white/5 transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {getEntityIcon(item.entity_type)}
+                    <div className="truncate flex flex-col">
+                      <span className="font-semibold text-zinc-200 group-hover:text-white truncate text-xs font-sans">
+                        {item.title}
+                      </span>
+                      <span className="text-[10px] text-zinc-500 uppercase tracking-wide">
+                        {item.entity_type} {item.key ? `• ${item.key}` : ""}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-zinc-600 font-mono shrink-0 capitalize">
+                    {item.status || item.priority || ""}
+                  </span>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={handleViewAllResults}
+                className="w-full p-3 flex items-center justify-between bg-black/60 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer font-semibold"
+              >
+                <span>See all results for &ldquo;{searchTerm}&rdquo;</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </>
           )}
         </div>
       )}
