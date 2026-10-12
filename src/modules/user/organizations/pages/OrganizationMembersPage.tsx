@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   UserPlus,
   Search,
@@ -22,6 +23,8 @@ import { useOrganizationPermission } from "@/hooks/useOrganizationPermission";
 
 export function OrganizationMembersPage() {
   const subdomain = getSubdomain() || "";
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const { data: accessData } = useOrganizationAccess(subdomain);
   const canInviteMembers = accessData?.can_invite_members ?? false;
   const canViewMembers = useOrganizationPermission("member.view");
@@ -35,6 +38,19 @@ export function OrganizationMembersPage() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
+  const inviteModal = useModal();
+  const successModal = useModal();
+  const [createdInvite, setCreatedInvite] =
+    useState<CreateInvitationResponse | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("action") === "invite" && canInviteMembers) {
+      inviteModal.openModal();
+      searchParams.delete("action");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, canInviteMembers, inviteModal, setSearchParams]);
+
   const { data: membersData, isLoading } = useOrganizationMembers({
     slug: subdomain,
     search: activeSearch,
@@ -42,11 +58,6 @@ export function OrganizationMembersPage() {
     page,
     page_size: pageSize,
   });
-
-  const inviteModal = useModal();
-  const successModal = useModal();
-  const [createdInvite, setCreatedInvite] =
-    useState<CreateInvitationResponse | null>(null);
 
   const handleInvitationSuccess = (data: CreateInvitationResponse) => {
     setCreatedInvite(data);
@@ -102,7 +113,7 @@ export function OrganizationMembersPage() {
           {canInviteMembers && (
             <Button
               onClick={inviteModal.openModal}
-              className="h-10 gap-2 bg-transparent border border-primary/80 text-primary hover:text-primary/70 hover:border-primary/60 hover:bg-transparent font-mono font-semibold text-xs rounded w-full sm:w-auto"
+              className="h-10 gap-2 bg-transparent border border-primary/80 text-primary hover:text-primary/70 hover:border-primary/60 hover:bg-transparent font-mono font-semibold text-xs rounded w-full sm:w-auto cursor-pointer"
             >
               <UserPlus className="h-4 w-4" />
               Invite Member
@@ -124,7 +135,7 @@ export function OrganizationMembersPage() {
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -138,7 +149,7 @@ export function OrganizationMembersPage() {
               );
               setPage(1);
             }}
-            className="h-10 px-3 border border-white/10 bg-[#0C0C0E] text-xs font-mono text-gray-300 rounded-sm focus:outline-none"
+            className="h-10 px-3 border border-white/10 bg-[#0C0C0E] text-xs font-mono text-gray-300 rounded-sm focus:outline-none cursor-pointer"
           >
             <option value="all">All Members</option>
             <option value="owner">Owner</option>
@@ -228,7 +239,7 @@ export function OrganizationMembersPage() {
                     </td>
                     {canManageMembers && (
                       <td className="py-3.5 px-4 text-right">
-                        <button className="text-gray-500 hover:text-white">
+                        <button className="text-gray-500 hover:text-white cursor-pointer">
                           <MoreHorizontal className="h-4 w-4" />
                         </button>
                       </td>
@@ -249,14 +260,14 @@ export function OrganizationMembersPage() {
               <Button
                 disabled={!membersData.previous}
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                className="h-8 px-3 border border-white/10 bg-[#0C0C0E] text-white hover:bg-white/5 rounded-sm disabled:opacity-50"
+                className="h-8 px-3 border border-white/10 bg-[#0C0C0E] text-white hover:bg-white/5 rounded-sm disabled:opacity-50 cursor-pointer"
               >
                 Previous
               </Button>
               <Button
                 disabled={!membersData.next}
                 onClick={() => setPage((prev) => prev + 1)}
-                className="h-8 px-3 border border-white/10 bg-[#0C0C0E] text-white hover:bg-white/5 rounded-sm disabled:opacity-50"
+                className="h-8 px-3 border border-white/10 bg-[#0C0C0E] text-white hover:bg-white/5 rounded-sm disabled:opacity-50 cursor-pointer"
               >
                 Next
               </Button>

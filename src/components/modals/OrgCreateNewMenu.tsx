@@ -86,7 +86,7 @@ export function OrgCreateNewMenu({ onClose }: OrgCreateNewMenuProps) {
 
         <div
           onClick={() => {
-            navigate("/members");
+            navigate("/members?action=invite");
             onClose();
           }}
           className="p-2.5 flex items-start gap-3 bg-white/3 border border-white/5 hover:border-white/20 hover:bg-white/5 transition-colors cursor-pointer group rounded-xs"
