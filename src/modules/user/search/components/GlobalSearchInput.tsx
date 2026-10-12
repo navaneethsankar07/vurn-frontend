@@ -8,7 +8,7 @@ import {
   Layers,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useGlobalSearch } from "../api/searchQueries";
+import { useSearchSuggestions } from "../api/searchQueries";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
 
 export function GlobalSearchInput() {
@@ -43,7 +43,7 @@ export function GlobalSearchInput() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const { data, isLoading } = useGlobalSearch(debouncedQuery);
+  const { data, isLoading } = useSearchSuggestions(debouncedQuery);
   const results = data?.results || [];
 
   const handleSelectResult = (item: any) => {
@@ -91,40 +91,42 @@ export function GlobalSearchInput() {
       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
 
       <Input
-        type="search"
+        type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onFocus={() => {
           if (searchTerm.trim().length >= 2) setIsOpen(true);
         }}
         placeholder="Search resources, organizations, or issues..."
-        className="h-10 rounded-[3px] border-white/10 bg-white/3 pl-9 pr-16 text-sm text-white placeholder:text-gray-500 focus-visible:border-primary/30 focus-visible:outline-none focus-visible:ring-0"
+        className="h-10 rounded-[3px] border-white/10 bg-white/3 pl-9 pr-20 text-sm text-white placeholder:text-gray-500 focus-visible:border-primary/30 focus-visible:outline-none focus-visible:ring-0"
       />
 
-      {searchTerm && (
-        <button
-          type="button"
-          onClick={() => {
-            setSearchTerm("");
-            setIsOpen(false);
-          }}
-          className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white cursor-pointer"
-        >
-          <X className="h-3.5 w-3.5" />
-        </button>
-      )}
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm("");
+              setIsOpen(false);
+            }}
+            className="text-gray-500 hover:text-white transition-colors cursor-pointer p-1"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
 
-      <kbd className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-[3px] border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-gray-500 sm:flex">
-        <span>⌘</span>
-        <span>K</span>
-      </kbd>
+        <kbd className="pointer-events-none hidden items-center gap-1 rounded-[3px] border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-gray-500 sm:flex">
+          <span>⌘</span>
+          <span>K</span>
+        </kbd>
+      </div>
 
       {isOpen && searchTerm.trim().length >= 2 && (
         <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-[#09090B] border border-white/10 rounded-xs shadow-2xl max-h-96 overflow-y-auto font-mono text-xs divide-y divide-white/5">
           {isLoading ? (
             <div className="py-8 flex items-center justify-center gap-2 text-zinc-500">
               <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
-              <span>Searching...</span>
+              <span>Searching suggestions...</span>
             </div>
           ) : results.length === 0 ? (
             <div className="py-8 text-center text-zinc-500 italic">

@@ -1,5 +1,5 @@
 import api from "@/api/axios";
-import type { GlobalSearchResponse } from "../types";
+import type { GlobalSearchResponse, SearchSuggestionsResponse } from "../types";
 
 export async function globalSearch(
   query: string,
@@ -8,6 +8,15 @@ export async function globalSearch(
 ): Promise<GlobalSearchResponse> {
   const { data } = await api.get(
     `/search/?q=${encodeURIComponent(query)}&page=${page}&page_size=${pageSize}`,
+  );
+  return data;
+}
+
+export async function searchSuggestions(
+  query: string,
+): Promise<SearchSuggestionsResponse> {
+  const { data } = await api.get(
+    `/search/suggestions/?q=${encodeURIComponent(query)}`,
   );
   return data;
 }

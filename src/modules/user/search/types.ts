@@ -23,3 +23,8 @@ export interface GlobalSearchResponse {
   total: number;
   results: SearchResultItem[];
 }
+
+export interface SearchSuggestionsResponse {
+  total: number;
+  results: SearchResultItem[];
+}
