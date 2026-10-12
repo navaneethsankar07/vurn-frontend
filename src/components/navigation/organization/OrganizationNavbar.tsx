@@ -6,6 +6,7 @@ import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
 import { useModal } from "@/hooks/useModal";
 import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
+import { OrgCreateNewMenu } from "@/components/modals/OrgCreateNewMenu";
 import { useUnreadNotificationCount } from "@/modules/user/notifications/api/notificationQueries";
 
 import logo from "@/assets/logo.svg";
@@ -27,7 +28,10 @@ export function OrganizationNavbar({
 }: OrganizationNavbarProps) {
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
   const notificationModal = useModal(false);
+  const createNewModal = useModal(false);
+
   const notificationRef = useRef<HTMLDivElement>(null);
+  const createNewRef = useRef<HTMLDivElement>(null);
 
   const { user } = useAppSelector((state) => state.auth);
   const { data: unreadData } = useUnreadNotificationCount();
@@ -49,10 +53,16 @@ export function OrganizationNavbar({
       ) {
         notificationModal.closeModal();
       }
+      if (
+        createNewRef.current &&
+        !createNewRef.current.contains(event.target as Node)
+      ) {
+        createNewModal.closeModal();
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [notificationModal]);
+  }, [notificationModal, createNewModal]);
 
   const handleBaseDomainNavigate = (path: string) => {
     window.location.href = `${protocol}//${baseHost}${path}`;
@@ -210,14 +220,28 @@ export function OrganizationNavbar({
         </div>
 
         <div className="flex items-center gap-3.5">
-          <button
-            type="button"
-            className="flex items-center gap-2 border border-white/10 bg-[#09090b] px-3.5 py-2 text-sm font-medium text-white hover:bg-white/5 transition-colors cursor-pointer"
+          <div
+            className="relative"
+            ref={createNewRef}
+            onMouseDown={(e) => e.stopPropagation()}
           >
-            <Plus className="h-4 w-4" />
-            <span>New</span>
-            <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
-          </button>
+            <button
+              type="button"
+              onClick={createNewModal.toggleModal}
+              aria-expanded={createNewModal.isOpen}
+              className="flex items-center gap-2 border border-white/10 bg-[#09090b] px-3.5 py-2 text-sm font-medium text-white hover:bg-white/5 transition-colors cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              <span>New</span>
+              <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+            </button>
+
+            {createNewModal.isOpen && (
+              <div className="absolute right-0 top-full z-50 mt-2.5">
+                <OrgCreateNewMenu onClose={createNewModal.closeModal} />
+              </div>
+            )}
+          </div>
 
           <div className="relative" ref={notificationRef}>
             <button

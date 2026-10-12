@@ -59,7 +59,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
 
       <div className="flex shrink-0 items-center gap-2 sm:gap-8">
         <div
-          className="relative hidden sm:block"
+          className="relative hidden sm:block right-5"
           ref={createNewRef}
           onMouseDown={(e) => e.stopPropagation()}
         >
@@ -81,7 +81,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           )}
         </div>
 
-        <div className="relative" ref={notificationRef}>
+        <div className="relative right-5" ref={notificationRef}>
           <button
             type="button"
             onClick={() => setIsNotificationOpen((prev) => !prev)}
@@ -97,7 +97,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           </button>
 
           {isNotificationOpen && (
-            <div className="absolute right-0 top-full z-50 mt-2.5">
+            <div className="absolute -right-23 top-full z-50 mt-4">
               <UserNotificationMenu
                 onClose={() => setIsNotificationOpen(false)}
               />
@@ -105,7 +105,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           )}
         </div>
 
-        <div className="relative">
+        <div className="relative right-5">
           <button
             type="button"
             onClick={() => setIsProfileMenuOpen((previous) => !previous)}
