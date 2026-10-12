@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Search, Plus, Bell, ChevronDown, Building2 } from "lucide-react";
+import { Plus, Bell, ChevronDown, Building2 } from "lucide-react";
 import { useAppSelector } from "@/app/hooks";
 import { getSubdomain } from "@/utils/subdomain";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
@@ -7,7 +7,9 @@ import { renderOrgIcon } from "@/utils/renderOrgIcon";
 import { useModal } from "@/hooks/useModal";
 import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
 import { useUnreadNotificationCount } from "@/modules/user/notifications/api/notificationQueries";
+
 import logo from "@/assets/logo.svg";
+import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
 
 interface OrganizationSummary {
   name: string;
@@ -204,18 +206,7 @@ export function OrganizationNavbar({
         </div>
 
         <div className="hidden md:flex flex-1 max-w-xl mx-6 sm:mx-10">
-          <div className="relative w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search resources, organizations, or members..."
-              className="w-full bg-[#09090b] pl-10 pr-14 py-2 text-sm text-white placeholder-gray-500 outline-none border border-white/10 focus:border-white/20 transition-colors"
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-gray-400">
-              <span>⌘</span>
-              <span>K</span>
-            </div>
-          </div>
+          <GlobalSearchInput />
         </div>
 
         <div className="flex items-center gap-3.5">

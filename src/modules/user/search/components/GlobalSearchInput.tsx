@@ -1,0 +1,146 @@
+import { useState, useRef, useEffect } from "react";
+import {
+  Search,
+  X,
+  Loader2,
+  FolderKanban,
+  CheckSquare,
+  Layers,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useGlobalSearch } from "../api/searchQueries";
+
+export function GlobalSearchInput() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchTerm);
+      if (searchTerm.trim().length >= 2) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const { data, isLoading } = useGlobalSearch(debouncedQuery);
+  const results = data?.results || [];
+
+  const handleSelectResult = (item: any) => {
+    setIsOpen(false);
+    setSearchTerm("");
+
+    if (item.entity_type === "project") {
+      window.location.href = `/projects/${item.key?.toLowerCase()}`;
+    } else if (item.entity_type === "issue") {
+      window.location.href = `/projects/${item.project_key?.toLowerCase()}/issues?selectedIssue=${item.entity_id}`;
+    } else if (item.entity_type === "sprint") {
+      window.location.href = `/projects/${item.project_key?.toLowerCase()}/sprints`;
+    }
+  };
+
+  const getEntityIcon = (type: string) => {
+    switch (type) {
+      case "project":
+        return <FolderKanban className="h-3.5 w-3.5 text-amber-500 shrink-0" />;
+      case "issue":
+        return <CheckSquare className="h-3.5 w-3.5 text-blue-400 shrink-0" />;
+      case "sprint":
+        return <Layers className="h-3.5 w-3.5 text-purple-400 shrink-0" />;
+      default:
+        return <Search className="h-3.5 w-3.5 text-zinc-400 shrink-0" />;
+    }
+  };
+
+  return (
+    <div className="relative mx-auto w-full max-w-xl" ref={containerRef}>
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+
+      <Input
+        type="search"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => {
+          if (searchTerm.trim().length >= 2) setIsOpen(true);
+        }}
+        placeholder="Search resources, organizations, or issues..."
+        className="h-10 rounded-[3px] border-white/10 bg-white/3 pl-9 pr-16 text-sm text-white placeholder:text-gray-500 focus-visible:border-primary/30 focus-visible:outline-none focus-visible:ring-0"
+      />
+
+      {searchTerm && (
+        <button
+          type="button"
+          onClick={() => {
+            setSearchTerm("");
+            setIsOpen(false);
+          }}
+          className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white cursor-pointer"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      )}
+
+      <kbd className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-[3px] border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-gray-500 sm:flex">
+        <span>⌘</span>
+        <span>K</span>
+      </kbd>
+
+      {isOpen && searchTerm.trim().length >= 2 && (
+        <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-[#09090B] border border-white/10 rounded-xs shadow-2xl max-h-96 overflow-y-auto font-mono text-xs divide-y divide-white/5">
+          {isLoading ? (
+            <div className="py-8 flex items-center justify-center gap-2 text-zinc-500">
+              <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
+              <span>Searching...</span>
+            </div>
+          ) : results.length === 0 ? (
+            <div className="py-8 text-center text-zinc-500 italic">
+              No results found for &ldquo;{searchTerm}&rdquo;
+            </div>
+          ) : (
+            results.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => handleSelectResult(item)}
+                className="p-3 flex items-center justify-between gap-3 hover:bg-white/5 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {getEntityIcon(item.entity_type)}
+                  <div className="truncate flex flex-col">
+                    <span className="font-semibold text-zinc-200 group-hover:text-white truncate text-xs font-sans">
+                      {item.title}
+                    </span>
+                    <span className="text-[10px] text-zinc-500 uppercase tracking-wide">
+                      {item.entity_type} {item.key ? `• ${item.key}` : ""}
+                    </span>
+                  </div>
+                </div>
+                <span className="text-[10px] text-zinc-600 font-mono shrink-0 capitalize">
+                  {item.status || item.priority || ""}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -19,6 +19,5 @@ export function useUnreadNotificationCount() {
   return useQuery({
     queryKey: ["notifications-unread-count"],
     queryFn: fetchUnreadCount,
-    refetchInterval: 30000,
   });
 }

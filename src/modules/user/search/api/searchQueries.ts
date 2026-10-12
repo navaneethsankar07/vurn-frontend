@@ -1,0 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
+import { globalSearch } from "./searchApi";
+
+export function useGlobalSearch(
+  query: string,
+  page: number = 1,
+  pageSize: number = 20,
+) {
+  return useQuery({
+    queryKey: ["global-search", query, page, pageSize],
+    queryFn: () => globalSearch(query, page, pageSize),
+    enabled: Boolean(query && query.trim().length >= 2),
+  });
+}
