@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useGlobalSearch } from "../api/searchQueries";
+import { getOrganizationUrl } from "@/utils/organizationUrl";
 
 export function GlobalSearchInput() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,12 +50,26 @@ export function GlobalSearchInput() {
     setIsOpen(false);
     setSearchTerm("");
 
+    const orgSlug = item.organization_slug;
+    const projSlug = item.project_slug || item.project_key?.toLowerCase();
+
+    if (!orgSlug) return;
+
     if (item.entity_type === "project") {
-      window.location.href = `/projects/${item.key?.toLowerCase()}`;
+      window.location.href = getOrganizationUrl(
+        orgSlug,
+        `/projects/${projSlug}`,
+      );
     } else if (item.entity_type === "issue") {
-      window.location.href = `/projects/${item.project_key?.toLowerCase()}/issues?selectedIssue=${item.entity_id}`;
+      window.location.href = getOrganizationUrl(
+        orgSlug,
+        `/projects/${projSlug}/issues?selectedIssue=${item.entity_id}`,
+      );
     } else if (item.entity_type === "sprint") {
-      window.location.href = `/projects/${item.project_key?.toLowerCase()}/sprints`;
+      window.location.href = getOrganizationUrl(
+        orgSlug,
+        `/projects/${projSlug}/sprints/${item.entity_id}`,
+      );
     }
   };
 

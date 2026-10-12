@@ -1,10 +1,11 @@
-
 export interface SearchResultItem {
   id: string;
   entity_type: "project" | "issue" | "sprint" | string;
   entity_id: string;
   project_id?: string;
   project_key?: string;
+  organization_slug?: string;
+  project_slug?: string;
   key?: string;
   identifier?: string | null;
   title: string;
