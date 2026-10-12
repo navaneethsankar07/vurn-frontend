@@ -11,12 +11,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { useSearchSuggestions } from "../api/searchQueries";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 export function GlobalSearchInput() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useKeyboardShortcuts({
+    onSearch: () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
+      }
+    },
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -118,6 +130,7 @@ export function GlobalSearchInput() {
       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
 
       <Input
+        ref={inputRef}
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
