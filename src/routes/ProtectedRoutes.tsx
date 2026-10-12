@@ -11,6 +11,7 @@ import { OrganizationsPage } from "@/modules/user/organizations/pages/Organizati
 import { OrganizationInvitationsPage } from "@/modules/user/organizations/pages/OrganizationInvitationsPage";
 import { AcceptInvitationPage } from "@/modules/user/organizations/pages/AcceptInvitationPage";
 import { GlobalSearchResultsPage } from "@/modules/user/search/components/GlobalSearchResultsPage";
+import { KeyboardShortcutsPage } from "@/modules/public/docs/pages/KeyboardShortcutsPage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -30,6 +31,10 @@ export const ProtectedRoutes: RouteObject[] = [
           {
             path: "/profile",
             element: <ProfilePage />,
+          },
+          {
+            path: "/shortcuts",
+            element: <KeyboardShortcutsPage />,
           },
           {
             path: "/organizations",
