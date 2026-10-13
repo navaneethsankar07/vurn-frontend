@@ -235,10 +235,27 @@ export function useUpdateProjectIssue() {
       });
     },
     onError: (error: any) => {
-      const message =
-        error?.response?.data?.error ||
-        error?.response?.data?.detail ||
-        "Failed to update issue.";
+      const errorData = error?.response?.data;
+      let message = "Failed to update issue.";
+
+      if (errorData) {
+        if (typeof errorData.error === "string") {
+          message = errorData.error;
+        } else if (typeof errorData.detail === "string") {
+          message = errorData.detail;
+        } else if (typeof errorData === "object") {
+          const firstKey = Object.keys(errorData)[0];
+          if (firstKey) {
+            const fieldErrors = errorData[firstKey];
+            if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+              message = fieldErrors[0];
+            } else if (typeof fieldErrors === "string") {
+              message = fieldErrors;
+            }
+          }
+        }
+      }
+
       toast.error(message);
     },
   });

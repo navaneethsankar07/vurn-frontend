@@ -35,6 +35,7 @@ import type {
   IssueDetailResponse,
 } from "../types";
 import { IssueAttachmentsSection } from "./IssueAttachmentsSection";
+import { IssueAiBreakdownSection } from "../../ai/components/IssueAiBreakdownSection";
 
 interface IssueDetailPanelProps {
   subdomain: string;
@@ -504,6 +505,15 @@ export function IssueDetailPanel({
               </div>
             )}
           </div>
+
+          <IssueAiBreakdownSection
+            subdomain={subdomain}
+            projectSlug={projectSlug}
+            issueId={currentIssueId}
+            issueTitle={issue.title}
+            issueDescription={issue.description}
+            sprintId={issue.sprint_id}
+          />
 
           <IssueLinkedGitHubIssues
             linkedIssues={issue.linked_github_issues || []}

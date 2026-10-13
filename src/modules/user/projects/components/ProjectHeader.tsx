@@ -50,6 +50,9 @@ export function ProjectHeader() {
           Edit Project
         </Button>
         <Button
+          onClick={() =>
+            navigate(`/projects/${projectSlug}/settings/danger-zone`)
+          }
           variant="outline"
           className="h-9 gap-1.5 border-white/10 bg-[#0C0C0E] text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 rounded transition-colors cursor-pointer"
         >
@@ -57,7 +60,9 @@ export function ProjectHeader() {
           Archive Project
         </Button>
         <Button
-          onClick={() => navigate(`/projects/${projectSlug}/issues`)}
+          onClick={() =>
+            navigate(`/projects/${projectSlug}/issues?action=create`)
+          }
           className="h-9 gap-1.5 bg-transparent border border-primary text-primary hover:bg-transparent hover:border-primary/60 hover:text-primary/70 font-semibold text-xs rounded transition-colors cursor-pointer"
         >
           <Plus className="h-4 w-4" />
