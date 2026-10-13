@@ -57,6 +57,11 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
         "Create Issue shortcut only works inside a project workspace.",
       );
     },
+    onRefreshRepository: () => {
+      toast.error(
+        "Refresh Repository (R) shortcut only works on the repository page inside a project.",
+      );
+    },
   });
 
   useEffect(() => {

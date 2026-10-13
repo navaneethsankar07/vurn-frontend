@@ -99,7 +99,20 @@ export function OrganizationNavbar({
       if (window.location.pathname.includes("/projects/")) {
         return;
       }
-      toast.error("Create Issue shortcut only works inside a project workspace.");
+      toast.error(
+        "Create Issue shortcut only works inside a project workspace.",
+      );
+    },
+    onRefreshRepository: () => {
+      if (
+        window.location.pathname.includes("/repository") ||
+        window.location.pathname.includes("/projects/")
+      ) {
+        return;
+      }
+      toast.error(
+        "Refresh Repository (R) shortcut only works on the repository page inside a project.",
+      );
     },
   });
 

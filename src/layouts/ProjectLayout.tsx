@@ -87,6 +87,14 @@ export function ProjectLayout() {
         toast.error("Project context required to create an issue.");
       }
     },
+    onRefreshRepository: () => {
+      if (window.location.pathname.includes("/repository")) {
+        return;
+      }
+      toast.error(
+        "Refresh Repository (R) shortcut only works on the repository page.",
+      );
+    },
   });
 
   return (
