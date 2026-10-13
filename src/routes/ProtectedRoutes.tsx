@@ -12,6 +12,7 @@ import { OrganizationInvitationsPage } from "@/modules/user/organizations/pages/
 import { AcceptInvitationPage } from "@/modules/user/organizations/pages/AcceptInvitationPage";
 import { GlobalSearchResultsPage } from "@/modules/user/search/components/GlobalSearchResultsPage";
 import { KeyboardShortcutsPage } from "@/modules/public/docs/pages/KeyboardShortcutsPage";
+import { HelpCenterPage } from "@/modules/public/docs/pages/HelpCenterPage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -51,6 +52,10 @@ export const ProtectedRoutes: RouteObject[] = [
           {
             path: "/invitations/:token",
             element: <AcceptInvitationPage />,
+          },
+          {
+            path: "help",
+            element: <HelpCenterPage />,
           },
           {
             element: <SettingsLayout />,
