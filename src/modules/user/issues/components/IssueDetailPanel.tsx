@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { Loader2, X } from "lucide-react";
+import { Loader2, Sparkles, X } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,6 +36,7 @@ import type {
 } from "../types";
 import { IssueAttachmentsSection } from "./IssueAttachmentsSection";
 import { IssueAiBreakdownSection } from "../../ai/components/IssueAiBreakdownSection";
+import { IssueAiEstimateSection } from "../../ai/components/IssueAiEstimateSection";
 
 interface IssueDetailPanelProps {
   subdomain: string;
@@ -261,6 +262,16 @@ export function IssueDetailPanel({
           : "",
       );
     }
+  };
+
+  const handleApplyAiPoints = (points: number) => {
+    setPointsInput(String(points));
+    updateIssue({
+      subdomain,
+      projectSlug,
+      issueId: currentIssueId,
+      data: { story_points: points },
+    });
   };
 
   const handleSaveEstimateHours = () => {
@@ -506,14 +517,26 @@ export function IssueDetailPanel({
             )}
           </div>
 
-          <IssueAiBreakdownSection
-            subdomain={subdomain}
-            projectSlug={projectSlug}
-            issueId={currentIssueId}
-            issueTitle={issue.title}
-            issueDescription={issue.description}
-            sprintId={issue.sprint_id}
-          />
+          <div className="space-y-4 pt-2 border-t border-white/10">
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              Vurn AI
+            </div>
+
+            <IssueAiBreakdownSection
+              subdomain={subdomain}
+              projectSlug={projectSlug}
+              issueId={currentIssueId}
+              issueTitle={issue.title}
+              issueDescription={issue.description}
+              sprintId={issue.sprint_id}
+            />
+
+            <IssueAiEstimateSection
+              issueId={currentIssueId}
+              onApplyPoints={handleApplyAiPoints}
+            />
+          </div>
 
           <IssueLinkedGitHubIssues
             linkedIssues={issue.linked_github_issues || []}

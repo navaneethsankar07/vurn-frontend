@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Sparkles,
   Loader2,
   Check,
   ChevronDown,
@@ -82,12 +81,11 @@ export function IssueAiBreakdownSection({
   };
 
   return (
-    <div className="space-y-3 pt-2 border-t border-white/10">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-          <Sparkles className="h-3.5 w-3.5" />
-          Vurn AI Assistant
-        </div>
+        <span className="text-[11px] font-bold text-zinc-300 font-mono tracking-tight">
+          Task Breakdown
+        </span>
         <div className="flex items-center gap-2">
           {hasGenerated && (
             <button
@@ -110,7 +108,7 @@ export function IssueAiBreakdownSection({
             type="button"
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="h-7 px-2.5 text-xs bg-transparent hover:bg-transparent  text-primary hover:text-primary/80 border border-primary/30 rounded-xs font-mono cursor-pointer"
+            className="h-7 px-2.5 text-xs bg-transparent hover:bg-transparent text-primary hover:text-primary/80 border border-primary/30 rounded-xs font-mono cursor-pointer"
           >
             {isGenerating ? (
               <>
