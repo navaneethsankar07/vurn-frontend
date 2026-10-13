@@ -14,7 +14,7 @@ interface HelpQuickActionsProps {
 }
 
 export function HelpQuickActions({ onSelectTopic }: HelpQuickActionsProps) {
-  const { data, isLoading } = useHelpTopics();
+  const { data, isLoading } = useHelpTopics(undefined, 4);
   const topics = data?.results || [];
 
   const getIcon = (iconName?: string) => {

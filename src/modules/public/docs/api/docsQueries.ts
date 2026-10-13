@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-    fetchFaqs,
+  fetchFaqs,
   fetchHelpArticleDetail,
   fetchHelpArticles,
   fetchHelpTopicDetail,
   fetchHelpTopics,
 } from "./docsApi";
 
-export function useHelpTopics(searchQuery?: string) {
+export function useHelpTopics(searchQuery?: string, limit?: number) {
   return useQuery({
-    queryKey: ["help-topics", searchQuery],
-    queryFn: () => fetchHelpTopics(searchQuery),
+    queryKey: ["help-topics", searchQuery, limit],
+    queryFn: () => fetchHelpTopics(searchQuery, limit),
   });
 }
 

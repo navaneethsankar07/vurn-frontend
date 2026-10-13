@@ -9,10 +9,14 @@ import type {
 
 export async function fetchHelpTopics(
   searchQuery?: string,
+  limit?: number,
 ): Promise<HelpTopicsListResponse> {
-  const url = searchQuery
-    ? `/help/topics/?q=${encodeURIComponent(searchQuery)}`
-    : "/help/topics/";
+  const params = new URLSearchParams();
+  if (searchQuery) params.append("q", searchQuery);
+  if (limit) params.append("limit", String(limit));
+
+  const queryString = params.toString();
+  const url = queryString ? `/help/topics/?${queryString}` : "/help/topics/";
   const response = await api.get(url);
   return response.data;
 }

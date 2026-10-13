@@ -3,6 +3,7 @@ import { HelpQuickActions } from "../components/HelpQuickActions";
 import { HelpTopicView } from "../components/HelpTopicView";
 import { HelpArticleView } from "../components/HelpArticleView";
 import { HelpFaqList } from "../components/HelpFaqList";
+import { HelpFooterSection } from "../components/HelpFooterSection";
 import { Search, X } from "lucide-react";
 import { HelpArticlesList } from "../components/HelpArticlesList";
 
@@ -35,7 +36,7 @@ export function HelpCenterPage() {
 
   return (
     <div className="min-h-full bg-black text-white p-4 sm:p-6 lg:p-0 font-mono">
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8 pb-12">
         {!activeSlug ? (
           <div className="space-y-8">
             <div className="space-y-1 border-b border-white/10 pb-4">
@@ -83,6 +84,8 @@ export function HelpCenterPage() {
             />
 
             <HelpFaqList />
+
+            <HelpFooterSection />
           </div>
         ) : selectedTopicSlug ? (
           <HelpTopicView

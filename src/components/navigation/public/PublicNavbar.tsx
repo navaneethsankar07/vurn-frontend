@@ -10,7 +10,7 @@ import { Sparkles, Menu, X } from "lucide-react";
 const NAV_LINKS = [
   { label: "Features", href: "#features" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Documentation", href: "#docs" },
+  { label: "Documentation", href: "/docs" },
   { label: "GitHub", href: "#github" },
 ];
 
