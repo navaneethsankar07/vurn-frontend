@@ -7,6 +7,7 @@ interface ShortcutHandlers {
   onEscape?: () => void;
   onGoToProjects?: () => void;
   onGoToOrganizations?: () => void;
+  onGoToHome?: () => void;
 }
 
 export function useKeyboardShortcuts({
@@ -16,6 +17,7 @@ export function useKeyboardShortcuts({
   onEscape,
   onGoToProjects,
   onGoToOrganizations,
+  onGoToHome,
 }: ShortcutHandlers) {
   const pendingKeyRef = useRef<string | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -70,6 +72,9 @@ export function useKeyboardShortcuts({
           } else if (key === "o") {
             event.preventDefault();
             onGoToOrganizations?.();
+          } else if (key === "h") {
+            event.preventDefault();
+            onGoToHome?.();
           }
           pendingKeyRef.current = null;
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -104,5 +109,6 @@ export function useKeyboardShortcuts({
     onEscape,
     onGoToProjects,
     onGoToOrganizations,
+    onGoToHome,
   ]);
 }

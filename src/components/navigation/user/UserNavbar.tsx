@@ -45,6 +45,9 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
     onGoToOrganizations: () => {
       navigate("/organizations");
     },
+    onGoToHome: () => {
+      navigate("/dashboard");
+    },
   });
 
   useEffect(() => {

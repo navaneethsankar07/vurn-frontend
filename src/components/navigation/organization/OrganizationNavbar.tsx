@@ -85,6 +85,9 @@ export function OrganizationNavbar({
     onGoToOrganizations: () => {
       handleBaseDomainNavigate("/organizations");
     },
+    onGoToHome: () => {
+      handleBaseDomainNavigate("/dashboard");
+    },
   });
 
   const handleBaseDomainNavigate = (path: string) => {
