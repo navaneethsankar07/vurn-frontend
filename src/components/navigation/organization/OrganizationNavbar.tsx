@@ -95,6 +95,12 @@ export function OrganizationNavbar({
       }
       toast.error("Go to Docs shortcut only works inside a project workspace.");
     },
+    onCreateIssue: () => {
+      if (window.location.pathname.includes("/projects/")) {
+        return;
+      }
+      toast.error("Create Issue shortcut only works inside a project workspace.");
+    },
   });
 
   const handleBaseDomainNavigate = (path: string) => {

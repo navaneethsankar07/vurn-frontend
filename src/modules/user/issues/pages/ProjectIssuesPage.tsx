@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
@@ -50,6 +50,14 @@ export function ProjectIssuesPage() {
 
   const createModal = useModal();
   const filterModal = useModal();
+
+  useEffect(() => {
+    if (searchParams.get("action") === "create") {
+      createModal.openModal();
+      searchParams.delete("action");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, createModal, setSearchParams]);
 
   const { data: workflowData } = useProjectWorkflow(subdomain, projectSlug);
   const { data: boardSprints = [] } = useBoardSprints(subdomain, projectSlug);

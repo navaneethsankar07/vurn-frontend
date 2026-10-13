@@ -52,6 +52,11 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
     onGoToDocs: () => {
       toast.error("Go to Docs shortcut only works inside a project workspace.");
     },
+    onCreateIssue: () => {
+      toast.error(
+        "Create Issue shortcut only works inside a project workspace.",
+      );
+    },
   });
 
   useEffect(() => {

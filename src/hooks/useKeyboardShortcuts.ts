@@ -9,6 +9,7 @@ interface ShortcutHandlers {
   onGoToOrganizations?: () => void;
   onGoToHome?: () => void;
   onGoToDocs?: () => void;
+  onCreateIssue?: () => void;
   onInvalidSubShortcut?: (keySequence: string) => void;
 }
 
@@ -21,6 +22,7 @@ export function useKeyboardShortcuts({
   onGoToOrganizations,
   onGoToHome,
   onGoToDocs,
+  onCreateIssue,
   onInvalidSubShortcut,
 }: ShortcutHandlers) {
   const pendingKeyRef = useRef<string | null>(null);
@@ -87,8 +89,20 @@ export function useKeyboardShortcuts({
           return;
         }
 
-        if (key === "g") {
-          pendingKeyRef.current = "g";
+        if (pendingKeyRef.current === "c") {
+          event.preventDefault();
+          if (key === "i") {
+            onCreateIssue?.();
+          } else {
+            onInvalidSubShortcut?.(`c then ${key}`);
+          }
+          pendingKeyRef.current = null;
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          return;
+        }
+
+        if (key === "g" || key === "c") {
+          pendingKeyRef.current = key;
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
           timeoutRef.current = setTimeout(() => {
             pendingKeyRef.current = null;
@@ -117,6 +131,7 @@ export function useKeyboardShortcuts({
     onGoToOrganizations,
     onGoToHome,
     onGoToDocs,
+    onCreateIssue,
     onInvalidSubShortcut,
   ]);
 }

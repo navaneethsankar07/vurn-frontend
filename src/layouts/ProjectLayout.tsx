@@ -80,6 +80,13 @@ export function ProjectLayout() {
         toast.error("Project context required for docs navigation.");
       }
     },
+    onCreateIssue: () => {
+      if (projectSlug) {
+        navigate(`/projects/${projectSlug}/issues?action=create`);
+      } else {
+        toast.error("Project context required to create an issue.");
+      }
+    },
   });
 
   return (
