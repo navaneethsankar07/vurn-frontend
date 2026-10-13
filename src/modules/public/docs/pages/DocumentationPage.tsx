@@ -33,7 +33,7 @@ export function DocumentationPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-full bg-black text-white p-8 flex items-center justify-center font-mono text-xs">
+      <div className="h-full bg-black text-white p-8 flex items-center justify-center font-mono text-xs">
         <Loader2 className="h-5 w-5 animate-spin text-[#5C5C5C] mr-2" />
         Loading documentation...
       </div>
@@ -41,7 +41,7 @@ export function DocumentationPage() {
   }
 
   return (
-    <div className="h-full bg-black text-white p-4 sm:p-6 lg:p-0 font-mono flex flex-col overflow-hidden">
+    <div className="h-full bg-black text-white p-4 sm:p-6 lg:p-8 font-mono flex flex-col overflow-hidden">
       <div className="max-w-7xl w-full mx-auto space-y-6 flex flex-col flex-1 min-h-0">
         <div className="shrink-0 space-y-1 border-b border-white/10 pb-4">
           <div className="flex items-center gap-2 text-[#5C5C5C] text-xs font-bold uppercase tracking-wider">
