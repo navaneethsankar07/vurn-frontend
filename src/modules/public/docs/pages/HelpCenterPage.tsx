@@ -2,6 +2,7 @@ import { useState } from "react";
 import { HelpQuickActions } from "../components/HelpQuickActions";
 import { HelpTopicView } from "../components/HelpTopicView";
 import { HelpArticleView } from "../components/HelpArticleView";
+import { HelpFaqList } from "../components/HelpFaqList";
 import { Search, X } from "lucide-react";
 import { HelpArticlesList } from "../components/HelpArticlesList";
 
@@ -80,6 +81,8 @@ export function HelpCenterPage() {
               searchQuery={activeSearch}
               onSelectArticle={(slug) => setSelectedArticleSlug(slug)}
             />
+
+            <HelpFaqList />
           </div>
         ) : selectedTopicSlug ? (
           <HelpTopicView

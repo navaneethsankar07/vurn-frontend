@@ -22,9 +22,19 @@ export interface HelpArticleSummary {
 }
 
 export interface HelpArticleDetail extends HelpArticleSummary {
-  content: string; 
+  content: string;
 }
 
 export interface HelpArticlesListResponse {
   results: HelpArticleSummary[];
+}
+
+export interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+export interface FaqListResponse {
+  results: FaqItem[];
 }

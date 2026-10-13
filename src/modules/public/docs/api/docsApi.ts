@@ -1,5 +1,11 @@
 import api from "@/api/axios";
-import type { HelpTopicsListResponse, HelpTopicDetail, HelpArticlesListResponse, HelpArticleDetail } from "../types";
+import type {
+  HelpTopicsListResponse,
+  HelpTopicDetail,
+  HelpArticlesListResponse,
+  HelpArticleDetail,
+  FaqListResponse,
+} from "../types";
 
 export async function fetchHelpTopics(
   searchQuery?: string,
@@ -38,5 +44,10 @@ export async function fetchHelpArticleDetail(
   slug: string,
 ): Promise<HelpArticleDetail> {
   const response = await api.get(`/help/articles/${slug}/`);
+  return response.data;
+}
+
+export async function fetchFaqs(): Promise<FaqListResponse> {
+  const response = await api.get("/help/faqs/");
   return response.data;
 }
