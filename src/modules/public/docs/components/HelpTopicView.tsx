@@ -4,10 +4,15 @@ import DOMPurify from "dompurify";
 
 interface HelpTopicViewProps {
   slug: string;
-  onBack: () => void;
+  onBack?: () => void;
+  showBackButton?: boolean;
 }
 
-export function HelpTopicView({ slug, onBack }: HelpTopicViewProps) {
+export function HelpTopicView({
+  slug,
+  onBack,
+  showBackButton = true,
+}: HelpTopicViewProps) {
   const { data: topic, isLoading, isError } = useHelpTopicDetail(slug);
 
   if (isLoading) {
@@ -22,12 +27,14 @@ export function HelpTopicView({ slug, onBack }: HelpTopicViewProps) {
   if (isError || !topic) {
     return (
       <div className="space-y-4 font-mono">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white cursor-pointer"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Help Center
-        </button>
+        {showBackButton && (
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white cursor-pointer"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Help Center
+          </button>
+        )}
         <div className="p-4 border border-red-500/20 bg-red-500/5 text-red-400 text-xs rounded-xs">
           Failed to load help topic.
         </div>
@@ -39,12 +46,14 @@ export function HelpTopicView({ slug, onBack }: HelpTopicViewProps) {
 
   return (
     <div className="space-y-4 font-mono text-white max-w-6xl mx-auto">
-      <button
-        onClick={onBack}
-        className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white cursor-pointer transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to Help Center
-      </button>
+      {showBackButton && (
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white cursor-pointer transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to Help Center
+        </button>
+      )}
 
       <div className="space-y-2 border-b border-white/10 pb-4">
         <h1 className="text-3xl font-bold tracking-tight text-white">

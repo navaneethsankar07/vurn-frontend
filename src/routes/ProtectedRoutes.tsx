@@ -13,6 +13,7 @@ import { AcceptInvitationPage } from "@/modules/user/organizations/pages/AcceptI
 import { GlobalSearchResultsPage } from "@/modules/user/search/components/GlobalSearchResultsPage";
 import { KeyboardShortcutsPage } from "@/modules/public/docs/pages/KeyboardShortcutsPage";
 import { HelpCenterPage } from "@/modules/public/docs/pages/HelpCenterPage";
+import { DocumentationPage } from "@/modules/public/docs/pages/DocumentationPage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -56,6 +57,10 @@ export const ProtectedRoutes: RouteObject[] = [
           {
             path: "help",
             element: <HelpCenterPage />,
+          },
+          {
+            path: "documentation",
+            element: <DocumentationPage />,
           },
           {
             element: <SettingsLayout />,
