@@ -6,6 +6,7 @@ interface ShortcutHandlers {
   onNotifications?: () => void;
   onEscape?: () => void;
   onGoToProjects?: () => void;
+  onGoToOrganizations?: () => void;
 }
 
 export function useKeyboardShortcuts({
@@ -14,9 +15,11 @@ export function useKeyboardShortcuts({
   onNotifications,
   onEscape,
   onGoToProjects,
+  onGoToOrganizations,
 }: ShortcutHandlers) {
   const pendingKeyRef = useRef<string | null>(null);
-const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       const target = event.target as HTMLElement;
@@ -64,6 +67,9 @@ const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
           if (key === "p") {
             event.preventDefault();
             onGoToProjects?.();
+          } else if (key === "o") {
+            event.preventDefault();
+            onGoToOrganizations?.();
           }
           pendingKeyRef.current = null;
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -91,5 +97,12 @@ const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
       window.removeEventListener("keydown", handleKeyDown);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [onSearch, onNew, onNotifications, onEscape, onGoToProjects]);
+  }, [
+    onSearch,
+    onNew,
+    onNotifications,
+    onEscape,
+    onGoToProjects,
+    onGoToOrganizations,
+  ]);
 }

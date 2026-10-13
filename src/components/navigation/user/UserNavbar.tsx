@@ -10,6 +10,7 @@ import { useUnreadNotificationCount } from "@/modules/user/notifications/api/not
 import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
 import { useModal } from "@/hooks/useModal";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useNavigate } from "react-router-dom";
 
 interface UserNavbarProps {
   hasUnreadNotifications?: boolean;
@@ -24,6 +25,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const createNewModal = useModal(false);
+  const navigate = useNavigate()
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const createNewRef = useRef<HTMLDivElement>(null);
@@ -39,6 +41,9 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
       createNewModal.closeModal();
       setIsNotificationOpen(false);
       setIsProfileMenuOpen(false);
+    },
+    onGoToOrganizations: () => {
+      navigate("/organizations");
     },
   });
 

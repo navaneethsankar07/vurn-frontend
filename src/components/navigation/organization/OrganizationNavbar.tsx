@@ -40,7 +40,7 @@ export function OrganizationNavbar({
   const unreadCount = unreadData?.unread_count ?? 0;
 
   const currentSubdomain = getSubdomain();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const port = window.location.port ? `:${window.location.port}` : "";
   const rawBaseDomain = import.meta.env.VITE_APP_BASE_DOMAIN || "lvh.me";
@@ -81,6 +81,9 @@ export function OrganizationNavbar({
     },
     onGoToProjects: () => {
       navigate("/projects");
+    },
+    onGoToOrganizations: () => {
+      handleBaseDomainNavigate("/organizations");
     },
   });
 
