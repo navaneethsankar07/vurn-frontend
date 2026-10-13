@@ -1,8 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { NavLink, Outlet, useParams, useSearchParams } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { ProjectHeader } from "@/modules/user/projects/components/ProjectHeader";
 import { IssueDetailPanel } from "@/modules/user/issues/components/IssueDetailPanel";
 import { getSubdomain } from "@/utils/subdomain";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { toast } from "sonner";
 
 export const PROJECT_TABS = [
   { label: "Overview", path: "" },
@@ -25,6 +33,7 @@ export function ProjectLayout() {
 
   const [panelWidth, setPanelWidth] = useState(480);
   const isDraggingRef = useRef(false);
+  const navigate = useNavigate();
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,6 +71,16 @@ export function ProjectLayout() {
     searchParams.delete("selectedIssue");
     setSearchParams(searchParams, { replace: true });
   };
+
+  useKeyboardShortcuts({
+    onGoToDocs: () => {
+      if (projectSlug) {
+        navigate(`/projects/${projectSlug}/docs`);
+      } else {
+        toast.error("Project context required for docs navigation.");
+      }
+    },
+  });
 
   return (
     <div className="bg-black text-white font-mono h-full flex overflow-hidden">

@@ -13,6 +13,7 @@ import logo from "@/assets/logo.svg";
 import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface OrganizationSummary {
   name: string;
@@ -87,6 +88,12 @@ export function OrganizationNavbar({
     },
     onGoToHome: () => {
       handleBaseDomainNavigate("/dashboard");
+    },
+    onGoToDocs: () => {
+      if (window.location.pathname.includes("/projects/")) {
+        return;
+      }
+      toast.error("Go to Docs shortcut only works inside a project workspace.");
     },
   });
 

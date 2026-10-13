@@ -8,6 +8,8 @@ interface ShortcutHandlers {
   onGoToProjects?: () => void;
   onGoToOrganizations?: () => void;
   onGoToHome?: () => void;
+  onGoToDocs?: () => void;
+  onInvalidSubShortcut?: (keySequence: string) => void;
 }
 
 export function useKeyboardShortcuts({
@@ -18,6 +20,8 @@ export function useKeyboardShortcuts({
   onGoToProjects,
   onGoToOrganizations,
   onGoToHome,
+  onGoToDocs,
+  onInvalidSubShortcut,
 }: ShortcutHandlers) {
   const pendingKeyRef = useRef<string | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -66,15 +70,17 @@ export function useKeyboardShortcuts({
         !event.shiftKey
       ) {
         if (pendingKeyRef.current === "g") {
+          event.preventDefault();
           if (key === "p") {
-            event.preventDefault();
             onGoToProjects?.();
           } else if (key === "o") {
-            event.preventDefault();
             onGoToOrganizations?.();
           } else if (key === "h") {
-            event.preventDefault();
             onGoToHome?.();
+          } else if (key === "d") {
+            onGoToDocs?.();
+          } else {
+            onInvalidSubShortcut?.(`g then ${key}`);
           }
           pendingKeyRef.current = null;
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -110,5 +116,7 @@ export function useKeyboardShortcuts({
     onGoToProjects,
     onGoToOrganizations,
     onGoToHome,
+    onGoToDocs,
+    onInvalidSubShortcut,
   ]);
 }

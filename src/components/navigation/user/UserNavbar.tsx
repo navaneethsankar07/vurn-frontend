@@ -11,6 +11,7 @@ import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearch
 import { useModal } from "@/hooks/useModal";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface UserNavbarProps {
   hasUnreadNotifications?: boolean;
@@ -25,7 +26,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const createNewModal = useModal(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const createNewRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,9 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
     },
     onGoToHome: () => {
       navigate("/dashboard");
+    },
+    onGoToDocs: () => {
+      toast.error("Go to Docs shortcut only works inside a project workspace.");
     },
   });
 
