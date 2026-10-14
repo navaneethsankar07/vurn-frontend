@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Loader2, AlertCircle } from "lucide-react";
 import {
   useSprintDetail,
@@ -25,7 +25,6 @@ import { DUMMY_SPRINT_EXTENDED } from "../constants";
 
 export function SprintDetailPage() {
   const { projectSlug = "", sprintId = "" } = useParams();
-  const navigate = useNavigate();
   const subdomain = getSubdomain() || "";
 
   const [page, setPage] = useState(1);
@@ -139,6 +138,8 @@ export function SprintDetailPage() {
   return (
     <div className="space-y-6 font-mono p-6 max-w-7xl mx-auto">
       <SprintHeader
+        projectSlug={projectSlug}
+        sprintId={Number(sprintId)}
         sprintName={sprint.name}
         status={sprint.status}
         goal={sprint.goal}
@@ -150,7 +151,6 @@ export function SprintDetailPage() {
           sprint.status,
         )}
         isStarting={isStarting}
-        onBack={() => navigate(`/projects/${projectSlug}/sprints`)}
         onEdit={openEditModal}
         onStart={handleStartSprint}
         onComplete={completeSprintModal.openModal}

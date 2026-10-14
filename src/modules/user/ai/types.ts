@@ -44,3 +44,48 @@ export interface AiDetectDuplicatesRequest {
 export interface AiDetectDuplicatesResponse {
   duplicates: DuplicateIssueItem[];
 }
+
+export interface AiSprintSummaryRequest {
+  organization_slug: string;
+  project_slug: string;
+  sprint_id: number;
+}
+
+export interface SprintInfo {
+  id: number;
+  name: string;
+  goal?: string;
+  description?: string;
+  start_date: string;
+  end_date: string;
+  estimated_days: number;
+  status: string;
+}
+
+export interface SprintMetrics {
+  total_issues: number;
+  completed_issues: number;
+  incomplete_issues: number;
+  completion_percentage: number;
+  total_story_points: number;
+  completed_story_points: number;
+  issues_added: number;
+  issues_removed: number;
+  added_issue_keys: string[];
+  removed_issue_keys: string[];
+}
+
+export interface SprintSummaryData {
+  sprint: SprintInfo;
+  metrics: SprintMetrics;
+  summary: string;
+  achievements: string[];
+  incomplete_work: string[];
+  scope_change_insights: string[];
+  risks: string[];
+  recommendations: string[];
+}
+
+export interface AiSprintSummaryResponse {
+  summary: SprintSummaryData;
+}

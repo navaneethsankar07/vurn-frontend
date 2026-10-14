@@ -1,5 +1,4 @@
 import {
-  ArrowLeft,
   Sparkles,
   Edit3,
   Play,
@@ -9,8 +8,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SprintStatus } from "../types";
+import { useModal } from "@/hooks/useModal";
+import { SprintSummaryModal } from "../../ai/components/SprintSummaryModal";
 
 interface SprintHeaderProps {
+  projectSlug: string;
+  sprintId: number;
   sprintName: string;
   status: SprintStatus;
   goal: string;
@@ -18,13 +21,14 @@ interface SprintHeaderProps {
   endDate: string;
   completionPercentage: number;
   isStarting?: boolean;
-  onBack: () => void;
   onEdit: () => void;
   onStart: () => void;
   onComplete?: () => void;
 }
 
 export function SprintHeader({
+  projectSlug,
+  sprintId,
   sprintName,
   status,
   goal,
@@ -32,11 +36,12 @@ export function SprintHeader({
   endDate,
   completionPercentage,
   isStarting = false,
-  onBack,
   onEdit,
   onStart,
   onComplete,
 }: SprintHeaderProps) {
+  const summaryModal = useModal();
+
   const getBadgeStyle = (s: SprintStatus) => {
     switch (s) {
       case "active":
@@ -51,15 +56,6 @@ export function SprintHeader({
 
   return (
     <div className="space-y-4">
-      <button
-        type="button"
-        onClick={onBack}
-        className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white transition-colors"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Back to Sprints
-      </button>
-
       <div className="bg-[#09090B] border border-white/10 p-5 rounded-xs space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1">
@@ -86,7 +82,8 @@ export function SprintHeader({
             <Button
               variant="outline"
               size="sm"
-              className="h-8 text-xs border-white/10 bg-black text-zinc-300 hover:bg-zinc-900 hover:text-white rounded-xs gap-1.5"
+              onClick={summaryModal.openModal}
+              className="h-8 text-xs border-white/10 bg-black text-zinc-300 hover:bg-zinc-900 hover:text-white rounded-xs gap-1.5 cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5 text-amber-500" />
               Generate Sprint Summary
@@ -95,7 +92,7 @@ export function SprintHeader({
               variant="outline"
               size="sm"
               onClick={onEdit}
-              className="h-8 text-xs border-white/10 bg-black text-zinc-300 hover:bg-zinc-900 hover:text-white rounded-xs gap-1.5"
+              className="h-8 text-xs border-white/10 bg-black text-zinc-300 hover:bg-zinc-900 hover:text-white rounded-xs gap-1.5 cursor-pointer"
             >
               <Edit3 className="h-3.5 w-3.5" />
               Edit Sprint
@@ -106,7 +103,7 @@ export function SprintHeader({
                 size="sm"
                 onClick={onStart}
                 disabled={isStarting}
-                className="h-8 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs gap-1.5 disabled:opacity-50"
+                className="h-8 text-xs bg-amber-500 text-black hover:bg-amber-400 font-semibold rounded-xs gap-1.5 disabled:opacity-50 cursor-pointer"
               >
                 {isStarting ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -121,7 +118,7 @@ export function SprintHeader({
               <Button
                 size="sm"
                 onClick={onComplete}
-                className="h-8 text-xs bg-emerald-500 text-black hover:bg-emerald-400 font-semibold rounded-xs gap-1.5"
+                className="h-8 text-xs bg-emerald-500 text-black hover:bg-emerald-400 font-semibold rounded-xs gap-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 Complete Sprint
@@ -155,6 +152,14 @@ export function SprintHeader({
           </div>
         </div>
       </div>
+
+      <SprintSummaryModal
+        isOpen={summaryModal.isOpen}
+        onClose={summaryModal.closeModal}
+        projectSlug={projectSlug}
+        sprintId={sprintId}
+        sprintName={sprintName}
+      />
     </div>
   );
 }
