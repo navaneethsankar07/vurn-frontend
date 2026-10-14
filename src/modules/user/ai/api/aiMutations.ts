@@ -1,6 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
-import type { AiEstimateRequest, AiTaskBreakdownRequest } from "../types";
-import { estimateStoryPoints, generateTaskBreakdown } from "./aiApi";
+import type {
+  AiDetectDuplicatesRequest,
+  AiEstimateRequest,
+  AiTaskBreakdownRequest,
+} from "../types";
+import {
+  detectDuplicateIssues,
+  estimateStoryPoints,
+  generateTaskBreakdown,
+} from "./aiApi";
 
 export function useAiTaskBreakdown() {
   return useMutation({
@@ -11,5 +19,12 @@ export function useAiTaskBreakdown() {
 export function useAiEstimateStoryPoints() {
   return useMutation({
     mutationFn: (data: AiEstimateRequest) => estimateStoryPoints(data),
+  });
+}
+
+export function useAiDetectDuplicates() {
+  return useMutation({
+    mutationFn: (data: AiDetectDuplicatesRequest) =>
+      detectDuplicateIssues(data),
   });
 }

@@ -23,3 +23,24 @@ export interface AiEstimateResponse {
   assumptions: string[];
   confidence: "low" | "medium" | "high";
 }
+
+export interface DuplicateIssueItem {
+  issue_id: number;
+  key: string;
+  title: string;
+  reason: string;
+  confidence: "low" | "medium" | "high";
+}
+
+export interface AiDetectDuplicatesRequest {
+  organization_slug: string;
+  project_slug: string;
+  title: string;
+  description?: string;
+  issue_type?: string;
+  priority?: string;
+}
+
+export interface AiDetectDuplicatesResponse {
+  duplicates: DuplicateIssueItem[];
+}
