@@ -6,6 +6,7 @@ export interface AiSubtaskItem {
 export interface AiTaskBreakdownRequest {
   issue_title: string;
   issue_description?: string;
+  organization_slug?: string | null;
 }
 
 export interface AiTaskBreakdownResponse {

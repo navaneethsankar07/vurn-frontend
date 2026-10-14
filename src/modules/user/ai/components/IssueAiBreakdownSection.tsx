@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useAiTaskBreakdown } from "../api/aiMutations";
 import { useCreateIssueSubtask } from "../../issues/api/issueMutations";
 import type { AiSubtaskItem } from "../types";
+import { getSubdomain } from "@/utils/subdomain";
 
 interface IssueAiBreakdownSectionProps {
   subdomain: string;
@@ -36,6 +37,8 @@ export function IssueAiBreakdownSection({
     Record<number, boolean>
   >({});
 
+  const organizationSlug = getSubdomain()
+
   const { mutate: breakDownTask, isPending: isGenerating } =
     useAiTaskBreakdown();
   const { mutate: createSubtask, isPending: isCreating } =
@@ -46,6 +49,7 @@ export function IssueAiBreakdownSection({
       {
         issue_title: issueTitle,
         issue_description: issueDescription || "",
+        organization_slug: organizationSlug
       },
       {
         onSuccess: (data) => {
