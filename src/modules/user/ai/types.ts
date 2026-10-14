@@ -16,6 +16,7 @@ export interface AiTaskBreakdownResponse {
 
 export interface AiEstimateRequest {
   issue_id: number | string;
+  organization_slug: string | null;
 }
 
 export interface AiEstimateResponse {

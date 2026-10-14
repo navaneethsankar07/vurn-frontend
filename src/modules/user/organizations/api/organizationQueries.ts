@@ -187,7 +187,7 @@ export function useOrganizationDashboardQuery(slug?: string) {
         total_members: data.total_members,
         active_sprint_count: data.active_sprint_count,
         open_issues: data.open_issues,
-        completed_issues: data.completed_issues,
+        remaining_ai_credits: data.completed_issues,
 
         latest_projects: data.latest_projects || [],
         active_sprints: data.active_sprints,

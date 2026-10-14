@@ -131,7 +131,7 @@ export interface OrganizationDashboardData {
   total_members: number;
   active_sprint_count: number;
   open_issues: number;
-  completed_issues: number;
+  remaining_ai_credits: number;
 
   latest_projects?: OrganizationProject[];
   active_sprints?: ActiveSprint[];

@@ -127,10 +127,10 @@ export function OrganizationDashboard() {
           </div>
           <div className="rounded border border-white/10 bg-[#09090b] p-3.5">
             <span className="text-xl font-bold text-white block">
-              {data.completed_issues}
+              {data.remaining_ai_credits}
             </span>
             <span className="text-[10px] text-gray-500 uppercase mt-1 block">
-              Completed Issues
+              Remaining AI Credits
             </span>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { Loader2, ChevronDown, ChevronUp, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAiEstimateStoryPoints } from "../api/aiMutations";
 import type { AiEstimateResponse } from "../types";
+import { getSubdomain } from "@/utils/subdomain";
 
 interface IssueAiEstimateSectionProps {
   issueId: number | string;
@@ -20,11 +21,13 @@ export function IssueAiEstimateSection({
   );
   const [isApplied, setIsApplied] = useState(false);
 
+  const organizationSlug = getSubdomain();
+
   const { mutate: estimatePoints, isPending } = useAiEstimateStoryPoints();
 
   const handleEstimate = () => {
     estimatePoints(
-      { issue_id: issueId },
+      { issue_id: issueId, organization_slug: organizationSlug },
       {
         onSuccess: (data) => {
           setEstimateData(data);
