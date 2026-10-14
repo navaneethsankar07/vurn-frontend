@@ -1,17 +1,47 @@
 import { useState } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, FolderPlus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import type { AiReleaseNotesResponse, ReleaseHighlightItem } from "../types";
+import { useDocumentFolders, useProjectDocuments } from "../../docs/api/knowledgeQueries";
+import { useCreateDocumentFolder, useCreateProjectDocument } from "../../docs/api/knowledgeMutations";
 
 interface ReleaseNotesResultViewProps {
+  subdomain: string;
+  projectSlug: string;
   resultData: AiReleaseNotesResponse;
 }
 
 export function ReleaseNotesResultView({
+  subdomain,
+  projectSlug,
   resultData,
 }: ReleaseNotesResultViewProps) {
   const [copied, setCopied] = useState(false);
+  const [isAddingToKb, setIsAddingToKb] = useState(false);
+
+  const { data: foldersData } = useDocumentFolders(subdomain, projectSlug);
+  const folders = foldersData?.results || [];
+
+  const matchedFolder = folders.find(
+    (f) => f.name.trim().toLowerCase() === "release notes",
+  );
+
+  const { data: docsData } = useProjectDocuments(
+    subdomain,
+    projectSlug,
+    matchedFolder ? { folder_id: matchedFolder.id } : undefined,
+  );
+  const docs = docsData?.results || [];
+
+  const { mutateAsync: createFolderAsync } = useCreateDocumentFolder(
+    subdomain,
+    projectSlug,
+  );
+  const { mutateAsync: createDocAsync } = useCreateProjectDocument(
+    subdomain,
+    projectSlug,
+  );
 
   const handleCopyMarkdown = () => {
     if (resultData?.release_notes?.markdown) {
@@ -19,6 +49,48 @@ export function ReleaseNotesResultView({
       setCopied(true);
       toast.success("Markdown copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleAddToKnowledgeBase = async () => {
+    if (!resultData?.release_notes?.markdown) return;
+    setIsAddingToKb(true);
+
+    try {
+      let targetFolderId = matchedFolder?.id;
+
+      // 1. If folder does not exist, create it first
+      if (!targetFolderId) {
+        const newFolder = await createFolderAsync({ name: "Release Notes" });
+        targetFolderId = newFolder.id;
+      }
+
+      // 2. Determine next version number based on existing documents in the folder
+      let maxVersion = 0;
+      docs.forEach((doc) => {
+        const match = doc.title.match(/v(\d+)/i);
+        if (match) {
+          const ver = parseInt(match[1], 10);
+          if (ver > maxVersion) maxVersion = ver;
+        }
+      });
+
+      const nextVersion =
+        maxVersion > 0 ? maxVersion + 1 : docs.length > 0 ? docs.length + 1 : 1;
+      const documentTitle = `Release Notes v${nextVersion}`;
+
+      // 3. Create the document with the markdown content
+      await createDocAsync({
+        folder_id: targetFolderId,
+        title: documentTitle,
+        content: resultData.release_notes.markdown,
+      });
+
+      toast.success(`Successfully added "${documentTitle}" to Knowledge Base.`);
+    } catch (error: any) {
+      // Error toast is already handled by mutation hooks, but catch here to stop loading state
+    } finally {
+      setIsAddingToKb(false);
     }
   };
 
@@ -92,22 +164,40 @@ export function ReleaseNotesResultView({
               {resultData.release_notes.overview}
             </p>
           </div>
-          <Button
-            type="button"
-            onClick={handleCopyMarkdown}
-            className="h-8 px-3 text-xs bg-transparent text-primary hover:bg-transparent border border-primary/30 hover:border-primary font-semibold rounded-xs gap-1.5 cursor-pointer font-mono shrink-0"
-          >
-            {copied ? (
-              <>
-                <Check className="h-3.5 w-3.5 text-emerald-400" /> Copied
-                Markdown
-              </>
-            ) : (
-              <>
-                <Copy className="h-3.5 w-3.5" /> Copy Markdown
-              </>
-            )}
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              type="button"
+              onClick={handleAddToKnowledgeBase}
+              disabled={isAddingToKb}
+              className="h-8 px-3 text-xs bg-primary text-black hover:bg-primary/90 font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
+            >
+              {isAddingToKb ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Adding...
+                </>
+              ) : (
+                <>
+                  <FolderPlus className="h-3.5 w-3.5" /> Add to Knowledge Base
+                </>
+              )}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleCopyMarkdown}
+              className="h-8 px-3 text-xs bg-transparent text-primary hover:bg-transparent border border-primary/30 hover:border-primary font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-400" /> Copied
+                  Markdown
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5" /> Copy Markdown
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         <div className="flex gap-4 pt-2 border-t border-white/5 text-[11px] text-zinc-400 font-mono">

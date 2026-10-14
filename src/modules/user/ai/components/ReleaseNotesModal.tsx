@@ -37,6 +37,8 @@ export function ReleaseNotesModal({
     null,
   );
 
+  const subdomain = getSubdomain() || "";
+
   const defaultRepoId =
     defaultRepositoryId ??
     (repositories.length === 1 ? repositories[0].id : undefined);
@@ -44,7 +46,7 @@ export function ReleaseNotesModal({
   const { mutate: generateNotes, isPending } = useAiGenerateReleaseNotes();
 
   const handleGenerate = (values: ReleaseNotesFormValues) => {
-    const orgSlug = getSubdomain() || "default";
+    const orgSlug = subdomain || "default";
 
     generateNotes(
       {
@@ -103,7 +105,11 @@ export function ReleaseNotesModal({
                 onSubmit={handleGenerate}
               />
             ) : (
-              <ReleaseNotesResultView resultData={resultData} />
+              <ReleaseNotesResultView
+                subdomain={subdomain}
+                projectSlug={projectSlug}
+                resultData={resultData}
+              />
             )}
           </div>
 
