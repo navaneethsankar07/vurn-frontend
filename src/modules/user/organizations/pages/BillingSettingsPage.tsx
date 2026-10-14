@@ -7,6 +7,7 @@ import { BillingTokenBalance } from "../components/billing/BillingTokenBalance";
 import { BillingUsageStats } from "../components/billing/BillingUsageStats";
 import { BillingPurchaseTokens } from "../components/billing/BillingPurchaseTokens";
 import { BillingUsageInfo } from "../components/billing/BillingUsageInfo";
+import { BillingUsageHistory } from "../components/billing/BillingUsageHistory";
 
 export function BillingSettingsPage() {
   const subdomain = getSubdomain() || "";
@@ -57,6 +58,8 @@ export function BillingSettingsPage() {
       <BillingPurchaseTokens canManageBilling={canManageBilling} />
 
       <BillingUsageInfo features={usageData?.available_features ?? []} />
+
+      <BillingUsageHistory organizationSlug={subdomain} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  fetchAiUsageHistory,
   fetchAiUsageStatistics,
   fetchOrganizationDashboard,
   fetchOrganizationOptions,
@@ -261,4 +262,13 @@ export function useAiUsageStatistics(organizationSlug: string) {
     queryFn: () => fetchAiUsageStatistics(organizationSlug),
     enabled: Boolean(organizationSlug),
   });
+}
+
+export function useAiUsageHistory(organizationSlug: string, page: number) {
+  return useQuery({
+    queryKey: ["ai-usage-history", organizationSlug, page],
+    queryFn: () => fetchAiUsageHistory(organizationSlug, page),
+    enabled: Boolean(organizationSlug),
+    keepPreviousData: true,
+  } as any);
 }

@@ -346,3 +346,28 @@ export interface AiUsageStatisticsResponse {
   average_daily_usage: string;
   available_features: AiFeatureUsage[];
 }
+
+export interface AiUsageUser {
+  id: number;
+  username: string;
+}
+
+export interface AiUsageRecord {
+  id: number;
+  user: AiUsageUser;
+  feature: string;
+  credits_consumed: number;
+  created_at: string;
+}
+
+export interface AiUsageHistoryResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: AiUsageRecord[];
+}
+
+export interface AiUsageHistoryRequest {
+  organization_slug: string;
+  page?: number;
+}
