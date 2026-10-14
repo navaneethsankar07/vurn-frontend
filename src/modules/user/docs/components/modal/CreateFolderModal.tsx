@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   createFolderSchema,
   type CreateFolderInput,
@@ -49,9 +50,17 @@ export function CreateFolderModal({
 
   const onSubmit = (data: CreateFolderInput) => {
     createFolder(data, {
-      onSuccess: () => {
+      onSuccess: (res: any) => {
+        toast.success(res?.message || "Folder created successfully.");
         reset();
         onClose();
+      },
+      onError: (error: any) => {
+        const message =
+          error?.response?.data?.error ||
+          error?.response?.data?.detail ||
+          "Failed to create folder.";
+        toast.error(message);
       },
     });
   };

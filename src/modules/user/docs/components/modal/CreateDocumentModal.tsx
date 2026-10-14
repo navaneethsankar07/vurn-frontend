@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   createDocumentSchema,
   type CreateDocumentInput,
@@ -56,14 +57,29 @@ export function CreateDocumentModal({
       {
         folder_id: Number(folderId),
         title: data.title.trim(),
-        content: "<p></p>",
+        content: data.content || "<p></p>",
       },
       {
         onSuccess: (res: any) => {
+          toast.success(res?.message || "Document created successfully.");
           reset();
           onClose();
           if (res?.id && onDocumentCreated) {
             onDocumentCreated(res.id);
+          }
+        },
+        onError: (error: any) => {
+          const status = error?.response?.status;
+          if (status === 403) {
+            toast.error(
+              "You don't have permission to edit the knowledge base.",
+            );
+          } else {
+            const message =
+              error?.response?.data?.error ||
+              error?.response?.data?.detail ||
+              "Failed to create document.";
+            toast.error(message);
           }
         },
       },

@@ -33,18 +33,10 @@ export function useCreateDocumentFolder(
   return useMutation({
     mutationFn: (payload: CreateDocumentFolderPayload) =>
       createDocumentFolder({ subdomain, projectSlug, payload }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["document-folders", subdomain, projectSlug],
       });
-      toast.success(data?.message || "Folder created successfully.");
-    },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.error ||
-        error?.response?.data?.detail ||
-        "Failed to create folder.";
-      toast.error(message);
     },
   });
 }
@@ -58,23 +50,10 @@ export function useCreateProjectDocument(
   return useMutation({
     mutationFn: (payload: CreateDocumentPayload) =>
       createProjectDocument({ subdomain, projectSlug, payload }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["documents", subdomain, projectSlug],
       });
-      toast.success(data?.message || "Document created successfully.");
-    },
-    onError: (error: any) => {
-      const status = error?.response?.status;
-      if (status === 403) {
-        toast.error("You don't have permission to edit the knowledge base.");
-      } else {
-        const message =
-          error?.response?.data?.error ||
-          error?.response?.data?.detail ||
-          "Failed to create document.";
-        toast.error(message);
-      }
     },
   });
 }
