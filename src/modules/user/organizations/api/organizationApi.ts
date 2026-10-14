@@ -1,6 +1,7 @@
 import api from "@/api/axios";
 import type {
   AcceptInvitationResponse,
+  AiUsageStatisticsResponse,
   BackendDashboardResponse,
   CreateInvitationRequest,
   CreateInvitationResponse,
@@ -226,3 +227,12 @@ export const getOrganizationMembers = async ({
   );
   return response.data;
 };
+
+export async function fetchAiUsageStatistics(
+  organizationSlug: string,
+): Promise<AiUsageStatisticsResponse> {
+  const response = await api.post("/ai/usage-statistics/", {
+    organization_slug: organizationSlug,
+  });
+  return response.data;
+}

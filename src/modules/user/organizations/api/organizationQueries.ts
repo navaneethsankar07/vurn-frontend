@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  fetchAiUsageStatistics,
   fetchOrganizationDashboard,
   fetchOrganizationOptions,
   fetchOrganizationRoles,
@@ -253,3 +254,11 @@ export const useOrganizationMembers = (
     enabled: Boolean(params.slug),
   });
 };
+
+export function useAiUsageStatistics(organizationSlug: string) {
+  return useQuery({
+    queryKey: ["ai-usage-statistics", organizationSlug],
+    queryFn: () => fetchAiUsageStatistics(organizationSlug),
+    enabled: Boolean(organizationSlug),
+  });
+}

@@ -1,8 +1,10 @@
 import { format, parseISO } from "date-fns";
 import { Target, Calendar } from "lucide-react";
 import type { ActiveSprint } from "../types";
+import { useNavigate } from "react-router-dom";
 
 export function ActiveSprints({ sprints = [] }: { sprints?: ActiveSprint[] }) {
+  const navigate = useNavigate();
   if (!sprints || sprints.length === 0) return null;
 
   return (
@@ -22,6 +24,11 @@ export function ActiveSprints({ sprints = [] }: { sprints?: ActiveSprint[] }) {
 
           return (
             <div
+              onClick={() =>
+                navigate(
+                  `/projects/${sprint.project_key?.toLowerCase()}/sprints/${sprint.id}`,
+                )
+              }
               key={sprint.id}
               className="rounded-xs border border-white/5 bg-black/40 p-3 space-y-2.5 hover:bg-white/5 transition-colors"
             >

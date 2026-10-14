@@ -109,6 +109,7 @@ export interface ActiveSprint {
   status: string;
   project_id: number;
   project_name: string;
+  project_key: string | null;
 }
 
 export interface RecentActivity {
@@ -330,4 +331,18 @@ export interface PaginatedResponse<T> {
   next: string | null;
   previous: string | null;
   results: T[];
+}
+
+export interface AiFeatureUsage {
+  key: string;
+  name: string;
+  credit_cost: number;
+}
+
+export interface AiUsageStatisticsResponse {
+  remaining_ai_credits: number;
+  credits_used_today: number;
+  credits_used_this_month: number;
+  average_daily_usage: string;
+  available_features: AiFeatureUsage[];
 }
