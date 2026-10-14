@@ -42,7 +42,7 @@ export function GitHubConnectedAccountView({
             <Button
               type="button"
               onClick={onOpenReleaseNotesModal}
-              className="h-9 gap-2 bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 text-xs rounded cursor-pointer"
+              className="h-9 gap-2 bg-transparent border border-primary/30 text-primary/90 hover:bg-transparent hover:border-primary/60 hover:text-primary text-xs rounded cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5" />
               Generate Release Notes

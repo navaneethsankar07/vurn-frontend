@@ -1,10 +1,17 @@
 import { useState } from "react";
-import { Copy, Check, FolderPlus, Loader2 } from "lucide-react";
+import { Copy, Check, FolderPlus, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { AiReleaseNotesResponse, ReleaseHighlightItem } from "../types";
-import { useDocumentFolders, useProjectDocuments } from "../../docs/api/knowledgeQueries";
-import { useCreateDocumentFolder, useCreateProjectDocument } from "../../docs/api/knowledgeMutations";
+import {
+  useDocumentFolders,
+  useProjectDocuments,
+} from "../../docs/api/knowledgeQueries";
+import {
+  useCreateDocumentFolder,
+  useCreateProjectDocument,
+} from "../../docs/api/knowledgeMutations";
 
 interface ReleaseNotesResultViewProps {
   subdomain: string;
@@ -17,8 +24,10 @@ export function ReleaseNotesResultView({
   projectSlug,
   resultData,
 }: ReleaseNotesResultViewProps) {
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [isAddingToKb, setIsAddingToKb] = useState(false);
+  const [publishedDocId, setPublishedDocId] = useState<number | null>(null);
 
   const { data: foldersData } = useDocumentFolders(subdomain, projectSlug);
   const folders = foldersData?.results || [];
@@ -59,13 +68,11 @@ export function ReleaseNotesResultView({
     try {
       let targetFolderId = matchedFolder?.id;
 
-      // 1. If folder does not exist, create it first
       if (!targetFolderId) {
         const newFolder = await createFolderAsync({ name: "Release Notes" });
         targetFolderId = newFolder.id;
       }
 
-      // 2. Determine next version number based on existing documents in the folder
       let maxVersion = 0;
       docs.forEach((doc) => {
         const match = doc.title.match(/v(\d+)/i);
@@ -79,16 +86,22 @@ export function ReleaseNotesResultView({
         maxVersion > 0 ? maxVersion + 1 : docs.length > 0 ? docs.length + 1 : 1;
       const documentTitle = `Release Notes v${nextVersion}`;
 
-      // 3. Create the document with the markdown content
-      await createDocAsync({
+      const res = await createDocAsync({
         folder_id: targetFolderId,
         title: documentTitle,
         content: resultData.release_notes.markdown,
       });
 
+      if (res?.id) {
+        setPublishedDocId(res.id);
+      }
       toast.success(`Successfully added "${documentTitle}" to Knowledge Base.`);
     } catch (error: any) {
-      // Error toast is already handled by mutation hooks, but catch here to stop loading state
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to create document.";
+      toast.error(message);
     } finally {
       setIsAddingToKb(false);
     }
@@ -165,26 +178,39 @@ export function ReleaseNotesResultView({
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Button
-              type="button"
-              onClick={handleAddToKnowledgeBase}
-              disabled={isAddingToKb}
-              className="h-8 px-3 text-xs bg-primary text-black hover:bg-primary/90 font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
-            >
-              {isAddingToKb ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Adding...
-                </>
-              ) : (
-                <>
-                  <FolderPlus className="h-3.5 w-3.5" /> Add to Knowledge Base
-                </>
-              )}
-            </Button>
+            {publishedDocId ? (
+              <Button
+                type="button"
+                onClick={() =>
+                  navigate(`/projects/${projectSlug}/docs`)
+                }
+                className="h-8 px-3 text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
+              >
+                <ExternalLink className="h-3.5 w-3.5" /> Go to Docs
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={handleAddToKnowledgeBase}
+                disabled={isAddingToKb}
+                className="h-8 px-3 text-xs bg-white/10 text-text-primary/80 hover:bg-white/20 hover:text-text-primary font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
+              >
+                {isAddingToKb ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />{" "}
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <FolderPlus className="h-3.5 w-3.5" /> Publish to Docs
+                  </>
+                )}
+              </Button>
+            )}
             <Button
               type="button"
               onClick={handleCopyMarkdown}
-              className="h-8 px-3 text-xs bg-transparent text-primary hover:bg-transparent border border-primary/30 hover:border-primary font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
+              className="h-8 px-3 text-xs bg-transparent text-primary hover:bg-transparent border border-primary/30 hover:border-primary/60 font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
             >
               {copied ? (
                 <>

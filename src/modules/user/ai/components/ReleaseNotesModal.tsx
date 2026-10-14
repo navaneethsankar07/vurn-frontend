@@ -119,7 +119,7 @@ export function ReleaseNotesModal({
                 type="button"
                 variant="outline"
                 onClick={() => setResultData(null)}
-                className="h-8 text-xs bg-transparent text-primary hover:bg-transparent border border-primary/30 font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
+                className="h-8 text-xs bg-transparent text-primary/80 hover:text-primary border border-primary/30 hover:border-primary/60 hover:bg-transparent  font-semibold rounded-xs gap-1.5 cursor-pointer font-mono"
               >
                 Change Parameters
               </Button>

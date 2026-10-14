@@ -281,7 +281,7 @@ export function ReleaseNotesForm({
         <Button
           type="submit"
           disabled={isPending}
-          className="h-9 px-6 bg-primary text-black hover:bg-primary/90 text-xs font-semibold rounded-xs gap-2 font-mono cursor-pointer"
+          className="h-9 px-6 bg-transparent text-primary/80 border border-primary/50 hover:bg-primary/3 hover:text-primary text-xs font-semibold rounded-xs gap-2 font-mono cursor-pointer"
         >
           {isPending ? (
             <>

@@ -92,7 +92,7 @@ export function KnowledgeMainContent({
 }: KnowledgeMainContentProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
-  const [editorMode, setEditorMode] = useState<"rich" | "markdown">("rich");
+  const [editorMode, setEditorMode] = useState<"rich" | "markdown">("markdown");
   const [markdownContent, setMarkdownContent] = useState("");
 
   const deleteModal = useModal();
@@ -233,7 +233,6 @@ export function KnowledgeMainContent({
           </div>
         ) : (
           <div className="max-w-7xl mx-auto space-y-4">
-            {/* Mode Switcher */}
             <div className="flex items-center justify-end gap-2">
               <span className="text-[11px] text-zinc-400">Editor Mode:</span>
               <div className="inline-flex bg-black border border-white/10 rounded-xs p-0.5">
