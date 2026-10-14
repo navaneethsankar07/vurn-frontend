@@ -4,6 +4,8 @@ import type {
   AiDetectDuplicatesResponse,
   AiEstimateRequest,
   AiEstimateResponse,
+  AiReleaseNotesRequest,
+  AiReleaseNotesResponse,
   AiSprintSummaryRequest,
   AiSprintSummaryResponse,
   AiTaskBreakdownRequest,
@@ -35,5 +37,12 @@ export async function generateSprintSummary(
   data: AiSprintSummaryRequest,
 ): Promise<AiSprintSummaryResponse> {
   const response = await api.post("/ai/generate-sprint-summary/", data);
+  return response.data;
+}
+
+export async function generateReleaseNotes(
+  data: AiReleaseNotesRequest,
+): Promise<AiReleaseNotesResponse> {
+  const response = await api.post("/ai/generate-release-notes/", data);
   return response.data;
 }

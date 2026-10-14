@@ -10,9 +10,11 @@ import {
   useStartGitHubConnect,
 } from "../api/githubMutations";
 import { RepositorySelectorModal } from "./modals/RepositorySelectorModal";
+import { ReleaseNotesModal } from "@/modules/user/ai/components/ReleaseNotesModal";
 import { GitHubConnectHero } from "./GitHubConnectHero";
 import { GitHubConnectedAccountView } from "./GitHubConnectedAccountViewProps";
 import { GitHubRepositoryOverview } from "./GitHubRepositoryOverviewProps";
+import { useModal } from "@/hooks/useModal";
 import type { GitHubRepositoryOption } from "../types";
 
 interface GitHubIntegrationHubProps {
@@ -28,6 +30,7 @@ export function GitHubIntegrationHub({
 }: GitHubIntegrationHubProps) {
   const navigate = useNavigate();
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
+  const releaseNotesModal = useModal();
 
   const { data: statusData, isLoading } = useGitHubStatus(
     subdomain,
@@ -89,6 +92,7 @@ export function GitHubIntegrationHub({
           onSelectRepo={(repo) =>
             navigate(`/projects/${projectSlug}/repository/${repo.id}`)
           }
+          onOpenReleaseNotesModal={releaseNotesModal.openModal}
         />
       )}
 
@@ -115,6 +119,14 @@ export function GitHubIntegrationHub({
         projectSlug={projectSlug}
         onSelectRepo={handleSelectRepoFromModal}
         isConnecting={isConnectingRepo}
+      />
+
+      <ReleaseNotesModal
+        isOpen={releaseNotesModal.isOpen}
+        onClose={releaseNotesModal.closeModal}
+        projectSlug={projectSlug}
+        repositories={repositories}
+        defaultRepositoryId={effectiveRepoId ?? undefined}
       />
     </div>
   );

@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 import { KnowledgeHeader } from "./KnowledgeHeader";
 import { KnowledgeToolbar } from "./KnowledgeToolbar";
 import { KnowledgeEditorCard } from "./KnowledgeEditorCard";
+import { KnowledgeMarkdownEditorCard } from "./KnowledgeMarkdownEditorCard";
 import { DocumentTagsSection } from "./DocumentTagsSection";
 import { DocumentAttachmentsSection } from "./DocumentAttachmentsSection";
 import { DeleteDocumentModal } from "./modal/DeleteDocumentModal";
@@ -91,6 +92,8 @@ export function KnowledgeMainContent({
 }: KnowledgeMainContentProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
+  const [editorMode, setEditorMode] = useState<"rich" | "markdown">("rich");
+  const [markdownContent, setMarkdownContent] = useState("");
 
   const deleteModal = useModal();
 
@@ -137,8 +140,10 @@ export function KnowledgeMainContent({
   useEffect(() => {
     if (document && editor) {
       setTitle(document.title);
-      if (editor.getHTML() !== document.content) {
-        editor.commands.setContent(document.content || "");
+      const content = document.content || "";
+      setMarkdownContent(content);
+      if (editor.getHTML() !== content) {
+        editor.commands.setContent(content);
       }
       editor.setEditable(isEditing);
     }
@@ -148,7 +153,7 @@ export function KnowledgeMainContent({
     return (
       <div className="flex-1 flex flex-col min-w-0 bg-[#060608]">
         <KnowledgeHeader />
-        <div className="flex-1 flex items-center justify-center p-8 text-center text-zinc-600 text-xs">
+        <div className="flex-1 flex items-center justify-center p-8 text-center text-zinc-600 text-xs font-mono">
           Select a folder from the sidebar to view documents.
         </div>
       </div>
@@ -159,7 +164,7 @@ export function KnowledgeMainContent({
     return (
       <div className="flex-1 flex flex-col min-w-0 bg-[#060608]">
         <KnowledgeHeader />
-        <div className="flex-1 flex items-center justify-center p-8 text-center text-zinc-600 text-xs">
+        <div className="flex-1 flex items-center justify-center p-8 text-center text-zinc-600 text-xs font-mono">
           Select a document from the sidebar to view content.
         </div>
       </div>
@@ -167,9 +172,12 @@ export function KnowledgeMainContent({
   }
 
   const handleSave = () => {
-    if (!selectedDocumentId || !editor) return;
+    if (!selectedDocumentId) return;
+    const contentToSave =
+      editorMode === "markdown" ? markdownContent : editor?.getHTML() || "";
+
     updateDocument(
-      { title: title.trim(), content: editor.getHTML() },
+      { title: title.trim(), content: contentToSave },
       {
         onSuccess: () => {
           setIsEditing(false);
@@ -201,6 +209,7 @@ export function KnowledgeMainContent({
         onToggleEdit={setIsEditing}
         onCancelEdit={() => {
           setTitle(document?.title || "");
+          setMarkdownContent(document?.content || "");
           editor?.commands.setContent(document?.content || "");
           setIsEditing(false);
         }}
@@ -223,27 +232,69 @@ export function KnowledgeMainContent({
             Failed to load document.
           </div>
         ) : (
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
-              <KnowledgeEditorCard
-                document={document}
-                isEditing={isEditing}
-                title={title}
-                setTitle={setTitle}
-                editor={editor}
-              />
+          <div className="max-w-7xl mx-auto space-y-4">
+            {/* Mode Switcher */}
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-[11px] text-zinc-400">Editor Mode:</span>
+              <div className="inline-flex bg-black border border-white/10 rounded-xs p-0.5">
+                <button
+                  type="button"
+                  onClick={() => setEditorMode("rich")}
+                  className={`px-3 py-1 text-[11px] rounded-xs cursor-pointer ${
+                    editorMode === "rich"
+                      ? "bg-amber-500 text-black font-bold"
+                      : "text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  Rich Text
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditorMode("markdown")}
+                  className={`px-3 py-1 text-[11px] rounded-xs cursor-pointer ${
+                    editorMode === "markdown"
+                      ? "bg-amber-500 text-black font-bold"
+                      : "text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  Markdown (.md)
+                </button>
+              </div>
             </div>
-            <div className="lg:col-span-1 space-y-6">
-              <DocumentTagsSection
-                subdomain={subdomain}
-                projectSlug={projectSlug}
-                documentId={selectedDocumentId}
-              />
-              <DocumentAttachmentsSection
-                subdomain={subdomain}
-                projectSlug={projectSlug}
-                documentId={selectedDocumentId}
-              />
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <div className="lg:col-span-3">
+                {editorMode === "rich" ? (
+                  <KnowledgeEditorCard
+                    document={document}
+                    isEditing={isEditing}
+                    title={title}
+                    setTitle={setTitle}
+                    editor={editor}
+                  />
+                ) : (
+                  <KnowledgeMarkdownEditorCard
+                    document={document}
+                    isEditing={isEditing}
+                    title={title}
+                    setTitle={setTitle}
+                    markdownContent={markdownContent}
+                    setMarkdownContent={setMarkdownContent}
+                  />
+                )}
+              </div>
+              <div className="lg:col-span-1 space-y-6">
+                <DocumentTagsSection
+                  subdomain={subdomain}
+                  projectSlug={projectSlug}
+                  documentId={selectedDocumentId}
+                />
+                <DocumentAttachmentsSection
+                  subdomain={subdomain}
+                  projectSlug={projectSlug}
+                  documentId={selectedDocumentId}
+                />
+              </div>
             </div>
           </div>
         )}

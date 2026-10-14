@@ -89,3 +89,40 @@ export interface SprintSummaryData {
 export interface AiSprintSummaryResponse {
   summary: SprintSummaryData;
 }
+
+export interface ReleaseHighlightItem {
+  category: string;
+  title: string;
+  description: string;
+  references?: string[];
+}
+
+export interface ReleaseNotesObject {
+  title: string;
+  overview: string;
+  highlights: ReleaseHighlightItem[];
+  bug_fixes: ReleaseHighlightItem[];
+  improvements: ReleaseHighlightItem[];
+  breaking_changes: ReleaseHighlightItem[];
+  known_issues: ReleaseHighlightItem[];
+  technical_changes: ReleaseHighlightItem[];
+  markdown: string;
+}
+
+export interface SourceSummary {
+  commits_analyzed: number;
+  merged_pull_requests_analyzed: number;
+}
+
+export interface AiReleaseNotesRequest {
+  organization_slug: string;
+  project_slug: string;
+  repository_id: number;
+  start_date: string;
+  end_date: string;
+}
+
+export interface AiReleaseNotesResponse {
+  release_notes: ReleaseNotesObject;
+  source_summary: SourceSummary;
+}

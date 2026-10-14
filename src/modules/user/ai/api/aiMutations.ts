@@ -2,12 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import type {
   AiDetectDuplicatesRequest,
   AiEstimateRequest,
+  AiReleaseNotesRequest,
   AiSprintSummaryRequest,
   AiTaskBreakdownRequest,
 } from "../types";
 import {
   detectDuplicateIssues,
   estimateStoryPoints,
+  generateReleaseNotes,
   generateSprintSummary,
   generateTaskBreakdown,
 } from "./aiApi";
@@ -34,5 +36,11 @@ export function useAiDetectDuplicates() {
 export function useAiGenerateSprintSummary() {
   return useMutation({
     mutationFn: (data: AiSprintSummaryRequest) => generateSprintSummary(data),
+  });
+}
+
+export function useAiGenerateReleaseNotes() {
+  return useMutation({
+    mutationFn: (data: AiReleaseNotesRequest) => generateReleaseNotes(data),
   });
 }

@@ -1,4 +1,4 @@
-import { CheckCircle2, ExternalLink, GitBranch } from "lucide-react";
+import { CheckCircle2, ExternalLink, GitBranch, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GithubIcon } from "@/utils/icons";
 import type { GitHubAccount, GitHubRepository } from "../types";
@@ -9,6 +9,7 @@ interface GitHubConnectedAccountViewProps {
   repositories: GitHubRepository[];
   onOpenLinkModal: () => void;
   onSelectRepo: (repo: GitHubRepository) => void;
+  onOpenReleaseNotesModal: () => void;
 }
 
 export function GitHubConnectedAccountView({
@@ -17,6 +18,7 @@ export function GitHubConnectedAccountView({
   repositories,
   onOpenLinkModal,
   onSelectRepo,
+  onOpenReleaseNotesModal,
 }: GitHubConnectedAccountViewProps) {
   return (
     <div className="border border-white/10 rounded bg-[#0C0C0E] p-6 space-y-6 font-mono">
@@ -35,13 +37,25 @@ export function GitHubConnectedAccountView({
           </div>
         </div>
 
-        <Button
-          type="button"
-          onClick={onOpenLinkModal}
-          className="h-9 gap-2 bg-transparent border border-white/10 text-zinc-300 hover:text-white hover:bg-white/5 text-xs rounded cursor-pointer"
-        >
-          Link Repository
-        </Button>
+        <div className="flex items-center gap-2">
+          {repositories.length > 0 && (
+            <Button
+              type="button"
+              onClick={onOpenReleaseNotesModal}
+              className="h-9 gap-2 bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 text-xs rounded cursor-pointer"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Generate Release Notes
+            </Button>
+          )}
+          <Button
+            type="button"
+            onClick={onOpenLinkModal}
+            className="h-9 gap-2 bg-transparent border border-white/10 text-zinc-300 hover:text-white hover:bg-white/5 text-xs rounded cursor-pointer"
+          >
+            Link Repository
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
