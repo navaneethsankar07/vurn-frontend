@@ -147,7 +147,7 @@ export function IssueAiDuplicatesSection({
                 >
                   <div className="flex items-center justify-between">
                     <a
-                      href={`/projects/${projectSlug}/issues/${dup.issue_id}`}
+                      href={`/projects/${projectSlug}/issues?selectedIssue=${dup.issue_id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 text-xs font-bold text-amber-500 hover:underline font-mono"

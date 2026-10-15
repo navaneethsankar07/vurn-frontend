@@ -21,7 +21,7 @@ export function BillingUsageHistory({
 
   const results = data?.results || [];
   const totalCount = data?.count || 0;
-  const pageSize = 10;
+  const pageSize = 5;
   const totalPages = Math.ceil(totalCount / pageSize) || 1;
 
   const formatDate = (dateString: string) => {
@@ -88,7 +88,7 @@ export function BillingUsageHistory({
                       {record.user?.username || `User #${record.user?.id}`}
                     </td>
                     <td className="p-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] border border-primary/30 bg-primary/10 text-primary uppercase font-semibold">
+                      <span className="px-2 py-0.5 rounded text-[10px] border border-primary/30  text-primary uppercase font-semibold">
                         {formatFeatureName(record.feature)}
                       </span>
                     </td>
@@ -105,7 +105,6 @@ export function BillingUsageHistory({
           </div>
         )}
 
-        {/* Pagination controls */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between pt-2 text-[11px] text-zinc-400">
             <span>

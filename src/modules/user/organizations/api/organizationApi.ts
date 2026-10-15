@@ -1,6 +1,7 @@
 import api from "@/api/axios";
 import type {
   AcceptInvitationResponse,
+  AiCreditPlansResponse,
   AiUsageHistoryResponse,
   AiUsageStatisticsResponse,
   BackendDashboardResponse,
@@ -245,5 +246,10 @@ export async function fetchAiUsageHistory(
   const response = await api.post(`/ai/usage-history/?page=${page}`, {
     organization_slug: organizationSlug,
   });
+  return response.data;
+}
+
+export async function fetchAiCreditPlans(): Promise<AiCreditPlansResponse> {
+  const response = await api.get("/ai/credit-plans/");  
   return response.data;
 }

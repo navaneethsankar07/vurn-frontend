@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  fetchAiCreditPlans,
   fetchAiUsageHistory,
   fetchAiUsageStatistics,
   fetchOrganizationDashboard,
@@ -271,4 +272,12 @@ export function useAiUsageHistory(organizationSlug: string, page: number) {
     enabled: Boolean(organizationSlug),
     keepPreviousData: true,
   } as any);
+}
+
+export function useAiCreditPlans() {
+  return useQuery({
+    queryKey: ["ai-credit-plans"],
+    queryFn: () => fetchAiCreditPlans(),
+    staleTime: 1000 * 60 * 10,
+  });
 }

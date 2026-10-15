@@ -371,3 +371,14 @@ export interface AiUsageHistoryRequest {
   organization_slug: string;
   page?: number;
 }
+
+export interface AiCreditPlan {
+  key: string;
+  name: string;
+  credits: number;
+  price_inr: number;
+}
+
+export interface AiCreditPlansResponse {
+  plans: AiCreditPlan[];
+}
