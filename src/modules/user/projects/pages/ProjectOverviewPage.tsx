@@ -38,7 +38,10 @@ export function ProjectOverviewPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <RecentActivityList />
+          <RecentActivityList
+            subdomain={subdomain}
+            projectSlug={projectSlug || ""}
+          />
         </div>
 
         <div className="space-y-6">
