@@ -187,6 +187,9 @@ export function useVerifyCreditPurchase() {
       toast.success(res?.message || "AI credits purchased successfully.");
       queryClient.invalidateQueries({ queryKey: ["ai-usage-statistics"] });
       queryClient.invalidateQueries({ queryKey: ["ai-usage-history"] });
+      queryClient.invalidateQueries({
+        queryKey: ["ai-credit-purchase-history"],
+      });
     },
     onError: (err: any) => {
       const msg =

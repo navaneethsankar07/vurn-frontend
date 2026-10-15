@@ -413,3 +413,29 @@ export interface VerifyCreditPurchaseResponse {
   credits_added: number;
   remaining_ai_credits: number;
 }
+
+export interface CreditPurchaseUser {
+  id: number;
+  username: string;
+}
+
+export interface CreditPurchaseRecord {
+  id: number;
+  user: CreditPurchaseUser;
+  plan_key: string;
+  credits: number;
+  amount: number;
+  currency: string;
+  status: string;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  credited_at: string;
+  created_at: string;
+}
+
+export interface CreditPurchaseHistoryResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CreditPurchaseRecord[];
+}

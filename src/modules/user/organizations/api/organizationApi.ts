@@ -11,6 +11,7 @@ import type {
   CreateOrganizationResponse,
   CreateRazorpayOrderRequest,
   CreateRolePayload,
+  CreditPurchaseHistoryResponse,
   GetOrganizationMembersParams,
   InvitationDetailResponse,
   OrganizationAccess,
@@ -269,5 +270,15 @@ export async function verifyCreditPurchase(
   data: VerifyCreditPurchaseRequest,
 ): Promise<VerifyCreditPurchaseResponse> {
   const response = await api.post("/ai/verify-credit-payment/", data);
+  return response.data;
+}
+
+export async function fetchCreditPurchaseHistory(
+  organizationSlug: string,
+  page: number = 1,
+): Promise<CreditPurchaseHistoryResponse> {
+  const response = await api.post(`/ai/credit-purchase-history/?page=${page}`, {
+    organization_slug: organizationSlug,
+  });
   return response.data;
 }

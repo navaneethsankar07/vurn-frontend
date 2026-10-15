@@ -3,6 +3,7 @@ import {
   fetchAiCreditPlans,
   fetchAiUsageHistory,
   fetchAiUsageStatistics,
+  fetchCreditPurchaseHistory,
   fetchOrganizationDashboard,
   fetchOrganizationOptions,
   fetchOrganizationRoles,
@@ -279,5 +280,16 @@ export function useAiCreditPlans() {
     queryKey: ["ai-credit-plans"],
     queryFn: () => fetchAiCreditPlans(),
     staleTime: 1000 * 60 * 10,
+  });
+}
+
+export function useCreditPurchaseHistory(
+  organizationSlug: string,
+  page: number,
+) {
+  return useQuery({
+    queryKey: ["ai-credit-purchase-history", organizationSlug, page],
+    queryFn: () => fetchCreditPurchaseHistory(organizationSlug, page),
+    enabled: Boolean(organizationSlug),
   });
 }

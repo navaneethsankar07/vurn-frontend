@@ -5,7 +5,6 @@ import {
   FolderKanban,
   Users,
   ShieldCheck,
-  FileText,
   Settings,
   PanelLeftClose,
   PanelLeftOpen,
@@ -16,7 +15,6 @@ const NAV_ITEMS = [
   { label: "Projects", href: "/projects", icon: FolderKanban },
   { label: "Members", href: "/members", icon: Users },
   { label: "Roles", href: "/roles", icon: ShieldCheck },
-  { label: "Docs", href: "/docs", icon: FileText },
   { label: "Settings", href: "/settings/general", icon: Settings },
 ];
 
