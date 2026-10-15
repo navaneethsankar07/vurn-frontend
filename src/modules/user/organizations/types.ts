@@ -382,3 +382,34 @@ export interface AiCreditPlan {
 export interface AiCreditPlansResponse {
   plans: AiCreditPlan[];
 }
+
+export interface CreateRazorpayOrderRequest {
+  organization_slug: string;
+  plan_key: string;
+}
+
+export interface RazorpayOrderResponse {
+  order_id: string;
+  razorpay_key_id: string;
+  amount: number;
+  currency: string;
+  plan: {
+    key: string;
+    name: string;
+    credits: number;
+    price_inr: number;
+  };
+}
+
+export interface VerifyCreditPurchaseRequest {
+  organization_slug: string;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+export interface VerifyCreditPurchaseResponse {
+  message: string;
+  credits_added: number;
+  remaining_ai_credits: number;
+}

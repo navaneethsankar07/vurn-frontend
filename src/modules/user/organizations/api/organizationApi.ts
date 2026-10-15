@@ -9,6 +9,7 @@ import type {
   CreateInvitationResponse,
   CreateOrganizationPayload,
   CreateOrganizationResponse,
+  CreateRazorpayOrderRequest,
   CreateRolePayload,
   GetOrganizationMembersParams,
   InvitationDetailResponse,
@@ -24,12 +25,15 @@ import type {
   PaginatedOrganizationsResponse,
   PaginatedResponse,
   PaginatedRolesResponse,
+  RazorpayOrderResponse,
   ReceivedInvitation,
   RoleQueryParams,
   UpdateBrandingPayload,
   UpdateOrganizationPreferencesPayload,
   UpdateRolePayload,
   UpdateSettingsPayload,
+  VerifyCreditPurchaseRequest,
+  VerifyCreditPurchaseResponse,
 } from "../types";
 
 export async function fetchOrganizationOptions(): Promise<OrganizationOptionsResponse> {
@@ -250,6 +254,20 @@ export async function fetchAiUsageHistory(
 }
 
 export async function fetchAiCreditPlans(): Promise<AiCreditPlansResponse> {
-  const response = await api.get("/ai/credit-plans/");  
+  const response = await api.get("/ai/credit-plans/");
+  return response.data;
+}
+
+export async function createRazorpayOrder(
+  data: CreateRazorpayOrderRequest,
+): Promise<RazorpayOrderResponse> {
+  const response = await api.post("/ai/credit-orders/", data);
+  return response.data;
+}
+
+export async function verifyCreditPurchase(
+  data: VerifyCreditPurchaseRequest,
+): Promise<VerifyCreditPurchaseResponse> {
+  const response = await api.post("/ai/verify-credit-payment/", data);
   return response.data;
 }

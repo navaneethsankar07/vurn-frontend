@@ -4,17 +4,24 @@ import {
   confirmDeleteOrganization,
   createOrganization,
   createOrganizationRole,
+  createRazorpayOrder,
   invitationApi,
   requestDeleteOrganization,
   updateOrganizationBranding,
   updateOrganizationPreferences,
   updateOrganizationRole,
   updateOrganizationSettings,
+  verifyCreditPurchase,
 } from "./organizationApi";
-import { INVITATION_KEYS, organizationKeys, preferenceKeys } from "./organizationQueries";
+import {
+  INVITATION_KEYS,
+  organizationKeys,
+  preferenceKeys,
+} from "./organizationQueries";
 import type {
   CreateInvitationRequest,
   CreateOrganizationPayload,
+  CreateRazorpayOrderRequest,
   CreateRoleVariables,
   OrganizationRole,
   OrganizationRoles,
@@ -22,7 +29,9 @@ import type {
   UpdateOrganizationPreferencesPayload,
   UpdateRoleVariables,
   UpdateSettingsPayload,
+  VerifyCreditPurchaseRequest,
 } from "../types";
+import { toast } from "sonner";
 
 export function useCreateOrganizationMutation() {
   const queryClient = useQueryClient();
@@ -152,6 +161,39 @@ export function useAcceptInvitationMutation() {
     mutationFn: (token: string) => invitationApi.acceptInvitation(token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: INVITATION_KEYS.received });
+    },
+  });
+}
+
+export function useCreateRazorpayOrder() {
+  return useMutation({
+    mutationFn: (data: CreateRazorpayOrderRequest) => createRazorpayOrder(data),
+    onError: (err: any) => {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detail ||
+        "Unable to create the payment order.";
+      toast.error(msg);
+    },
+  });
+}
+
+export function useVerifyCreditPurchase() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: VerifyCreditPurchaseRequest) =>
+      verifyCreditPurchase(data),
+    onSuccess: (res) => {
+      toast.success(res?.message || "AI credits purchased successfully.");
+      queryClient.invalidateQueries({ queryKey: ["ai-usage-statistics"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-usage-history"] });
+    },
+    onError: (err: any) => {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detail ||
+        "Unable to verify the payment.";
+      toast.error(msg);
     },
   });
 }

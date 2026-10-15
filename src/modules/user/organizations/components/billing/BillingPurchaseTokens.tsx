@@ -1,5 +1,11 @@
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { getSubdomain } from "@/utils/subdomain";
 import { useAiCreditPlans } from "../../api/organizationQueries";
+import {
+  useCreateRazorpayOrder,
+  useVerifyCreditPurchase,
+} from "../../api/organizationMutations";
 
 interface BillingPurchaseTokensProps {
   canManageBilling: boolean;
@@ -26,12 +32,79 @@ const PLAN_METADATA: Record<
   },
 };
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 export function BillingPurchaseTokens({
   canManageBilling,
 }: BillingPurchaseTokensProps) {
+  const subdomain = getSubdomain() || "";
   const { data, isLoading } = useAiCreditPlans();
   const plans = data?.plans || [];
-  
+
+  const [purchasingPlanKey, setPurchasingPlanKey] = useState<string | null>(
+    null,
+  );
+
+  const { mutateAsync: createOrder } = useCreateRazorpayOrder();
+  const { mutate: verifyPayment } = useVerifyCreditPurchase();
+
+  const handlePurchase = async (planKey: string) => {
+    if (!subdomain) return;
+    setPurchasingPlanKey(planKey);
+
+    try {
+      const orderData = await createOrder({
+        organization_slug: subdomain,
+        plan_key: planKey,
+      });
+
+      const razorpayOrderId =
+        orderData.order_id || (orderData as any).razorpay_order_id;
+
+      const options = {
+        key: orderData.razorpay_key_id,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Vurn AI",
+        description: `Purchase ${orderData.plan?.name || planKey} Token Pack`,
+        order_id: razorpayOrderId,
+        handler: function (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id?: string;
+          razorpay_signature: string;
+        }) {
+          verifyPayment({
+            organization_slug: subdomain,
+            razorpay_order_id: response.razorpay_order_id || razorpayOrderId,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          });
+          setPurchasingPlanKey(null);
+        },
+        modal: {
+          ondismiss: function () {
+            setPurchasingPlanKey(null);
+          },
+        },
+        prefill: {
+          name: "",
+          email: "",
+        },
+        theme: {
+          color: "#f59e0b",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch {
+      setPurchasingPlanKey(null);
+    }
+  };
 
   return (
     <div className="rounded border border-white/10 bg-[#09090b] shadow-xl font-mono">
@@ -60,6 +133,8 @@ export function BillingPurchaseTokens({
                 recommended: false,
                 originalPrice: plan.price_inr + 100,
               };
+
+              const isPurchasing = purchasingPlanKey === plan.key;
 
               return (
                 <div
@@ -105,14 +180,18 @@ export function BillingPurchaseTokens({
 
                   <button
                     type="button"
-                    disabled={!canManageBilling}
-                    className={`w-full rounded py-2 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
+                    disabled={!canManageBilling || isPurchasing}
+                    onClick={() => handlePurchase(plan.key)}
+                    className={`w-full rounded py-2 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2 ${
                       meta.recommended
                         ? "bg-primary text-black hover:bg-primary/90 font-semibold"
                         : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
                     }`}
                   >
-                    Purchase
+                    {isPurchasing && (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    )}
+                    {isPurchasing ? "Opening Checkout..." : "Purchase"}
                   </button>
                 </div>
               );
