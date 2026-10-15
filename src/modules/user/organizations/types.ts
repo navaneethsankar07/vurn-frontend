@@ -120,25 +120,6 @@ export interface RecentActivity {
   time: string;
 }
 
-export interface OrganizationDashboardData {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  icon?: string | null;
-  logo_url?: string | null;
-  accent_color?: string | null;
-  total_projects: number;
-  total_members: number;
-  active_sprint_count: number;
-  open_issues: number;
-  remaining_ai_credits: number;
-
-  latest_projects?: OrganizationProject[];
-  active_sprints?: ActiveSprint[];
-  recent_activities?: any[];
-}
-
 export interface BackendDashboardResponse {
   id: string;
   name: string;

@@ -80,6 +80,10 @@ export function useCreateProjectIssue() {
           variables.projectSlug,
         ],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["recent-activities"],
+        exact: false,
+      });
       toast.success(data?.message || "Work item created successfully.");
     },
     onError: (error: any) => {
@@ -232,6 +236,9 @@ export function useUpdateProjectIssue() {
           variables.subdomain,
           variables.projectSlug,
         ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["recent-activities"],
       });
     },
     onError: (error: any) => {
