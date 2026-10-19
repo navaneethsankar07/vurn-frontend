@@ -1,6 +1,7 @@
-import type { SprintActivity, SprintStatus } from "../types";
-import { formatRelativeTime } from "@/utils/sprintHelpers";
 import { format, parseISO } from "date-fns";
+import { formatRelativeTime } from "@/utils/sprintHelpers";
+import { SprintActivityList } from "./SprintActivityList";
+import type { SprintStatus } from "../types";
 
 interface SprintSidebarProps {
   status: SprintStatus;
@@ -13,7 +14,9 @@ interface SprintSidebarProps {
   remainingIssues: number;
   totalPoints: number;
   completedPoints: number;
-  activities: SprintActivity[];
+  subdomain: string;
+  projectSlug: string;
+  sprintId: string | number;
 }
 
 export function SprintSidebar({
@@ -27,7 +30,9 @@ export function SprintSidebar({
   remainingIssues,
   totalPoints,
   completedPoints,
-  activities,
+  subdomain,
+  projectSlug,
+  sprintId,
 }: SprintSidebarProps) {
   const formattedCreatedAt = createdAt
     ? format(parseISO(createdAt), "MMM d, yyyy")
@@ -64,8 +69,6 @@ export function SprintSidebar({
           </div>
         </div>
       </div>
-
-      
 
       <div className="bg-[#09090B] border border-white/10 rounded-xs p-4 space-y-3">
         <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-white/5 pb-2">
@@ -125,24 +128,11 @@ export function SprintSidebar({
         </div>
       </div>
 
-      <div className="bg-[#09090B] border border-white/10 rounded-xs p-4 space-y-3">
-        <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-white/5 pb-2">
-          Recent Activity
-        </h3>
-        <div className="space-y-2.5">
-          {activities.map((act) => (
-            <div key={act.id} className="text-xs space-y-0.5">
-              <p className="text-zinc-300 font-sans">
-                <span className="font-semibold text-white">{act.user}</span>{" "}
-                {act.detail}
-              </p>
-              <p className="text-[10px] text-zinc-500 font-mono">
-                {act.timestamp}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <SprintActivityList
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        sprintId={sprintId}
+      />
     </div>
   );
 }

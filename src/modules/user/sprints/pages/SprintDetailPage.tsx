@@ -14,7 +14,6 @@ import { SprintSidebar } from "../components/SprintSidebar";
 import { EditSprintModal } from "../components/modals/EditSprintModal";
 import { CompleteSprintModal } from "../components/modals/CompleteSprintModal";
 import { AddSprintIssuesModal } from "../components/modals/AddSprintIssuesModal";
-import { CreateIssueModal } from "../../issues/components/modals/CreateIssueModal";
 import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
 import {
@@ -37,7 +36,6 @@ export function SprintDetailPage() {
   } = useModal();
 
   const completeSprintModal = useModal();
-  const createIssueModal = useModal();
   const addIssuesModal = useModal();
 
   const {
@@ -191,7 +189,9 @@ export function SprintDetailPage() {
             remainingIssues={sprint.remainingIssuesCount}
             totalPoints={sprint.totalPoints}
             completedPoints={sprint.completedPoints}
-            activities={sprint.activities}
+            subdomain={subdomain}
+            projectSlug={projectSlug}
+            sprintId={sprintId}
           />
         </div>
       </div>
@@ -219,21 +219,6 @@ export function SprintDetailPage() {
         subdomain={subdomain}
         projectSlug={projectSlug}
         sprintId={sprintId}
-      />
-
-      <CreateIssueModal
-        isOpen={createIssueModal.isOpen}
-        onClose={createIssueModal.closeModal}
-        subdomain={subdomain}
-        projectSlug={projectSlug}
-        defaultSprintId={String(sprintId)}
-        sprints={[
-          {
-            id: Number(sprintId),
-            name: sprint.name,
-            status: sprint.status,
-          },
-        ]}
       />
     </div>
   );
