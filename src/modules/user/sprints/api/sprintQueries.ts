@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   checkSprintCompletion,
+  fetchBacklogIssues,
   fetchBoardSprints,
   fetchColumnIssues,
   fetchKanbanBoard,
@@ -116,5 +117,18 @@ export function useSprintCompletionCheck(
     ],
     queryFn: () => checkSprintCompletion(subdomain, projectSlug, sprintId),
     enabled: Boolean(subdomain && projectSlug && sprintId && enabled),
+  });
+}
+
+export function useBacklogIssues(
+  subdomain: string,
+  projectSlug: string,
+  page: number,
+  isOpen: boolean,
+) {
+  return useQuery({
+    queryKey: ["backlog-issues", subdomain, projectSlug, page],
+    queryFn: () => fetchBacklogIssues({ subdomain, projectSlug, page }),
+    enabled: Boolean(subdomain) && Boolean(projectSlug) && isOpen,
   });
 }

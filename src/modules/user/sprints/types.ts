@@ -303,3 +303,40 @@ export interface CompleteSprintPayload {
   incomplete_issue_action?: "sprint" | "new_sprint" | "backlog";
   target_sprint_id?: number;
 }
+
+export interface BacklogIssueItem {
+  id: number;
+  key: string;
+  title: string;
+  issue_type: string;
+}
+
+export interface BacklogIssuesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: BacklogIssueItem[];
+}
+
+export interface BacklogIssuesRequest {
+  subdomain: string;
+  projectSlug: string;
+  page?: number;
+}
+
+export interface AddIssuesToSprintRequest {
+  subdomain: string;
+  projectSlug: string;
+  sprint_id: number | string;
+  issue_ids: number[];
+}
+
+export interface AddIssuesToSprintResponse {
+  message: string;
+  sprint: {
+    id: number;
+    name: string;
+  };
+  added_issue_ids: number[];
+  moved_subtask_ids: number[];
+}

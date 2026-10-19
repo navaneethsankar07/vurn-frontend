@@ -13,6 +13,7 @@ import { SprintIssuesTable } from "../components/SprintIssuesTable";
 import { SprintSidebar } from "../components/SprintSidebar";
 import { EditSprintModal } from "../components/modals/EditSprintModal";
 import { CompleteSprintModal } from "../components/modals/CompleteSprintModal";
+import { AddSprintIssuesModal } from "../components/modals/AddSprintIssuesModal";
 import { CreateIssueModal } from "../../issues/components/modals/CreateIssueModal";
 import { useModal } from "@/hooks/useModal";
 import { getSubdomain } from "@/utils/subdomain";
@@ -37,6 +38,7 @@ export function SprintDetailPage() {
 
   const completeSprintModal = useModal();
   const createIssueModal = useModal();
+  const addIssuesModal = useModal();
 
   const {
     data: sprintMeta,
@@ -169,7 +171,7 @@ export function SprintDetailPage() {
 
           <SprintIssuesTable
             issues={sprint.issues}
-            onAddIssues={createIssueModal.openModal}
+            onAddIssues={addIssuesModal.openModal}
             currentPage={page}
             totalPages={totalPages}
             onPageChange={setPage}
@@ -209,6 +211,14 @@ export function SprintDetailPage() {
         projectSlug={projectSlug}
         sprintId={sprintId}
         plannedSprints={plannedSprintOptions}
+      />
+
+      <AddSprintIssuesModal
+        isOpen={addIssuesModal.isOpen}
+        onClose={addIssuesModal.closeModal}
+        subdomain={subdomain}
+        projectSlug={projectSlug}
+        sprintId={sprintId}
       />
 
       <CreateIssueModal

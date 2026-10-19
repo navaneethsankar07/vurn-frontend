@@ -1,5 +1,9 @@
 import api from "@/api/axios";
 import type {
+  AddIssuesToSprintRequest,
+  AddIssuesToSprintResponse,
+  BacklogIssuesRequest,
+  BacklogIssuesResponse,
   BoardSprintOption,
   CompleteSprintPayload,
   KanbanBoardResponse,
@@ -215,4 +219,30 @@ export async function completeSprint({
     payload || {},
   );
   return data;
+}
+
+export async function fetchBacklogIssues({
+  subdomain,
+  projectSlug,
+  page = 1,
+}: BacklogIssuesRequest): Promise<BacklogIssuesResponse> {
+  const response = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/backlog-issues/?page=${page}`,
+  );
+  return response.data;
+}
+
+export async function addIssuesToSprint({
+  subdomain,
+  projectSlug,
+  sprint_id,
+  issue_ids,
+}: AddIssuesToSprintRequest): Promise<AddIssuesToSprintResponse> {
+  const response = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/sprints/${Number(sprint_id)}/add-issues/`,
+    {
+      issue_ids,
+    },
+  );
+  return response.data;
 }

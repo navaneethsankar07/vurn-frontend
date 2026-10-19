@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  addIssuesToSprint,
   completeSprint,
   createProjectSprint,
   moveIssueStatus,
@@ -10,6 +11,7 @@ import {
 } from "./sprintApi";
 import type { CreateSprintInput } from "../schemas/createSprintSchema";
 import type {
+  AddIssuesToSprintRequest,
   MoveIssueStatusPayload,
   MoveIssueStatusResponse,
   StartSprintParams,
@@ -208,6 +210,25 @@ export function useCompleteSprint() {
       const message =
         error?.response?.data?.error || "Failed to complete sprint.";
       toast.error(message);
+    },
+  });
+}
+
+export function useAddIssuesToSprint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AddIssuesToSprintRequest) => addIssuesToSprint(data),
+    onSuccess: (res) => {
+      toast.success(res?.message || "Issues added to sprint successfully.");
+      queryClient.invalidateQueries({ queryKey: ["sprint-issues"] });
+      queryClient.invalidateQueries({ queryKey: ["backlog-issues"] });
+    },
+    onError: (err: any) => {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detail ||
+        "Failed to add issues to sprint.";
+      toast.error(msg);
     },
   });
 }
