@@ -14,6 +14,7 @@ import { GlobalSearchResultsPage } from "@/modules/user/search/components/Global
 import { KeyboardShortcutsPage } from "@/modules/public/docs/pages/KeyboardShortcutsPage";
 import { HelpCenterPage } from "@/modules/public/docs/pages/HelpCenterPage";
 import { DocumentationPage } from "@/modules/public/docs/pages/DocumentationPage";
+import { HomePage } from "@/modules/user/dashboard/pages/HomePage";
 
 export const ProtectedRoutes: RouteObject[] = [
   {
@@ -28,7 +29,7 @@ export const ProtectedRoutes: RouteObject[] = [
           },
           {
             path: "/dashboard",
-            element: <h1>Dashboard</h1>,
+            element: <HomePage />,
           },
           {
             path: "/profile",
