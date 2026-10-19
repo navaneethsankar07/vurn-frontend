@@ -225,9 +225,14 @@ export async function fetchBacklogIssues({
   subdomain,
   projectSlug,
   page = 1,
+  page_size = 10,
 }: BacklogIssuesRequest): Promise<BacklogIssuesResponse> {
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  params.append("page_size", page_size.toString());
+
   const response = await api.get(
-    `/organizations/${subdomain}/projects/${projectSlug}/backlog-issues/?page=${page}`,
+    `/organizations/${subdomain}/projects/${projectSlug}/backlog-issues/?${params.toString()}`,
   );
   return response.data;
 }

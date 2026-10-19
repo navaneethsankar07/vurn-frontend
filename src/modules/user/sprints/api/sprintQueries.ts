@@ -123,12 +123,24 @@ export function useSprintCompletionCheck(
 export function useBacklogIssues(
   subdomain: string,
   projectSlug: string,
-  page: number,
   isOpen: boolean,
 ) {
-  return useQuery({
-    queryKey: ["backlog-issues", subdomain, projectSlug, page],
-    queryFn: () => fetchBacklogIssues({ subdomain, projectSlug, page }),
+  return useInfiniteQuery({
+    queryKey: ["backlog-issues", subdomain, projectSlug],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchBacklogIssues({
+        subdomain,
+        projectSlug,
+        page: pageParam,
+        page_size: 10,
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
     enabled: Boolean(subdomain) && Boolean(projectSlug) && isOpen,
   });
 }

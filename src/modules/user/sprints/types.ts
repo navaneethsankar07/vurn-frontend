@@ -322,6 +322,7 @@ export interface BacklogIssuesRequest {
   subdomain: string;
   projectSlug: string;
   page?: number;
+  page_size?: number;
 }
 
 export interface AddIssuesToSprintRequest {

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Loader2, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { useState, useRef } from "react";
+import { Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBacklogIssues } from "../../api/sprintQueries";
 import { useAddIssuesToSprint } from "../../api/sprintMutations";
@@ -19,20 +19,26 @@ export function AddSprintIssuesModal({
   projectSlug,
   sprintId,
 }: AddSprintIssuesModalProps) {
-  const [page, setPage] = useState(1);
   const [selectedIssueIds, setSelectedIssueIds] = useState<number[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data, isLoading } = useBacklogIssues(
-    subdomain,
-    projectSlug,
-    page,
-    isOpen,
-  );
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useBacklogIssues(subdomain, projectSlug, isOpen);
+
   const { mutate: addIssues, isPending: isAdding } = useAddIssuesToSprint();
 
-  const issues = data?.results || [];
-  const totalCount = data?.count || 0;
-  const totalPages = Math.ceil(totalCount / 5) || 1;
+  const issues = data?.pages.flatMap((page) => page.results) || [];
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+    if (
+      scrollHeight - scrollTop <= clientHeight + 20 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  };
 
   const handleToggleSelect = (id: number) => {
     setSelectedIssueIds((prev) =>
@@ -107,15 +113,20 @@ export function AddSprintIssuesModal({
                 className="text-primary hover:underline cursor-pointer"
               >
                 {selectedIssueIds.length === issues.length
-                  ? "Deselect All on Page"
-                  : "Select All on Page"}
+                  ? "Deselect All"
+                  : "Select All"}
               </button>
               <span>{selectedIssueIds.length} selected</span>
             </div>
 
-            <div className="border border-white/10 rounded-xs divide-y divide-white/5 max-h-72 overflow-y-auto">
+            <div
+              ref={scrollContainerRef}
+              onScroll={handleScroll}
+              className="border border-white/10 rounded-xs divide-y divide-white/5 max-h-72 overflow-y-auto"
+            >
               {issues.map((issue) => {
                 const isSelected = selectedIssueIds.includes(issue.id);
+
                 return (
                   <div
                     key={issue.id}
@@ -149,37 +160,13 @@ export function AddSprintIssuesModal({
                   </div>
                 );
               })}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between pt-2 text-xs text-zinc-400">
-                <span>
-                  Page {page} of {totalPages}
-                </span>
-                <div className="flex items-center gap-1">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={page <= 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="h-7 px-2 border-white/10 bg-black text-zinc-300 hover:text-white rounded-xs disabled:opacity-30 cursor-pointer"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={page >= totalPages}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="h-7 px-2 border-white/10 bg-black text-zinc-300 hover:text-white rounded-xs disabled:opacity-30 cursor-pointer"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </Button>
+              {isFetchingNextPage && (
+                <div className="py-3 flex items-center justify-center text-zinc-500 text-xs gap-2">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                  <span>Loading more issues...</span>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
 
