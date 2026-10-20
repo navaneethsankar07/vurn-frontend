@@ -120,7 +120,7 @@ export function GlobalSearchInput() {
       if (item.organization_slug) parts.push(`Org: ${item.organization_slug}`);
       if (item.project_slug || item.project_key)
         parts.push(`Project: ${item.project_slug || item.project_key}`);
-      return parts.join(" • ");
+      return parts.join(" ");
     }
     return "";
   };
@@ -138,9 +138,15 @@ export function GlobalSearchInput() {
         onFocus={() => {
           if (searchTerm.trim().length >= 2) setIsOpen(true);
         }}
-        placeholder="Search resources, organizations, or issues..."
-        className="h-10 rounded-[3px] border-white/10 bg-white/3 pl-9 pr-20 text-sm text-white placeholder:text-gray-500 focus-visible:border-primary/30 focus-visible:outline-none focus-visible:ring-0"
+        placeholder="Search..."
+        aria-label="Search"
+        className="h-10 rounded-[3px] border-white/10 bg-white/3 pl-9 pr-20 text-sm text-white placeholder:text-gray-500 focus-visible:border-primary/30 focus-visible:outline-none focus-visible:ring-0 md:placeholder:opacity-0 [&:not(:placeholder-shown)]::placeholder:opacity-100"
       />
+      <div className="pointer-events-none absolute left-9 top-1/2 -translate-y-1/2 text-sm text-gray-500 hidden md:block truncate pr-24 select-none">
+        {!searchTerm && (
+          <span>Search resources, organizations, or issues...</span>
+        )}
+      </div>
 
       <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
         {searchTerm && (

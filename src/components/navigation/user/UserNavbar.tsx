@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { useAppSelector } from "@/app/hooks";
 import { Button } from "@/components/ui/button";
 import { Bell, ChevronDown, Plus } from "lucide-react";
-import logo from "@/assets/logo.svg"
+import logo from "@/assets/logo.svg";
 import { UserProfileMenu } from "@/modules/user/account/components/UserProfileMenu";
 import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
 import { CreateNewMenu } from "@/components/modals/CreateNewMenu";
@@ -93,9 +93,9 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
 
       <GlobalSearchInput />
 
-      <div className="flex shrink-0 items-center gap-2 sm:gap-18">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-4">
         <div
-          className="relative hidden sm:block right-5"
+          className="relative block"
           ref={createNewRef}
           onMouseDown={(e) => e.stopPropagation()}
         >
@@ -103,21 +103,21 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
             type="button"
             onClick={createNewModal.toggleModal}
             aria-expanded={createNewModal.isOpen}
-            className="gap-1 rounded-0xl border-2 border-[#34343A] bg-secondary font-mono text-sm font-semibold text-white/80 hover:bg-hover-bg hover:text-text-primary cursor-pointer"
+            className="gap-1 rounded-0xl border-2 border-[#34343A] bg-secondary font-mono text-sm font-semibold text-white/80 hover:bg-hover-bg hover:text-text-primary cursor-pointer px-2.5 sm:px-4"
           >
             <Plus strokeLinecap="butt" />
-            <span>New</span>
-            <ChevronDown />
+            <span className="hidden sm:inline">New</span>
+            <ChevronDown className="hidden sm:inline" />
           </Button>
 
           {createNewModal.isOpen && (
-            <div className="absolute top-full z-50 mt-4">
+            <div className="absolute -right-21 sm:-left-8 top-full z-50 mt-4">
               <CreateNewMenu onClose={createNewModal.closeModal} />
             </div>
           )}
         </div>
 
-        <div className="relative right-5" ref={notificationRef}>
+        <div className="relative" ref={notificationRef}>
           <button
             type="button"
             onClick={() => setIsNotificationOpen((prev) => !prev)}
@@ -133,7 +133,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           </button>
 
           {isNotificationOpen && (
-            <div className="absolute -right-23 top-full z-50 mt-4">
+            <div className="absolute -right-10 sm:-right-123 top-full z-50 mt-4">
               <UserNotificationMenu
                 onClose={() => setIsNotificationOpen(false)}
               />
@@ -141,7 +141,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           )}
         </div>
 
-        <div className="relative right-5">
+        <div className="relative">
           <button
             type="button"
             onClick={() => setIsProfileMenuOpen((previous) => !previous)}
@@ -157,7 +157,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           </button>
 
           {isProfileMenuOpen && (
-            <div className="absolute -right-5 top-full z-50 mt-2.5">
+            <div className="absolute right-0 sm:-right-5 top-full z-50 mt-2.5">
               <UserProfileMenu onClose={() => setIsProfileMenuOpen(false)} />
             </div>
           )}
