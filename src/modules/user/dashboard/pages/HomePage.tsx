@@ -3,6 +3,7 @@ import { useDashboardRecentActivity } from "../api/dashboardQueries";
 import { ContinueWorkingSection } from "../components/ContinueWorkingSection";
 import { RecentOrganizationsSection } from "../components/RecentOrganizationsSection";
 import { PendingInvitationsSection } from "../components/PendingInvitationsSection";
+import { HomeRecentActivitySection } from "../components/HomeRecentActivitySection";
 
 export function HomePage() {
   const { data, isLoading, isError } = useDashboardRecentActivity();
@@ -44,6 +45,8 @@ export function HomePage() {
       <RecentOrganizationsSection organizations={recentOrganizations} />
 
       <PendingInvitationsSection />
+
+      <HomeRecentActivitySection />
     </div>
   );
 }
