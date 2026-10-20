@@ -2,6 +2,7 @@ import { Loader2 } from "lucide-react";
 import { useDashboardRecentActivity } from "../api/dashboardQueries";
 import { ContinueWorkingSection } from "../components/ContinueWorkingSection";
 import { RecentOrganizationsSection } from "../components/RecentOrganizationsSection";
+import { PendingInvitationsSection } from "../components/PendingInvitationsSection";
 
 export function HomePage() {
   const { data, isLoading, isError } = useDashboardRecentActivity();
@@ -41,6 +42,8 @@ export function HomePage() {
       <ContinueWorkingSection issues={recentIssues} />
 
       <RecentOrganizationsSection organizations={recentOrganizations} />
+
+      <PendingInvitationsSection />
     </div>
   );
 }

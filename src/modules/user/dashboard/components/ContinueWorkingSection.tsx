@@ -30,7 +30,7 @@ export function ContinueWorkingSection({
                 <span className="text-xs font-semibold text-white">
                   {issue.key}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary uppercase font-semibold">
+                <span className="text-[10px] px-2 py-0.5 rounded-xs border border-primary/20 text-text-primary uppercase font-semibold">
                   {issue.status}
                 </span>
               </div>
@@ -57,7 +57,7 @@ export function ContinueWorkingSection({
 
                   window.location.href = targetUrl;
                 }}
-                className="text-xs text-primary group-hover:underline flex items-center gap-1 cursor-pointer font-semibold"
+                className="text-xs text-gray-500 group-hover:underline hover:text-gray-400 flex items-center gap-1 cursor-pointer font-semibold"
               >
                 Continue <ArrowRight className="h-3 w-3" />
               </button>

@@ -18,8 +18,8 @@ export interface DashboardOrganization {
   id: number;
   name: string;
   slug: string;
-  icon: string | null;
-  accent_color: string | null;
+  icon: string;
+  accent_color: string;
   event_type: "joined" | "created" | string;
   event_date: string;
 }

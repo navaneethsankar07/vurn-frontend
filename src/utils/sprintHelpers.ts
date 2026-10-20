@@ -53,15 +53,15 @@ export function formatRelativeTime(
   const date = parseISO(dateStr);
   const diffInSeconds = Math.abs(differenceInSeconds(new Date(), date));
 
-  if (diffInSeconds < 60) return prefix ? `${prefix}just now` : "Just now";
+  if (diffInSeconds < 60) return prefix ? `${prefix} just now` : "Just now";
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${prefix}${minutes}m ago`;
+  if (minutes < 60) return `${prefix} ${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${prefix}${hours}h ago`;
+  if (hours < 24) return `${prefix} ${hours}h ago`;
   const days = Math.floor(hours / 24);
-  if (days < 30) return `${prefix}${days}d ago`;
+  if (days < 30) return `${prefix} ${days}d ago`;
   const weeks = Math.floor(days / 7);
-  return `${prefix}${weeks}w ago`;
+  return `${prefix} ${weeks}w ago`;
 }
 
 export function isCommentEdited(
