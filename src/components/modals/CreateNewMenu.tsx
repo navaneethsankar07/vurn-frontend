@@ -23,7 +23,7 @@ export function CreateNewMenu({ onClose }: CreateNewMenuProps) {
   return (
     <div
       ref={menuRef}
-      className="w-72 sm:w-60 bg-[#09090B] border border-white/10 rounded-xs shadow-2xl font-mono text-white text-xs z-50 overflow-hidden"
+      className="w-72 sm:w-65 bg-[#09090B] border border-white/10 rounded-xs shadow-2xl font-mono text-white text-xs z-50 overflow-hidden"
     >
       <div className="px-3.5 py-3 border-b border-white/5 bg-black/60 space-y-0.5">
         <h3 className="font-bold uppercase tracking-wider text-[11px] text-white">

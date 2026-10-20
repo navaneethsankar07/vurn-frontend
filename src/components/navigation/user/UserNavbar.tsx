@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import { useAppSelector } from "@/app/hooks";
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, Plus, Sparkles } from "lucide-react";
-
+import { Bell, ChevronDown, Plus } from "lucide-react";
+import logo from "@/assets/logo.svg"
 import { UserProfileMenu } from "@/modules/user/account/components/UserProfileMenu";
 import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
 import { CreateNewMenu } from "@/components/modals/CreateNewMenu";
@@ -86,15 +86,14 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-black px-4 sm:px-6">
       <a href="/" className="flex items-center gap-2 sm:hidden">
-        <span className="flex h-7 w-7 items-center justify-center rounded-[3px] bg-amber-500 text-black">
-          <Sparkles className="h-4 w-4" strokeWidth={2.5} />
+        <span className="flex h-10 w-20 items-center justify-center rounded-xs text-black">
+          <img src={logo} alt="" />
         </span>
-        <span className="text-lg font-bold tracking-tight">Vurn</span>
       </a>
 
       <GlobalSearchInput />
 
-      <div className="flex shrink-0 items-center gap-2 sm:gap-8">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-18">
         <div
           className="relative hidden sm:block right-5"
           ref={createNewRef}

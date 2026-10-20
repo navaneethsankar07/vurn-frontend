@@ -16,7 +16,7 @@ export function ContinueWorkingSection({
   return (
     <div className="space-y-3 font-mono">
       <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-        Continue Working
+        Continue Working...
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -30,7 +30,7 @@ export function ContinueWorkingSection({
                 <span className="text-xs font-semibold text-white">
                   {issue.key}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-xs border border-primary/20 text-text-primary uppercase font-semibold">
+                <span className="text-[10px] px-2 py-0.5 rounded-xs border border-gray-600 text-gray-400 uppercase font-semibold">
                   {issue.status}
                 </span>
               </div>
@@ -44,7 +44,7 @@ export function ContinueWorkingSection({
 
             <div className="flex items-center justify-between pt-2 border-t border-white/5">
               <span className="text-[10px] text-zinc-500 flex items-center gap-1">
-                <Clock className="h-3 w-3" />{" "}
+                <Clock className="h-3 w-3" />
                 {formatRelativeTime(issue.updated_at)}
               </span>
               <button

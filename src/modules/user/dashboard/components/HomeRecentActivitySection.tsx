@@ -60,7 +60,7 @@ export function HomeRecentActivitySection() {
             return (
               <div
                 key={activity.id}
-                className="py-3 flex items-start justify-between gap-3 text-xs"
+                className="py-2 flex items-start justify-between gap-3 text-xs"
               >
                 <div className="flex items-start gap-3 min-w-0">
                   <IconComp className="h-4 w-4 text-zinc-400 shrink-0 mt-0.5" />
