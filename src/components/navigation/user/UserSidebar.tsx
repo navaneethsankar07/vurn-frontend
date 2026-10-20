@@ -10,23 +10,32 @@ import {
 
 import logo from "@/assets/logo.svg";
 import icon from "@/assets/icon.svg";
+import { useReceivedInvitationsQuery } from "@/modules/user/organizations/api/organizationQueries";
 
 interface UserSidebarProps {
   isCollapsed?: boolean;
   onCollapseToggle?: () => void;
 }
 
-const NAV_ITEMS = [
-  { label: "Home", icon: Home, href: "/dashboard" },
-  { label: "Organizations", icon: Building2, href: "/organizations" },
-  { label: "Invitations", icon: Mail, href: "/invitations", count: 2 },
-];
-
 export function UserSidebar({
   isCollapsed = false,
   onCollapseToggle,
 }: UserSidebarProps) {
   const location = useLocation();
+  const { data: invitations } = useReceivedInvitationsQuery();
+
+  const invitationCount = Array.isArray(invitations) ? invitations.length : 0;
+
+  const NAV_ITEMS = [
+    { label: "Home", icon: Home, href: "/dashboard" },
+    { label: "Organizations", icon: Building2, href: "/organizations" },
+    {
+      label: "Invitations",
+      icon: Mail,
+      href: "/invitations",
+      count: invitationCount > 0 ? invitationCount : undefined,
+    },
+  ];
 
   return (
     <aside
@@ -45,7 +54,11 @@ export function UserSidebar({
               <object
                 data={isCollapsed ? icon : logo}
                 type="image/svg+xml"
-                className={isCollapsed ? "w-8 pointer-events-none" : "w-2 sm:w-32 pointer-events-none"}
+                className={
+                  isCollapsed
+                    ? "w-8 pointer-events-none"
+                    : "w-2 sm:w-32 pointer-events-none"
+                }
               />
             </span>
           </a>

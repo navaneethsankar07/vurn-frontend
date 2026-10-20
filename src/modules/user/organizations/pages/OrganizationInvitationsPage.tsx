@@ -8,11 +8,11 @@ export function OrganizationInvitationsPage() {
   const { data: invitations, isLoading, error } = useReceivedInvitationsQuery();
     
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-3xl mx-auto space-y-6">
+    <div className="bg-black text-white p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
         <div>
           <h1 className="text-2xl font-mono font-bold flex items-center gap-2">
-            <Mail className="h-6 w-6 text-amber-500" />
+            <Mail className="h-6 w-6 text-primary" />
             Organization Invitations
           </h1>
           <p className="text-xs font-mono text-gray-400 mt-1">
@@ -40,7 +40,7 @@ export function OrganizationInvitationsPage() {
                 className="p-6 border border-white/10 rounded-sm bg-[#0C0C0E] space-y-4"
               >
                 <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 bg-amber-500/20 text-amber-500 font-mono font-bold flex items-center justify-center rounded-sm text-sm border border-amber-500/30">
+                  <div className="h-10 w-10 text-text-primary font-mono font-bold flex items-center justify-center rounded-xs text-sm border border-gray-600">
                     {inv.organization_name.substring(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1">
@@ -65,7 +65,7 @@ export function OrganizationInvitationsPage() {
                 <div className="flex justify-end gap-3 pt-2">
                   <Button
                     onClick={() => navigate(`/invitations/${inv.token}`)}
-                    className="h-9 px-4 bg-amber-500 text-black font-mono font-semibold text-xs hover:bg-amber-500/90 rounded-sm"
+                    className="h-9 px-4 border border-primary/50 bg-transparent text-primary/70 font-mono font-semibold text-xs hover:text-primary hover:border-primary/80 hover:bg-transparent rounded-xs"
                   >
                     View Invitation
                   </Button>

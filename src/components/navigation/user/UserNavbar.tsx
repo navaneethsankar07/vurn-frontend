@@ -133,7 +133,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
           </button>
 
           {isNotificationOpen && (
-            <div className="absolute -right-10 sm:-right-123 top-full z-50 mt-4">
+            <div className="absolute -right-10 sm:-right-12 top-full z-50 mt-4">
               <UserNotificationMenu
                 onClose={() => setIsNotificationOpen(false)}
               />
