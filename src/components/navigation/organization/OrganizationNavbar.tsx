@@ -6,6 +6,7 @@ import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { renderOrgIcon } from "@/utils/renderOrgIcon";
 import { useModal } from "@/hooks/useModal";
 import { UserNotificationMenu } from "@/modules/user/notifications/component/modal/UserNotificationMenu";
+import { UserProfileMenu } from "@/modules/user/account/components/UserProfileMenu";
 import { OrgCreateNewMenu } from "@/components/modals/OrgCreateNewMenu";
 import { useUnreadNotificationCount } from "@/modules/user/notifications/api/notificationQueries";
 
@@ -32,9 +33,11 @@ export function OrganizationNavbar({
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
   const notificationModal = useModal(false);
   const createNewModal = useModal(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const createNewRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const { user } = useAppSelector((state) => state.auth);
   const { data: unreadData } = useUnreadNotificationCount();
@@ -63,6 +66,12 @@ export function OrganizationNavbar({
       ) {
         createNewModal.closeModal();
       }
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileMenuOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -78,6 +87,7 @@ export function OrganizationNavbar({
     onEscape: () => {
       createNewModal.closeModal();
       notificationModal.closeModal();
+      setIsProfileMenuOpen(false);
       setOrgDropdownOpen(false);
     },
     onGoToProjects: () => {
@@ -151,9 +161,9 @@ export function OrganizationNavbar({
           <button
             type="button"
             onClick={() => handleBaseDomainNavigate("/dashboard")}
-            className="flex items-center gap-2 shrink-0 cursor-pointer"
+            className="flex gap-2 shrink-0 cursor-pointer h-16 overflow-hidden items-center justify-center"
           >
-            <span className="flex items-center justify-center">
+            <span className="flex items-center justify-center overflow-hidden h-full">
               <object
                 data={logo}
                 type="image/svg+xml"
@@ -289,7 +299,7 @@ export function OrganizationNavbar({
             </button>
 
             {createNewModal.isOpen && (
-              <div className="absolute right-0 top-full z-50 mt-2.5">
+              <div className="absolute -right-17 top-full z-50 mt-3.5">
                 <OrgCreateNewMenu onClose={createNewModal.closeModal} />
               </div>
             )}
@@ -310,7 +320,7 @@ export function OrganizationNavbar({
             </button>
 
             {notificationModal.isOpen && (
-              <div className="absolute right-0 top-full z-50 mt-2.5">
+              <div className="absolute -right-5 top-full z-50 mt-4">
                 <UserNotificationMenu onClose={notificationModal.closeModal} />
               </div>
             )}
@@ -318,24 +328,34 @@ export function OrganizationNavbar({
 
           <div className="h-5 w-px bg-white/10 hidden sm:block" />
 
-          <button
-            type="button"
-            onClick={() => handleBaseDomainNavigate("/profile")}
-            className="h-8.5 w-8.5 rounded-full bg-linear-to-tr from-amber-500 to-amber-200 p-px cursor-pointer overflow-hidden shrink-0"
-            title={user?.full_name || user?.username || "Profile"}
-          >
-            {user?.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.full_name || user.username}
-                className="h-full w-full rounded-full object-cover"
-              />
-            ) : (
-              <div className="h-full w-full rounded-full bg-[#09090b] flex items-center justify-center text-xs font-bold text-amber-500">
-                {fallbackInitial}
+          <div className="relative" ref={profileMenuRef}>
+            <button
+              type="button"
+              onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+              aria-label="Account menu"
+              aria-expanded={isProfileMenuOpen}
+              className="h-8.5 w-8.5 rounded-full bg-linear-to-tr from-amber-500 to-amber-200 p-px cursor-pointer overflow-hidden shrink-0 block"
+              title={user?.full_name || user?.username || "Profile"}
+            >
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.full_name || user.username}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-full w-full rounded-full bg-[#09090b] flex items-center justify-center text-xs font-bold text-amber-500">
+                  {fallbackInitial}
+                </div>
+              )}
+            </button>
+
+            {isProfileMenuOpen && (
+              <div className="absolute -right-4 top-full z-50 mt-4">
+                <UserProfileMenu onClose={() => setIsProfileMenuOpen(false)} />
               </div>
             )}
-          </button>
+          </div>
         </div>
       </div>
     </header>

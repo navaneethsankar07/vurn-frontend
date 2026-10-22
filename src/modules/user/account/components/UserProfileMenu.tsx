@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { User, Sliders, Keyboard, BookOpen, LogOut } from "lucide-react";
 
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
@@ -18,6 +17,17 @@ export function UserProfileMenu({ onClose }: UserProfileMenuProps) {
   if (!user) {
     return null;
   }
+
+  const port = window.location.port ? `:${window.location.port}` : "";
+  const rawBaseDomain = import.meta.env.VITE_APP_BASE_DOMAIN || "lvh.me";
+  const cleanBaseDomain = rawBaseDomain.split(":")[0];
+  const baseHost = `${cleanBaseDomain}${port}`;
+  const protocol = window.location.protocol;
+
+  const handleBaseDomainNavigate = (path: string) => {
+    onClose();
+    window.location.href = `${protocol}//${baseHost}${path}`;
+  };
 
   const initials = user.full_name
     .split(" ")
@@ -95,16 +105,15 @@ export function UserProfileMenu({ onClose }: UserProfileMenuProps) {
 
       <div className="space-y-0.5 p-1">
         {menuItems.map((item) => (
-          <Link
+          <button
             key={item.label}
-            to={item.href}
-            onClick={onClose}
-            className="flex items-center gap-3 rounded-[3px] px-3 py-2.5 text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
+            type="button"
+            onClick={() => handleBaseDomainNavigate(item.href)}
+            className="flex w-full items-center gap-3 rounded-[3px] px-3 py-2.5 text-left text-gray-300 transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
           >
             <item.icon className="h-4 w-4 shrink-0 text-gray-400" />
-
             <span>{item.label}</span>
-          </Link>
+          </button>
         ))}
       </div>
 
@@ -112,10 +121,9 @@ export function UserProfileMenu({ onClose }: UserProfileMenuProps) {
         <button
           type="button"
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-[3px] px-3 py-2.5 text-left text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
+          className="flex w-full items-center gap-3 rounded-[3px] px-3 py-2.5 text-left text-gray-300 transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
         >
           <LogOut className="h-4 w-4 shrink-0 text-gray-400" />
-
           <span>Sign Out</span>
         </button>
       </div>
