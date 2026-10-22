@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReceivedInvitationsQuery } from "../api/organizationQueries";
 
@@ -12,7 +12,6 @@ export function OrganizationInvitationsPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div>
           <h1 className="text-2xl font-mono font-bold flex items-center gap-2">
-            <Mail className="h-6 w-6 text-primary" />
             Organization Invitations
           </h1>
           <p className="text-xs font-mono text-gray-400 mt-1">
@@ -37,7 +36,7 @@ export function OrganizationInvitationsPage() {
             {invitations.map((inv) => (
               <div
                 key={inv.id}
-                className="p-6 border border-white/10 rounded-sm bg-[#0C0C0E] space-y-4"
+                className="p-6 border w-7xl border-white/10 rounded-sm bg-[#0C0C0E] space-y-1"
               >
                 <div className="flex items-start gap-4">
                   <div className="h-10 w-10 text-text-primary font-mono font-bold flex items-center justify-center rounded-xs text-sm border border-gray-600">
@@ -62,10 +61,15 @@ export function OrganizationInvitationsPage() {
                   </p>
                 )}
 
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex w-6.5xl gap-3 pt-2">
+                  {inv.invited_by_name && (
+                    <p className="text-xs font-mono text-gray-300  p-3">
+                      Invited by {inv.invited_by_name}
+                    </p>
+                  )}
                   <Button
                     onClick={() => navigate(`/invitations/${inv.token}`)}
-                    className="h-9 px-4 border border-primary/50 bg-transparent text-primary/70 font-mono font-semibold text-xs hover:text-primary hover:border-primary/80 hover:bg-transparent rounded-xs"
+                    className="h-9 ml-auto px-4 border border-primary/50 bg-transparent text-primary/70 font-mono font-semibold text-xs hover:text-primary hover:border-primary/80 hover:bg-transparent rounded-xs"
                   >
                     View Invitation
                   </Button>

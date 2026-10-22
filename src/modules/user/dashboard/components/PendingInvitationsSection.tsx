@@ -43,7 +43,7 @@ export function PendingInvitationsSection() {
                 </h4>
                 <p className="text-[10px] text-zinc-400 font-sans truncate">
                   Invited by{" "}
-                  {invitation.invited_by_username ||
+                  {invitation.invited_by_name ||
                     invitation.invited_by ||
                     "Administrator"}
                 </p>

@@ -1,11 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Loader2, CheckCircle2, AlertTriangle, Building2, Mail } from "lucide-react";
+import { Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useInvitationDetailQuery } from "../api/organizationQueries";
 import { useAcceptInvitationMutation } from "../api/organizationMutations";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
+import { renderOrgIcon } from "@/utils/renderOrgIcon";
 
 export function AcceptInvitationPage() {
   const { token } = useParams<{ token: string }>();
@@ -69,7 +70,6 @@ export function AcceptInvitationPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div>
           <h1 className="text-2xl font-mono font-bold flex items-center gap-2">
-            <Mail className="h-6 w-6 text-primary" />
             Organization Invitations
           </h1>
           <p className="text-xs font-mono text-gray-400 mt-1">
@@ -79,13 +79,13 @@ export function AcceptInvitationPage() {
 
         <div className="bg-black h-100 sm:h-150 flex items-center justify-center p-4 select-none">
           <div className="max-w-6xl w-full border border-white/10 bg-[#0C0C0E] p-8 rounded-xs shadow-2xl space-y-6 text-center">
-            <div className="h-16 w-16 mx-auto rounded-xs border border-gray-600 flex items-center justify-center text-gray-400">
-              <Building2 className="h-8 w-8" />
+            <div className="h-15 w-16 mx-auto rounded-xs border border-gray-600 flex items-center justify-center text-gray-400">
+              {renderOrgIcon(detail.organization.icon)}
             </div>
 
             <div>
               <h1 className="text-xl font-mono font-bold text-white">
-                Join {detail.organization.name}
+                Join Organization:  {detail.organization.name}
               </h1>
               <p className="text-xs font-mono text-gray-400 mt-2">
                 You have been invited to join{" "}

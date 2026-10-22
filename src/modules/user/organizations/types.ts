@@ -257,6 +257,7 @@ export interface ReceivedInvitation {
   permission_role: "admin" | "member";
   job_role_name: string;
   token: string;
+  invited_by_name: string;
   personal_message?: string;
   expires_at: string;
   created_at: string;
@@ -266,7 +267,7 @@ export interface InvitationDetailResponse {
   organization: {
     name: string;
     slug: string;
-    icon?: string;
+    icon: string;
   };
   job_role: {
     id: string;

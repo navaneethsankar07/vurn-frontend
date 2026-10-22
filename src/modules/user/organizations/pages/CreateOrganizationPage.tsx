@@ -92,13 +92,12 @@ export function CreateOrganizationPage() {
     <div className="relative text-white font-mono px-4 sm:px-6 lg:px-8 flex justify-center items-start">
       {isRedirecting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md transition-all duration-300">
-          <div className="flex items-center gap-3.5 bg-[#09090b] border border-white/10 px-5 py-3.5 rounded-md shadow-2xl">
-            <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
+          <div className="flex items-center gap-3.5 bg-[#09090b] border border-white/10 px-5 py-3.5 rounded-xs shadow-2xl">
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
             <div className="flex items-center gap-2 text-xs font-mono">
               <span className="text-gray-200 font-medium">
-                Redirecting to workspace
+                Redirecting to workspace...
               </span>
-              <span className="flex h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
             </div>
           </div>
         </div>

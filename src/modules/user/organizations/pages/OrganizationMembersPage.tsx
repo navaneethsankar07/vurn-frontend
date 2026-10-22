@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import {
   UserPlus,
   Search,
-  MoreHorizontal,
+  // MoreHorizontal,
   ShieldAlert,
   Loader2,
   X,
@@ -159,8 +159,8 @@ export function OrganizationMembersPage() {
         </div>
 
         <div className="border border-white/10 rounded-sm bg-[#0C0C0E] overflow-x-auto">
-          <table className="w-full text-left font-mono text-xs min-w-160">
-            <thead className="border-b border-white/10 bg-white/5 text-gray-400">
+          <table className="w-full text-center font-mono text-xs min-w-4xl">
+            <thead className="border-b border-white/10  bg-white/5 text-gray-400">
               <tr>
                 <th className="py-3 px-4 font-normal">Name</th>
                 <th className="py-3 px-4 font-normal">Email</th>
@@ -237,13 +237,13 @@ export function OrganizationMembersPage() {
                     <td className="py-3.5 px-4 text-gray-400">
                       {member.project_count}
                     </td>
-                    {canManageMembers && (
+                    {/* {canManageMembers && (
                       <td className="py-3.5 px-4 text-right">
                         <button className="text-gray-500 hover:text-white cursor-pointer">
                           <MoreHorizontal className="h-4 w-4" />
                         </button>
                       </td>
-                    )}
+                    )} */}
                   </tr>
                 ))
               )}

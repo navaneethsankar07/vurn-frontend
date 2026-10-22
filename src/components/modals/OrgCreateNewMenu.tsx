@@ -26,7 +26,7 @@ export function OrgCreateNewMenu({ onClose }: OrgCreateNewMenuProps) {
     const port = window.location.port ? `:${window.location.port}` : "";
     const rawBaseDomain = import.meta.env.VITE_APP_BASE_DOMAIN || "lvh.me";
     const cleanBaseDomain = rawBaseDomain.split(":")[0];
-    window.location.href = `${protocol}//${cleanBaseDomain}${port}/organizations`;
+    window.location.href = `${protocol}//${cleanBaseDomain}${port}/organizations/new`;
   };
 
   return (
