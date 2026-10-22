@@ -6,6 +6,7 @@ import {
   createOrganizationRole,
   createRazorpayOrder,
   invitationApi,
+  pinOrganization,
   requestDeleteOrganization,
   updateOrganizationBranding,
   updateOrganizationPreferences,
@@ -96,6 +97,17 @@ export function useConfirmDeleteOrgMutation(slug: string) {
 
   return useMutation({
     mutationFn: (code: string) => confirmDeleteOrganization(slug, code),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() });
+    },
+  });
+}
+
+export function usePinOrganizationMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slug, isPinned }: { slug: string; isPinned: boolean }) =>
+      pinOrganization(slug, isPinned),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: organizationKeys.lists() });
     },

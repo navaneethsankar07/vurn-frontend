@@ -62,7 +62,7 @@ export function HomeRecentActivitySection() {
                 key={activity.id}
                 className="py-2 flex items-start justify-between gap-3 text-xs"
               >
-                <div className="flex items-start gap-3 min-w-0">
+                <div className="flex items-start gap-4 min-w-0">
                   <IconComp className="h-4 w-4 text-zinc-400 shrink-0 mt-0.5" />
                   <div className="min-w-0">
                     <p className="text-white font-medium truncate">
@@ -77,9 +77,6 @@ export function HomeRecentActivitySection() {
                           in {activity.project_name}
                         </span>
                       )}
-                    </p>
-                    <p className="text-zinc-400 text-[11px] truncate mt-0.5 font-sans">
-                      {activity.metadata?.subtitle || activity.issue_key || ""}
                     </p>
                   </div>
                 </div>

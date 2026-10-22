@@ -77,14 +77,20 @@ export function OrganizationsPage() {
     return true;
   });
 
+  const sortedOrganizations = [...filteredOrganizations].sort((a, b) => {
+    if (a.is_pinned && !b.is_pinned) return -1;
+    if (!a.is_pinned && b.is_pinned) return 1;
+    return 0;
+  });
+
   const recentOrganizations = data?.results?.recent || [];
   const totalCount = data?.count || 0;
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1;
   const hasRecent = recentOrganizations.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#030303] text-white font-mono px-4 sm:px-6 lg:px-8 py-10 flex justify-center">
-      <div className="w-full max-w-5xl space-y-8">
+    <div className="bg-[#030303] text-white font-mono px-4 sm:px-3 lg:px-4 py-3 flex justify-center">
+      <div className="w-full max-w-7xl space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white">
@@ -218,7 +224,7 @@ export function OrganizationsPage() {
                       {org.name}
                     </h3>
                     <p className="text-[11px] text-gray-500 truncate">
-                      {org.last_opened_at || "Opened recently"}
+                      {(org.last_opened_at) || "Opened recently"}
                     </p>
                   </div>
                 </a>
@@ -241,9 +247,9 @@ export function OrganizationsPage() {
                 />
               ))}
             </div>
-          ) : filteredOrganizations.length > 0 ? (
-            <div className="space-y-2">
-              {filteredOrganizations.map((org) => (
+          ) : sortedOrganizations.length > 0 ? (
+            <div className="space-y-3">
+              {sortedOrganizations.map((org) => (
                 <OrganizationListItem key={org.id} organization={org} />
               ))}
             </div>

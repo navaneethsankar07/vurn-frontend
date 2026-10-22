@@ -25,11 +25,11 @@ export function RecentOrganizationsSection({
             key={org.id}
             className="rounded border border-white/10 bg-[#09090b] p-4 flex flex-col justify-between space-y-4 hover:border-white/20 transition-all group"
           >
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div
-                    className="h-7 w-7 flex items-center justify-center font-bold text-xs"
+                    className="h-5 w-7 flex items-center justify-center font-bold text-xs"
                     style={{ color: org.accent_color || "inherit" }}
                   >
                     {renderOrgIcon(org.icon)}
@@ -42,9 +42,6 @@ export function RecentOrganizationsSection({
                   {org.slug}
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-400 font-sans">
-                Workspace workspace for team collaboration and code deployment.
-              </p>
             </div>
 
             <div className="flex items-center justify-between pt-2 border-t border-white/5">

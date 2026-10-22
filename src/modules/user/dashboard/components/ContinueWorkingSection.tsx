@@ -23,9 +23,9 @@ export function ContinueWorkingSection({
         {issues.slice(0, 3).map((issue) => (
           <div
             key={issue.id}
-            className="rounded border border-white/10 bg-[#09090b] p-4 flex flex-col justify-between space-y-4 hover:border-white/20 transition-all group"
+            className="rounded border border-white/10 bg-[#09090b] p-3 flex flex-col justify-between space-y-4 hover:border-white/20 transition-all group"
           >
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-white">
                   {issue.key}

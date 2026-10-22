@@ -54,6 +54,14 @@ export async function createOrganization(
   return response.data;
 }
 
+export async function pinOrganization(slug: string, isPinned: boolean) {
+  const response = await api.patch("/organizations/pin/", {
+    slug,
+    is_pinned: isPinned,
+  });
+  return response.data;
+}
+
 export async function fetchOrganizations(
   params?: OrganizationQueryParams,
 ): Promise<PaginatedOrganizationsResponse> {

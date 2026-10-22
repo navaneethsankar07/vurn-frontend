@@ -31,9 +31,9 @@ export function HomePage() {
   const recentOrganizations = data?.recent_organizations || [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-0 space-y-9 select-none">
+    <div className="mx-auto max-w-7xl px-4 sm:px-1 py-3 space-y-7 select-none">
       <div className="space-y-1">
-        <h1 className="text-lg font-bold text-white font-mono">Home</h1>
+        <h1 className="text-xl font-bold text-white font-mono">Home</h1>
         <p className="text-xs text-zinc-400 font-mono">
           Your personal workspace. Continue where you left off or manage your
           organizations.
