@@ -14,6 +14,7 @@ export function OrganizationDashboard() {
   const { data, isLoading, isError, error } = useOrganizationDashboardQuery(
     subdomain ?? undefined,
   );
+console.log(data);
 
   if (!subdomain) {
     return <div>No active organization subdomain detected.</div>;

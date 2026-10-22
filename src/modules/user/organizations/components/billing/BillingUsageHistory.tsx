@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Loader2, ChevronLeft, ChevronRight, Activity } from "lucide-react";
 import { useAiUsageHistory } from "../../api/organizationQueries";
-import type {
-  AiUsageHistoryResponse,
-  AiUsageRecord,
-} from "../../types";
+import type { AiUsageHistoryResponse, AiUsageRecord } from "../../types";
 
 interface BillingUsageHistoryProps {
   organizationSlug: string;
@@ -74,32 +71,44 @@ export function BillingUsageHistory({
                 <tr className="border-b border-white/10 bg-white/5 text-zinc-400 text-[10px] uppercase tracking-wider">
                   <th className="p-3 font-semibold">User</th>
                   <th className="p-3 font-semibold">Feature</th>
-                  <th className="p-3 font-semibold">Credits Consumed</th>
+                  <th className="p-3 font-semibold">Credits</th>
                   <th className="p-3 font-semibold">Date & Time</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-zinc-300">
-                {results.map((record: AiUsageRecord) => (
-                  <tr
-                    key={record.id}
-                    className="hover:bg-white/5 transition-colors"
-                  >
-                    <td className="p-3 font-bold text-white">
-                      {record.user?.username || `User #${record.user?.id}`}
-                    </td>
-                    <td className="p-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] border border-primary/30  text-primary uppercase font-semibold">
-                        {formatFeatureName(record.feature)}
-                      </span>
-                    </td>
-                    <td className="p-3 font-bold text-amber-400">
-                      -{record.credits_consumed} credits
-                    </td>
-                    <td className="p-3 text-zinc-400 text-[11px]">
-                      {formatDate(record.created_at)}
-                    </td>
-                  </tr>
-                ))}
+                {results.map((record: AiUsageRecord) => {
+                  const isInitialCredits =
+                    record.feature === "initial_free_credits";
+
+                  return (
+                    <tr
+                      key={record.id}
+                      className="hover:bg-white/5 transition-colors"
+                    >
+                      <td className="p-3 font-bold text-white">
+                        {record.user?.username || `User #${record.user?.id}`}
+                      </td>
+                      <td className="p-3">
+                        <span className="px-2 py-0.5 rounded text-[10px] border border-primary/30 text-primary uppercase font-semibold">
+                          {formatFeatureName(record.feature)}
+                        </span>
+                      </td>
+                      <td
+                        className={`p-3 font-bold ${
+                          isInitialCredits
+                            ? "text-emerald-400"
+                            : "text-amber-400"
+                        }`}
+                      >
+                        {isInitialCredits ? "+" : "-"}
+                        {record.credits_consumed} credits
+                      </td>
+                      <td className="p-3 text-zinc-400 text-[11px]">
+                        {formatDate(record.created_at)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

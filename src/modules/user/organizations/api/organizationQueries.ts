@@ -93,7 +93,7 @@ export function useOrganizationDashboardQuery(slug?: string) {
 
       return {
         ...dashboardData,
-        remaining_ai_credits: dashboardData.completed_issues,
+        remaining_ai_credits: dashboardData.remaining_ai_credits,
         recent_activities: recentActivities,
       };
     },

@@ -135,7 +135,7 @@ export interface BackendDashboardResponse {
   active_sprints: ActiveSprint[];
   active_sprint_count: number;
   open_issues: number;
-  completed_issues: number;
+  remaining_ai_credits: number;
   latest_projects: OrganizationProject[];
 }
 
