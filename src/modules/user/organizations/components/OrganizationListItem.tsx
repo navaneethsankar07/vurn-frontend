@@ -1,5 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Users, FolderGit2, MoreHorizontal, Pin, PinOff } from "lucide-react";
+import {
+  Users,
+  FolderGit2,
+  MoreHorizontal,
+  Pin,
+  PinOff,
+  Clock,
+} from "lucide-react";
 import { OrganizationAvatar } from "./OrganizationAvatar";
 import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { usePinOrganizationMutation } from "../api/organizationMutations";
@@ -8,14 +15,20 @@ import type { Organization } from "../types";
 
 interface OrganizationListItemProps {
   organization: Organization;
+  recentOrganizations?: Organization[];
 }
 
 export function OrganizationListItem({
   organization,
+  recentOrganizations = [],
 }: OrganizationListItemProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const pinMutation = usePinOrganizationMutation();
+
+  const isRecentlyOpened = recentOrganizations.some(
+    (rec) => rec.id === organization.id || rec.slug === organization.slug,
+  );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -82,7 +95,7 @@ export function OrganizationListItem({
               {organization.role}
             </span>
             {organization.is_pinned && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-[3px]  text-primary/70 border border-primary/30">
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-[3px] text-primary/70 border border-primary/30">
                 <Pin className="h-3 w-3" /> Pinned
               </span>
             )}
@@ -101,6 +114,12 @@ export function OrganizationListItem({
 
       <div className="flex items-center justify-between sm:justify-end gap-6 text-xs text-gray-400 shrink-0 border-t sm:border-t-0 border-white/5 pt-2 sm:pt-0">
         <div className="flex items-center gap-4">
+          {isRecentlyOpened && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-3 py-1.5 rounded-xs text-gray-400 border border-white/10">
+              <Clock className="h-3 w-3" /> Recently opened
+            </span>
+          )}
+
           <div className="flex items-center gap-1.5" title="Members">
             <Users className="h-3.5 w-3.5 text-gray-500" />
             <span className="text-gray-300">{organization.member_count}</span>

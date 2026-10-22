@@ -7,18 +7,14 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Building2,
   X,
 } from "lucide-react";
 import {
-  useOrganizationOptionsQuery,
   useOrganizationsQuery,
   organizationKeys,
 } from "../api/organizationQueries";
 import { OrganizationListItem } from "../components/OrganizationListItem";
-import { OrganizationAvatar } from "../components/OrganizationAvatar";
-import { getOrganizationUrl } from "@/utils/organizationUrl";
 import { ITEMS_PER_PAGE } from "../constants";
 import type { RoleFilter, SortOption, SortOrder } from "../types";
 
@@ -63,7 +59,6 @@ export function OrganizationsPage() {
   };
 
   const { data, isLoading } = useOrganizationsQuery(queryParams);
-  const { data: options } = useOrganizationOptionsQuery();
 
   const fetchedOrganizations = data?.results?.organizations || [];
   const filteredOrganizations = fetchedOrganizations.filter((org) => {
@@ -86,7 +81,6 @@ export function OrganizationsPage() {
   const recentOrganizations = data?.results?.recent || [];
   const totalCount = data?.count || 0;
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1;
-  const hasRecent = recentOrganizations.length > 0;
 
   return (
     <div className="bg-[#030303] text-white font-mono px-4 sm:px-3 lg:px-4 py-3 flex justify-center">
@@ -199,40 +193,6 @@ export function OrganizationsPage() {
           </div>
         </div>
 
-        {hasRecent && (
-          <div className="space-y-3">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-              <Clock className="h-3.5 w-3.5 text-gray-500" />
-              Recently opened
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {recentOrganizations.map((org) => (
-                <a
-                  key={org.id}
-                  href={getOrganizationUrl(org.slug)}
-                  className="flex items-center gap-3 p-3.5 rounded-[3px] border border-white/5 bg-[#09090b] hover:bg-[#121215] hover:border-white/15 transition-all"
-                >
-                  <OrganizationAvatar
-                    name={org.name}
-                    icon={org.icon}
-                    accentColor={org.accent_color}
-                    logoUrl={org.logo_url}
-                    availableColors={options?.accent_colors}
-                  />
-                  <div className="min-w-0">
-                    <h3 className="text-xs font-semibold text-white truncate">
-                      {org.name}
-                    </h3>
-                    <p className="text-[11px] text-gray-500 truncate">
-                      {(org.last_opened_at) || "Opened recently"}
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
         <div className="space-y-3">
           <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
             All organizations
@@ -250,7 +210,11 @@ export function OrganizationsPage() {
           ) : sortedOrganizations.length > 0 ? (
             <div className="space-y-3">
               {sortedOrganizations.map((org) => (
-                <OrganizationListItem key={org.id} organization={org} />
+                <OrganizationListItem
+                  key={org.id}
+                  organization={org}
+                  recentOrganizations={recentOrganizations}
+                />
               ))}
             </div>
           ) : (
