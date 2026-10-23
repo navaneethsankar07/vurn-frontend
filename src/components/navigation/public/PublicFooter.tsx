@@ -11,7 +11,7 @@ export function SiteFooter() {
           <Link to="#privacy" className="transition-colors hover:text-white">
             Privacy
           </Link>
-          <Link to="#terms" className="transition-colors hover:text-white">
+          <Link to="/terms" className="transition-colors hover:text-white">
             Terms
           </Link>
         </div>

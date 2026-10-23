@@ -13,6 +13,7 @@ import { LandingPage } from "@/modules/public/landing/pages/LandingPage";
 import { DocumentationPage } from "@/modules/public/docs/pages/DocumentationPage";
 import { FeaturesPage } from "@/modules/public/features/pages/FeaturesPage";
 import { PricingPage } from "@/modules/public/pricing/pages/PricingPage";
+import { TermsPage } from "@/modules/public/terms/pages/TermsPage";
 
 export const PublicRoutes: RouteObject[] = [
   {
@@ -32,6 +33,10 @@ export const PublicRoutes: RouteObject[] = [
           {
             path: "/pricing",
             element: <PricingPage />,
+          },
+          {
+            path: "/terms",
+            element: <TermsPage />,
           },
           {
             path: "/docs",

@@ -7,7 +7,7 @@ export function PublicLayout() {
     <div className="flex min-h-screen flex-col bg-black text-white selection:bg-amber-500 selection:text-black overflow-hidden">
       <SiteHeader />
 
-      <main className="flex flex-1 flex-col min-h-0 overflow-hidden">
+      <main className="flex flex-1 flex-col">
         <Outlet />
       </main>
 
