@@ -29,7 +29,7 @@ const FEATURES = [
 
 export function FeaturesGrid() {
   return (
-    <section className="px-6 py-20 max-w-7xl mx-auto w-full font-mono border-t border-white/5">
+    <section className="px-6 py-20 max-w-8xl md:pb-40 mx-35  font-mono border-t border-white/5">
       <div className="space-y-4 mb-12">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
           Built for modern engineering teams

@@ -4,7 +4,7 @@ import { CtaBanner } from "../components/CtaBanner";
 
 export function LandingPage() {
   return (
-    <div className="flex flex-col min-h-full bg-black text-white">
+    <div className="flex flex-col lg:mt-50 min-h-screen bg-black text-white">
       <HeroSection />
       <FeaturesGrid />
       <CtaBanner />

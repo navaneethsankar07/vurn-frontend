@@ -5,9 +5,9 @@ import { SignupVisualPanel } from "../components/signup/SignupVisualPanel";
 
 export default function LoginPage() {
   return (
-    <main className="grid min-h-[calc(100vh-4rem)] flex-1 grid-cols-1 lg:grid-cols-2">
+    <main className="grid flex-1 grid-cols-1 lg:grid-cols-2">
       <div className="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-16">
-        <div className="w-full max-w-md">
+        <div className="w-full pt-20 max-w-md">
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
             Welcome Back
           </h1>

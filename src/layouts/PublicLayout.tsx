@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/navigation/public/PublicFooter";
 
 export function PublicLayout() {
   return (
-    <div className="flex h-screen flex-col bg-black text-white selection:bg-amber-500 selection:text-black overflow-hidden">
+    <div className="flex min-h-screen flex-col bg-black text-white selection:bg-amber-500 selection:text-black overflow-hidden">
       <SiteHeader />
 
       <main className="flex flex-1 flex-col min-h-0 overflow-hidden">

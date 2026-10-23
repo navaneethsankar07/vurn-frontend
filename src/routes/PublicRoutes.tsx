@@ -11,6 +11,7 @@ import ForgotPasswordPage from "@/modules/public/auth/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/modules/public/auth/pages/ResetPasswordPage";
 import { LandingPage } from "@/modules/public/landing/pages/LandingPage";
 import { DocumentationPage } from "@/modules/public/docs/pages/DocumentationPage";
+import { FeaturesPage } from "@/modules/public/features/pages/FeaturesPage";
 
 export const PublicRoutes: RouteObject[] = [
   {
@@ -22,6 +23,10 @@ export const PublicRoutes: RouteObject[] = [
           {
             path: "/",
             element: <LandingPage />,
+          },
+          {
+            path: "/features",
+            element: <FeaturesPage />,
           },
           {
             path: "/docs",

@@ -14,9 +14,6 @@ export function SiteFooter() {
           <Link to="#terms" className="transition-colors hover:text-white">
             Terms
           </Link>
-          <Link to="#status" className="transition-colors hover:text-white">
-            Status
-          </Link>
         </div>
       </div>
     </footer>
