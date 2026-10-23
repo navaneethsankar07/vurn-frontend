@@ -1,11 +1,7 @@
-import { ExternalLink, Ticket } from "lucide-react";
 import type { ProfileHeaderCardProps } from "../types";
 import { formatMonthYear } from "@/utils/date";
 
-export function ProfileHeaderCard({
-  user,
-  onTokenTransactionsClick,
-}: ProfileHeaderCardProps) {
+export function ProfileHeaderCard({ user }: ProfileHeaderCardProps) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-[3px] border border-white/10 bg-[#0C0C0E] p-6 font-mono">
       <div className="flex items-center gap-4">
@@ -28,16 +24,6 @@ export function ProfileHeaderCard({
           </span>
         </div>
       </div>
-
-      <button
-        type="button"
-        onClick={onTokenTransactionsClick}
-        className="flex items-center gap-2 rounded-[3px] border border-amber-500/40 bg-amber-500/10 px-3.5 py-2 text-xs font-semibold text-amber-500 transition-colors hover:bg-amber-500/20"
-      >
-        <Ticket className="h-4 w-4" />
-        <span>AI Token Transactions</span>
-        <ExternalLink className="h-3.5 w-3.5" />
-      </button>
     </div>
   );
 }

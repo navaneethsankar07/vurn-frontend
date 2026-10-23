@@ -19,15 +19,8 @@ export type ProfileActivityType =
   | "invitation_accepted"
   | "organization_joined";
 
-export interface ProfileActivity {
-  type: ProfileActivityType;
-  title: string;
-  description: string;
-  timestamp: string;
-}
-
 export interface ProfileStatistics {
-  organizations_joined: number;
+  organizations: number;
   projects: number;
   assigned_issues: number;
   completed_issues: number;
@@ -39,7 +32,6 @@ export interface ProfileResponse {
   message?: string;
   user: ProfileUser;
   statistics: ProfileStatistics;
-  recent_activity: ProfileActivity[];
 }
 
 export interface ProfileHeaderCardProps {
@@ -53,10 +45,6 @@ export interface PersonalInfoCardProps {
 
 export interface ProfileStatsCardProps {
   statistics: ProfileStatistics;
-}
-
-export interface RecentActivityCardProps {
-  activities: ProfileActivity[];
 }
 
 export interface GeneralSettingsFormData {

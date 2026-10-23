@@ -1,52 +1,90 @@
 import {
-  GitCommit,
   MessageSquare,
+  Loader2,
+  Activity,
+  CircleCheckBig,
   CheckCircle2,
-  Mail,
-  Building2,
-  type LucideIcon,
+  GitCommit,
 } from "lucide-react";
-import type { ProfileActivity, ProfileActivityType, RecentActivityCardProps } from "../types";
-import { formatTimeAgo } from "@/utils/date";
+import { useRecentActivities } from "@/modules/user/activities/api/recentActivityQueries";
+import type { RecentActivityItem } from "@/modules/user/activities/types";
+import { formatRelativeTime } from "@/utils/date";
 
-const ICON_MAP: Record<ProfileActivityType, LucideIcon> = {
-  issue_created: GitCommit,
-  comment_added: MessageSquare,
-  issue_closed: CheckCircle2,
-  invitation_accepted: Mail,
-  organization_joined: Building2,
-};
+export function RecentActivityCard() {
+  const { data: activities, isLoading } = useRecentActivities({
+    scope: "home",
+  });
 
-export function RecentActivityCard({ activities }: RecentActivityCardProps) {
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case "issue_completed":
+      case "issue_closed":
+        return CheckCircle2;
+      case "issue_created":
+      case "issue_updated":
+        return GitCommit;
+      case "sprint_created":
+        return CircleCheckBig;
+      case "invitation_accepted":
+        return MessageSquare;
+      default:
+        return Activity;
+    }
+  };
+
+  const activityList: RecentActivityItem[] = activities || [];
+
   return (
-    <div className="rounded-[3px] border border-white/10 bg-[#0C0C0E] font-mono overflow-hidden">
-      <div className="border-b border-white/10 px-5 py-4">
-        <h3 className="text-sm font-normal text-white">Recent Activity</h3>
+    <div className="border border-white/10 rounded-[3px] p-5 space-y-4 font-mono bg-[#0C0C0E]">
+      <div className="flex items-center justify-between border-b border-white/5 pb-3">
+        <h3 className="text-xs font-semibold text-white uppercase tracking-wider">
+          Recent Activity
+        </h3>
       </div>
-      <div className="divide-y divide-white/10">
-        {activities.map((act: ProfileActivity, index: number) => {
-          const Icon = ICON_MAP[act.type] || GitCommit;
-          return (
-            <div
-              key={`${act.type}-${act.timestamp}-${index}`}
-              className="flex items-center justify-between gap-4 px-5 py-4"
-            >
-              <div className="flex items-start gap-3.5">
-                <Icon className="h-4 w-4 shrink-0 text-gray-400 mt-0.5" />
-                <div className="flex flex-col">
-                  <span className="text-sm text-white">{act.title}</span>
-                  <span className="text-xs text-gray-500 mt-1">
-                    {act.description}
-                  </span>
+
+      {isLoading ? (
+        <div className="py-12 flex items-center justify-center text-zinc-500 text-xs gap-2">
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          <span>Loading recent activities...</span>
+        </div>
+      ) : activityList.length === 0 ? (
+        <div className="py-8 text-center text-zinc-500 text-xs italic">
+          No recent activity found.
+        </div>
+      ) : (
+        <div className="divide-y divide-white/5">
+          {activityList.slice(0, 5).map((activity) => {
+            const IconComp = getActivityIcon(activity.activity_type);
+
+            return (
+              <div
+                key={activity.id}
+                className="py-2.5 flex items-start justify-between gap-3 text-xs"
+              >
+                <div className="flex items-start gap-4 min-w-0">
+                  <IconComp className="h-4 w-4 text-zinc-400 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-white font-medium truncate">
+                      <span className="text-zinc-300 font-normal">
+                        {activity.description}
+                      </span>
+                      {activity.project_name && (
+                        <span className="text-zinc-400 font-normal ml-1">
+                          in {activity.project_name}
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 </div>
+                <span className="text-[10px] text-zinc-500 shrink-0 font-mono">
+                  {formatRelativeTime(activity.created_at)}
+                </span>
               </div>
-              <span className="text-xs text-gray-500 shrink-0 self-start sm:self-center">
-                {formatTimeAgo(act.timestamp)}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

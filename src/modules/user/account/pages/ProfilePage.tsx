@@ -18,7 +18,8 @@ export default function ProfilePage() {
   if (isError || !data) {
     return (
       <div className="mx-auto max-w-5xl p-6 font-mono text-red-400">
-        Error loading profile: {error instanceof Error ? error.message : "Unknown error"}
+        Error loading profile:{" "}
+        {error instanceof Error ? error.message : "Unknown error"}
       </div>
     );
   }
@@ -29,17 +30,14 @@ export default function ProfilePage() {
         Profile
       </h1>
 
-      <ProfileHeaderCard
-        user={data.user}
-        onTokenTransactionsClick={() => console.log("Navigate to AI tokens")}
-      />
+      <ProfileHeaderCard user={data.user} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PersonalInfoCard user={data.user} />
         <ProfileStatsCard statistics={data.statistics} />
       </div>
 
-      <RecentActivityCard activities={data.recent_activity} />
+      <RecentActivityCard />
     </div>
   );
 }

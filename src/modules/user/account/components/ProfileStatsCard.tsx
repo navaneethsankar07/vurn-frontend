@@ -2,7 +2,7 @@ import type { ProfileStatsCardProps } from "../types";
 
 export function ProfileStatsCard({ statistics }: ProfileStatsCardProps) {
   const statList = [
-    { label: "Organizations Joined", value: statistics.organizations_joined },
+    { label: "Organizations", value: statistics.organizations },
     { label: "Projects", value: statistics.projects },
     { label: "Assigned Issues", value: statistics.assigned_issues },
     { label: "Completed Issues", value: statistics.completed_issues },
@@ -24,7 +24,7 @@ export function ProfileStatsCard({ statistics }: ProfileStatsCardProps) {
             key={stat.label}
             className="bg-[#0C0C0E] px-5 py-5 flex flex-col justify-center"
           >
-            <span className="text-xl sm:text-2xl font-normal text-white">
+            <span className="text-xl sm:text-xl font-normal text-white">
               {stat.value}
             </span>
             <span className="text-xs text-gray-400 mt-2">{stat.label}</span>

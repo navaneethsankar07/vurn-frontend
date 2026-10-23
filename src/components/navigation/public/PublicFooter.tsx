@@ -8,7 +8,7 @@ export function SiteFooter() {
           © 2026 Vurn. Built for modern engineering teams.
         </p>
         <div className="flex items-center gap-10 font-mono">
-          <Link to="#privacy" className="transition-colors hover:text-white">
+          <Link to="/privacy" className="transition-colors hover:text-white">
             Privacy
           </Link>
           <Link to="/terms" className="transition-colors hover:text-white">

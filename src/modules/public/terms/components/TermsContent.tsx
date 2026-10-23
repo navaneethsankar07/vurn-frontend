@@ -123,7 +123,8 @@ export function TermsContent() {
         <p className="font-sans text-zinc-400 leading-relaxed">
           If you have any questions regarding these Terms of Service, please
           contact our legal and compliance department at{" "}
-          <span className="text-primary font-mono">legal@vurn.internal</span>.
+          <span className="text-primary font-mono">vurn.noreply@gmail.com</span>
+          .
         </p>
       </section>
     </div>

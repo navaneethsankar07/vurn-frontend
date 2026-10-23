@@ -4,7 +4,7 @@ import { TermsContent } from "../components/TermsContent";
 
 export function TermsPage() {
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-black text-white overflow-hidden">
+    <div className="flex pt-25 flex-col h-[calc(100vh-5rem)] bg-black text-white overflow-hidden">
       <TermsHero />
       <div className="flex-1 min-h-0 px-6 py-6 max-w-8xl mx-35 font-mono w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full items-start">

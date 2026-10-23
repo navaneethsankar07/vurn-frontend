@@ -16,6 +16,7 @@ export function GoogleAuthButton() {
       theme="outline"
       shape="rectangular"
       size="large"
+      text="continue_with"
       onSuccess={(credentialResponse) => {
         if (!credentialResponse.credential) return;
 

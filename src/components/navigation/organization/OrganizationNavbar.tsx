@@ -208,70 +208,74 @@ export function OrganizationNavbar({
             </button>
 
             {orgDropdownOpen && (
-              <div className="absolute left-0 mt-1.5 w-64 bg-[#09090b] py-1.5 shadow-xl z-50 text-sm border border-white/10">
-                <div className="px-3.5 py-1.5 text-[11px] uppercase text-gray-500 font-semibold">
+              <div className="absolute left-0 mt-1.5 w-56 bg-[#09090b] shadow-xl z-50 text-sm border border-white/10 flex flex-col max-h-80">
+                <div className="px-3.5 py-2 text-[11px] uppercase text-gray-500 font-semibold shrink-0 border-b border-white/5">
                   Your Organizations
                 </div>
 
-                {userOrgs.length > 0 ? (
-                  userOrgs.map((org) => {
-                    const isCurrent =
-                      currentSubdomain?.toLowerCase() ===
-                      org.slug.toLowerCase();
-                    return (
-                      <button
-                        key={org.slug}
-                        type="button"
-                        onClick={() => handleSwitchOrg(org.slug)}
-                        className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left hover:bg-white/5 transition-colors cursor-pointer ${
-                          isCurrent
-                            ? "text-white bg-white/5 font-semibold"
-                            : "text-gray-300"
-                        }`}
-                      >
-                        {org.logo_url ? (
-                          <img
-                            src={org.logo_url}
-                            alt={org.name}
-                            className="h-4.5 w-4.5 object-cover shrink-0"
-                          />
-                        ) : org.icon ? (
-                          <span className="shrink-0 flex items-center justify-center">
-                            {renderOrgIcon(org.icon, {
-                              className: `h-4 w-4 ${
+                <div className="overflow-y-auto flex-1 min-h-0 py-1 divide-y divide-white/5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#09090b] [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-white/20">
+                  {userOrgs.length > 0 ? (
+                    userOrgs.map((org) => {
+                      const isCurrent =
+                        currentSubdomain?.toLowerCase() ===
+                        org.slug.toLowerCase();
+                      return (
+                        <button
+                          key={org.slug}
+                          type="button"
+                          onClick={() => handleSwitchOrg(org.slug)}
+                          className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left hover:bg-white/5 transition-colors cursor-pointer ${
+                            isCurrent
+                              ? "text-white bg-white/5 font-semibold"
+                              : "text-gray-300"
+                          }`}
+                        >
+                          {org.logo_url ? (
+                            <img
+                              src={org.logo_url}
+                              alt={org.name}
+                              className="h-4.5 w-4.5 object-cover shrink-0"
+                            />
+                          ) : org.icon ? (
+                            <span className="shrink-0 flex items-center justify-center">
+                              {renderOrgIcon(org.icon, {
+                                className: `h-4 w-4 ${
+                                  isCurrent ? "text-amber-500" : "text-gray-500"
+                                }`,
+                              })}
+                            </span>
+                          ) : (
+                            <Building2
+                              className={`h-4 w-4 shrink-0 ${
                                 isCurrent ? "text-amber-500" : "text-gray-500"
-                              }`,
-                            })}
+                              }`}
+                            />
+                          )}
+                          <span className="truncate capitalize text-sm">
+                            {org.name}
                           </span>
-                        ) : (
-                          <Building2
-                            className={`h-4 w-4 shrink-0 ${
-                              isCurrent ? "text-amber-500" : "text-gray-500"
-                            }`}
-                          />
-                        )}
-                        <span className="truncate capitalize text-sm">
-                          {org.name}
-                        </span>
-                      </button>
-                    );
-                  })
-                ) : (
-                  <div className="px-3.5 py-2 text-gray-500 text-sm">
-                    No organizations found
-                  </div>
-                )}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="px-3.5 py-3 text-gray-500 text-sm text-center">
+                      No organizations found
+                    </div>
+                  )}
+                </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOrgDropdownOpen(false);
-                    handleBaseDomainNavigate("/organizations");
-                  }}
-                  className="flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-amber-500 hover:bg-white/5 transition-colors border-t border-white/5 cursor-pointer text-sm font-medium"
-                >
-                  View All Organizations
-                </button>
+                <div className="shrink-0 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOrgDropdownOpen(false);
+                      handleBaseDomainNavigate("/organizations");
+                    }}
+                    className="flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-amber-500 hover:bg-white/5 transition-colors cursor-pointer text-sm font-medium"
+                  >
+                    View All Organizations
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -65,6 +65,7 @@ export function QuickActions() {
           </button>
           <button
             type="button"
+            onClick={() => navigate("/settings")}
             className="flex w-full items-center gap-2.5 rounded px-2.5 py-1.5 text-xs text-gray-300 hover:bg-white/5 hover:text-white transition-colors cursor-pointer"
           >
             <Settings className="h-3.5 w-3.5 text-primary" />

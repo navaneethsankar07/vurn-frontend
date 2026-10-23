@@ -1,4 +1,5 @@
 import type { RouteObject } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { OrganizationLayout } from "@/layouts/OrganizationLayout";
 import { ProtectedRoute } from "@/routes/guards/ProtectedRoute";
 import { OrganizationDashboard } from "@/modules/user/organizations/pages/OrganizationDashboard";
@@ -38,6 +39,10 @@ export const OrganizationRoutes: RouteObject[] = subdomain
                 path: "settings",
                 element: <SettingsLayout />,
                 children: [
+                  {
+                    index: true,
+                    element: <Navigate to="general" replace />,
+                  },
                   {
                     path: "general",
                     element: <GeneralSettingsPage />,

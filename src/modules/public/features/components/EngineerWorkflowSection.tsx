@@ -21,11 +21,11 @@ export function EngineerWorkflowSection() {
             </li>
             <li className="flex items-center gap-2.5 text-xs text-zinc-300 font-sans">
               <Check className="h-4 w-4 text-primary shrink-0" />
-              <span>Real-time collaborative planning sessions</span>
+              <span>Kanban Board Support</span>
             </li>
             <li className="flex items-center gap-2.5 text-xs text-zinc-300 font-sans">
               <Check className="h-4 w-4 text-primary shrink-0" />
-              <span>Detailed audit logs and activity tracking</span>
+              <span> AI Features to enhance productivity</span>
             </li>
           </ul>
         </div>
@@ -37,19 +37,15 @@ export function EngineerWorkflowSection() {
           <ul className="space-y-3">
             <li className="flex items-center gap-2.5 text-xs text-zinc-300 font-sans">
               <Check className="h-4 w-4 text-primary shrink-0" />
-              <span>Lightning-fast sprint board performance</span>
+              <span>Issue management</span>
             </li>
             <li className="flex items-center gap-2.5 text-xs text-zinc-300 font-sans">
               <Check className="h-4 w-4 text-primary shrink-0" />
-              <span>Granular role-based access control</span>
+              <span>Custom role-based access control</span>
             </li>
             <li className="flex items-center gap-2.5 text-xs text-zinc-300 font-sans">
               <Check className="h-4 w-4 text-primary shrink-0" />
-              <span>Automated webhook integrations</span>
-            </li>
-            <li className="flex items-center gap-2.5 text-xs text-zinc-300 font-sans">
-              <Check className="h-4 w-4 text-primary shrink-0" />
-              <span>Zero-latency enterprise updates</span>
+              <span>webhook support</span>
             </li>
           </ul>
         </div>

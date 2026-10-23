@@ -1,17 +1,15 @@
 import { Check, X } from "lucide-react";
 
 const VURN_FEATURES = [
-  "Automatic branch creation",
-  "Commit linking",
-  "Pull request tracking",
-  "PR status reflection",
-  "Automated issue closure",
-  "Repository insights",
+  "Commit Tracking",
+  "Pull Request Tracking",
+  "Issue Tracking",
+  "Automatic & Manual Issue Linking",
+  "Release Notes",
 ];
 
 const STANDARD_FEATURES = [
   "Manual status updates",
-  "No direct links",
   "Disconnected workflow",
   "Context switching",
   "Extra overhead",
@@ -88,7 +86,7 @@ export function GitHubIntegrationSection() {
               </div>
               <div className="p-3 rounded-xs bg-white/3 border border-white/5 flex items-center justify-between">
                 <span className="text-zinc-300">
-                  Branch created: feat/org-pinning
+                  Issue: fix authentication redirect flow
                 </span>
                 <span className="text-primary font-bold">#VR-204</span>
               </div>

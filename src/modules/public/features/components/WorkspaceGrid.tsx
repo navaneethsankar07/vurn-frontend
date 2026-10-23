@@ -4,61 +4,49 @@ import {
   Layers,
   GitBranch,
   BookOpen,
-  Cpu,
+  UsersRound,
 } from "lucide-react";
 
 const WORKSPACE_FEATURES = [
   {
     icon: Terminal,
+    title: "Organization Management",
+    items: [
+      "Workspaces / projects",
+      "Roles",
+      "Permissions",
+      "Invite & Manage Members",
+    ],
+  },
+  {
+    icon: UsersRound,
     title: "Project Management",
-    items: ["Workspaces", "Milestones", "Project analytics", "Team velocity"],
+    items: ["Sprints", "Issues", "Members", "Custom Workflow"],
   },
   {
     icon: CheckSquare,
     title: "Issue Tracking",
-    items: [
-      "Custom statuses",
-      "Priorities",
-      "Labels",
-      "Assignees",
-      "Subtasks",
-      "Comments",
-    ],
+    items: ["Subtasks", "Comments", "Attachments", "Sprint History"],
   },
   {
     icon: Layers,
     title: "Sprint Planning",
-    items: [
-      "Backlog grooming",
-      "Kanban boards",
-      "Story point estimation",
-      "Velocity tracking",
-    ],
+    items: ["Backlog", "Kanban board", "Story point estimation", "Add Issues"],
   },
   {
     icon: GitBranch,
     title: "Version Control",
     items: [
-      "GitHub integration",
-      "Commit syncing",
-      "PR linking",
-      "Branch tracking",
+      "Integration",
+      "Commit Tracking",
+      "PR Tracking",
+      "Issue Trancking & Linking",
     ],
   },
   {
     icon: BookOpen,
-    title: "Documentation",
-    items: [
-      "Markdown knowledge base",
-      "Team wikis",
-      "API references",
-      "Rich formatting",
-    ],
-  },
-  {
-    icon: Cpu,
-    title: "Workflow Engine",
-    items: ["Custom automations", "Webhook triggers", "Project templates"],
+    title: "Knowlege Base",
+    items: ["Folders", "Files", "Markdown Support", "Rich Text Editor"],
   },
 ];
 

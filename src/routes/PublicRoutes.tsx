@@ -14,6 +14,7 @@ import { DocumentationPage } from "@/modules/public/docs/pages/DocumentationPage
 import { FeaturesPage } from "@/modules/public/features/pages/FeaturesPage";
 import { PricingPage } from "@/modules/public/pricing/pages/PricingPage";
 import { TermsPage } from "@/modules/public/terms/pages/TermsPage";
+import { PrivacyPage } from "@/modules/public/privacy/pages/PrivacyPage";
 
 export const PublicRoutes: RouteObject[] = [
   {
@@ -37,6 +38,10 @@ export const PublicRoutes: RouteObject[] = [
           {
             path: "/terms",
             element: <TermsPage />,
+          },
+          {
+            path: "/privacy",
+            element: <PrivacyPage />,
           },
           {
             path: "/docs",
