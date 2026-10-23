@@ -3,6 +3,7 @@ import { Pencil, Archive, Plus, Folder } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getSubdomain } from "@/utils/subdomain";
 import { useProjectDashboard } from "../api/projectQueries";
+import { renderOrgIcon } from "@/utils/renderOrgIcon";
 
 export function ProjectHeader() {
   const navigate = useNavigate();
@@ -14,9 +15,17 @@ export function ProjectHeader() {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-5 font-mono">
       <div className="flex items-start gap-3.5">
-        <div className="h-10 w-10 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 mt-0.5">
-          <Folder className="h-5 w-5" />
-        </div>
+        {project?.logo_url ? (
+          <img className="h-10 w-10 rounded-xs" src={project.logo_url} alt="" />
+        ) : (
+          <div
+            className="h-10 w-10 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 mt-0.5"
+            style={{ color: project?.accent_color || "var(--primary)" }}
+          >
+            {" "}
+            {project?.icon ? renderOrgIcon(project.icon) : <Folder />}
+          </div>
+        )}
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">

@@ -25,6 +25,9 @@ export interface ProjectDashboardData {
   name: string;
   key: string;
   status: string;
+  icon: string;
+  accent_color: string;
+  logo_url: string | null;
   description: string;
   open_issues: number;
   completed_issues: number;
