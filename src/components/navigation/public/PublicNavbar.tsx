@@ -6,7 +6,7 @@ import logo from "@/assets/logo.svg";
 
 const NAV_LINKS = [
   { label: "Features", href: "/features" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Pricing", href: "/pricing" },
   { label: "Documentation", href: "/docs" },
 ];
 export function SiteHeader() {
