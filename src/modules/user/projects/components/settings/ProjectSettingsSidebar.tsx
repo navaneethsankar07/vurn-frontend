@@ -1,6 +1,5 @@
 import { NavLink, useParams } from "react-router-dom";
 import { SlidersHorizontal, AlertTriangle } from "lucide-react";
-import { GithubIcon } from "@/utils/icons";
 
 interface NavItem {
   label: string;
@@ -11,7 +10,6 @@ interface NavItem {
 
 const SETTINGS_NAV_ITEMS: NavItem[] = [
   { label: "General", path: "general", icon: SlidersHorizontal },
-  { label: "GitHub Integration", path: "github", icon: GithubIcon },
   {
     label: "Danger Zone",
     path: "danger-zone",

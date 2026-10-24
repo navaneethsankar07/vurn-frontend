@@ -10,6 +10,7 @@ import { UserProfileMenu } from "@/modules/user/account/components/UserProfileMe
 import { OrgCreateNewMenu } from "@/components/modals/OrgCreateNewMenu";
 import { useUnreadNotificationCount } from "@/modules/user/notifications/api/notificationQueries";
 
+import profile from "@/assets/profile.png"
 import logo from "@/assets/logo.svg";
 import { GlobalSearchInput } from "@/modules/user/search/components/GlobalSearchInput";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -134,12 +135,6 @@ export function OrganizationNavbar({
     setOrgDropdownOpen(false);
     window.location.href = getOrganizationUrl(slug);
   };
-
-  const fallbackInitial = user?.full_name
-    ? user.full_name.charAt(0).toUpperCase()
-    : user?.username
-      ? user.username.charAt(0).toUpperCase()
-      : "U";
 
   const userOrgs = (user?.organizations as OrganizationSummary[]) || [];
 
@@ -341,17 +336,12 @@ export function OrganizationNavbar({
               className="h-8.5 w-8.5 rounded-full bg-linear-to-tr from-amber-500 to-amber-200 p-px cursor-pointer overflow-hidden shrink-0 block"
               title={user?.full_name || user?.username || "Profile"}
             >
-              {user?.avatar ? (
                 <img
-                  src={user.avatar}
-                  alt={user.full_name || user.username}
+                  src={user?.avatar ||  profile}
+                  alt={user?.full_name || user?.username}
                   className="h-full w-full rounded-full object-cover"
                 />
-              ) : (
-                <div className="h-full w-full rounded-full bg-[#09090b] flex items-center justify-center text-xs font-bold text-amber-500">
-                  {fallbackInitial}
-                </div>
-              )}
+            
             </button>
 
             {isProfileMenuOpen && (

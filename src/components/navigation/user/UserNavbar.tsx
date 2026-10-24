@@ -12,6 +12,7 @@ import { useModal } from "@/hooks/useModal";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import profile from "@/assets/profile.png"
 
 interface UserNavbarProps {
   hasUnreadNotifications?: boolean;
@@ -150,7 +151,7 @@ export function UserNavbar({ hasUnreadNotifications = true }: UserNavbarProps) {
             className="h-10 w-10 overflow-hidden rounded-full border-2 border-[#34343A] bg-white/5 hover:border-white/60 cursor-pointer"
           >
             <img
-              src={avatar || "https://placehold.net/avatar.svg"}
+              src={avatar || profile}
               alt="Account"
               className="h-full w-full object-cover"
             />

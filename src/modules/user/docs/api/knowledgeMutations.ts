@@ -1,4 +1,3 @@
-// src/modules/knowledge/api/knowledgeMutations.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type {
@@ -84,16 +83,34 @@ export function useUpdateProjectDocument(
     },
     onError: (error: any) => {
       const status = error?.response?.status;
+      const errorData = error?.response?.data;
+
       if (status === 403) {
         toast.error("You don't have permission to edit the knowledge base.");
       } else if (status === 404) {
         toast.error("Document not found.");
+      } else if (errorData && typeof errorData === "object") {
+        const messages: string[] = [];
+
+        for (const [key, value] of Object.entries(errorData)) {
+          if (Array.isArray(value)) {
+            const formattedKey =
+              key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " ");
+            messages.push(`${formattedKey}: ${value.join(", ")}`);
+          } else if (typeof value === "string") {
+            messages.push(value);
+          }
+        }
+
+        if (messages.length > 0) {
+          toast.error(messages[0]);
+        } else {
+          const fallbackMsg =
+            errorData.error || errorData.detail || "Failed to update document.";
+          toast.error(fallbackMsg);
+        }
       } else {
-        const message =
-          error?.response?.data?.error ||
-          error?.response?.data?.detail ||
-          "Failed to update document.";
-        toast.error(message);
+        toast.error("Failed to update document.");
       }
     },
   });

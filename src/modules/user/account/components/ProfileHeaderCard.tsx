@@ -1,5 +1,6 @@
 import type { ProfileHeaderCardProps } from "../types";
 import { formatMonthYear } from "@/utils/date";
+import profile from "@/assets/profile.png"
 
 export function ProfileHeaderCard({ user }: ProfileHeaderCardProps) {
   return (
@@ -7,7 +8,7 @@ export function ProfileHeaderCard({ user }: ProfileHeaderCardProps) {
       <div className="flex items-center gap-4">
         <div className="h-16 w-16 overflow-hidden rounded-full border border-white/10 bg-white/5">
           <img
-            src={user.avatar || "https://placehold.net/avatar.svg"}
+            src={user.avatar || profile}
             alt={user.full_name}
             referrerPolicy="no-referrer"
             className="h-full w-full object-cover"

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 
+import profile from  "@/assets/profile.png"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,7 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { getSubdomain } from "@/utils/subdomain";
 import { useModal } from "@/hooks/useModal";
 import { AddProjectMemberModal } from "../components/modals/AddProjectMemberModal";
@@ -215,10 +216,7 @@ export function ProjectMembersPage() {
                     >
                       <td className="py-3 px-4">
                         <Avatar className="h-8 w-8 border border-white/10">
-                          <AvatarImage src={member.avatar || ""} />
-                          <AvatarFallback className="bg-[#18181B] text-[10px] text-zinc-300 font-sans font-bold">
-                            {member.full_name?.[0] || "U"}
-                          </AvatarFallback>
+                          <AvatarImage src={member.avatar || profile} />
                         </Avatar>
                       </td>
                       <td className="py-3 px-4 font-semibold text-white">

@@ -88,14 +88,7 @@ export const projectRoutes: RouteObject[] = [
                 path: "general",
                 element: <GeneralSettingsPage />,
               },
-              {
-                path: "github",
-                element: (
-                  <div className="p-4 text-xs text-gray-400">
-                    GitHub Integration (Component)
-                  </div>
-                ),
-              },
+              
               {
                 path: "danger-zone",
                 element: <DangerZoneSection />,

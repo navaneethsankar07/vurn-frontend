@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import {
   UserPlus,
   Search,
-  // MoreHorizontal,
   ShieldAlert,
   Loader2,
   X,
@@ -15,6 +14,7 @@ import { InviteMemberModal } from "../components/modals/InviteMemberModal";
 import { InvitationSuccessModal } from "../components/modals/InvitationSuccessModal";
 import { type CreateInvitationResponse } from "../types";
 import { getSubdomain } from "@/utils/subdomain";
+import profile from "@/assets/profile.png"
 import {
   useOrganizationAccess,
   useOrganizationMembers,
@@ -199,9 +199,7 @@ export function OrganizationMembersPage() {
                   <tr key={member.id} className="hover:bg-white/5">
                     <td className="py-3.5 px-4 font-semibold flex items-center gap-2">
                       <img
-                        src={
-                          member.avatar || "https://placehold.net/avatar.svg"
-                        }
+                        src={member.avatar || profile}
                         alt={member.name}
                         className="h-7 w-7 rounded-full object-cover shrink-0 border border-white/10"
                       />

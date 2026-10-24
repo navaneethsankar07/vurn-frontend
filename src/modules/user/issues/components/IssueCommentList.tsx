@@ -15,6 +15,8 @@ import type { RootState } from "@/app/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useModal } from "@/hooks/useModal";
+import profile from "@/assets/profile.png";
+
 import {
   useCreateIssueComment,
   useDeleteIssueComment,
@@ -224,17 +226,12 @@ export function IssueCommentList({
             <div className="bg-black/50 border border-white/5 p-3 rounded-xs space-y-1.5 transition-colors hover:border-white/10 group">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {comment.author_profile ? (
                     <img
-                      src={comment.author_profile}
+                      src={comment.author_profile? comment.author_profile : profile}
                       alt={comment.author_name}
                       className="h-5 w-5 rounded-full object-cover border border-white/10 shrink-0"
                     />
-                  ) : (
-                    <span className="h-5 w-5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-semibold flex items-center justify-center shrink-0">
-                      {comment.author_name?.[0]?.toUpperCase()}
-                    </span>
-                  )}
+                  
                   <span className="font-semibold text-zinc-200 text-xs font-sans">
                     {comment.author_name}
                   </span>
@@ -409,17 +406,16 @@ export function IssueCommentList({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
                           <CornerDownRight className="h-3 w-3 text-zinc-600 shrink-0" />
-                          {reply.author_profile ? (
-                            <img
-                              src={reply.author_profile}
-                              alt={reply.author_name}
-                              className="h-4 w-4 rounded-full object-cover border border-white/10 shrink-0"
-                            />
-                          ) : (
-                            <span className="h-4 w-4 rounded-full bg-white/5 text-zinc-300 text-[9px] font-semibold flex items-center justify-center shrink-0">
-                              {reply.author_name?.[0]?.toUpperCase() || "U"}
-                            </span>
-                          )}
+                          <img
+                            src={
+                              reply.author_profile
+                                ? reply.author_profile
+                                : profile
+                            }
+                            alt={reply.author_name}
+                            className="h-4 w-4 rounded-full object-cover border border-white/10 shrink-0"
+                          />
+
                           <span className="font-semibold text-zinc-300 text-[11px] font-sans">
                             {reply.author_name}
                           </span>
