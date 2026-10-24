@@ -4,6 +4,7 @@ import { ContinueWorkingSection } from "../components/ContinueWorkingSection";
 import { RecentOrganizationsSection } from "../components/RecentOrganizationsSection";
 import { PendingInvitationsSection } from "../components/PendingInvitationsSection";
 import { HomeRecentActivitySection } from "../components/HomeRecentActivitySection";
+import { HomeEmptyState } from "../components/HomeEmptyState";
 
 export function HomePage() {
   const { data, isLoading, isError } = useDashboardRecentActivity();
@@ -29,20 +30,26 @@ export function HomePage() {
 
   const recentIssues = data?.recent_issues || [];
   const recentOrganizations = data?.recent_organizations || [];
+  const hasNoData =
+    recentIssues.length === 0 && recentOrganizations.length === 0;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-1 py-3 space-y-7 select-none">
-      <div className="space-y-1">
-        <h1 className="text-xl font-bold text-white font-mono">Home</h1>
-        <p className="text-xs text-zinc-400 font-mono">
-          Your personal workspace. Continue where you left off or manage your
-          organizations.
-        </p>
-      </div>
-
-      <ContinueWorkingSection issues={recentIssues} />
-
-      <RecentOrganizationsSection organizations={recentOrganizations} />
+      {hasNoData ? (
+        <HomeEmptyState />
+      ) : (
+        <>
+          <div className="space-y-1">
+            <h1 className="text-xl font-bold text-white font-mono">Home</h1>
+            <p className="text-xs text-zinc-400 font-mono">
+              Your personal workspace. Continue where you left off or manage
+              your organizations.
+            </p>
+          </div>
+          <ContinueWorkingSection issues={recentIssues} />
+          <RecentOrganizationsSection organizations={recentOrganizations} />
+        </>
+      )}
 
       <PendingInvitationsSection />
 
