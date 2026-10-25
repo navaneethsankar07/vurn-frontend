@@ -66,9 +66,6 @@ export function HomeRecentActivitySection() {
                   <IconComp className="h-4 w-4 text-zinc-400 shrink-0 mt-0.5" />
                   <div className="min-w-0">
                     <p className="text-white font-medium truncate">
-                      <span className="font-semibold text-primary">
-                        {activity.actor?.username || "System"}
-                      </span>{" "}
                       <span className="text-zinc-300 font-normal">
                         {activity.description}
                       </span>
