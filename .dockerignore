@@ -1,0 +1,10 @@
+
+.git
+node_modules
+dist
+.vscode
+.idea
+.env
+.env.*
+!.env.example
+certs
