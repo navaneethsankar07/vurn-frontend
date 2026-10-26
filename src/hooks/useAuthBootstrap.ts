@@ -1,9 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useAppDispatch } from "@/app/hooks";
 import {
   finishAuthInitialization,
-  setAccessToken,
   setCredentials,
 } from "@/modules/public/auth/authSlice";
 
@@ -14,8 +13,12 @@ import {
 
 export function useAuthBootstrap() {
   const dispatch = useAppDispatch();
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     let mounted = true;
 
     async function initializeAuth() {
@@ -24,9 +27,7 @@ export function useAuthBootstrap() {
 
         if (!mounted) return;
 
-        dispatch(setAccessToken(refreshResponse.access));
-
-        const userResponse = await getCurrentUser();
+        const userResponse = await getCurrentUser(refreshResponse.access);
 
         if (!mounted) return;
 

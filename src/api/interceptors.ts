@@ -30,7 +30,7 @@ export function setupInterceptors() {
     (config) => {
       const accessToken = store.getState().auth.accessToken;
 
-      if (accessToken) {
+      if (accessToken && !config.headers.Authorization) {
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
 
@@ -44,8 +44,7 @@ export function setupInterceptors() {
 
     async (error: AxiosError) => {
       const originalRequest = error.config as
-        | RetryableRequestConfig
-        | undefined;
+        RetryableRequestConfig | undefined;
 
       if (!originalRequest) {
         return Promise.reject(error);
@@ -53,7 +52,8 @@ export function setupInterceptors() {
 
       if (
         originalRequest.url?.includes("/auth/refresh/") ||
-        originalRequest.url?.includes("/auth/login/") 
+        originalRequest.url?.includes("/auth/login/") ||
+        originalRequest.url?.includes("/auth/google/")
       ) {
         return Promise.reject(error);
       }
@@ -73,9 +73,7 @@ export function setupInterceptors() {
           subscribeToRefresh((newAccessToken) => {
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-            api(originalRequest)
-              .then(resolve)
-              .catch(reject);
+            api(originalRequest).then(resolve).catch(reject);
           });
         });
       }

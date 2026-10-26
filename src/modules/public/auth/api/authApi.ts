@@ -73,8 +73,9 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
   return response.data;
 }
 
-export async function getCurrentUser(): Promise<User> {
-  const response = await api.get<User>("/auth/me/");
+export async function getCurrentUser(token?: string): Promise<User> {
+  const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+  const response = await api.get<User>("/auth/me/", { headers });
 
   return response.data;
 }
