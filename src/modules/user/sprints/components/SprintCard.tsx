@@ -1,0 +1,173 @@
+import { Calendar, Clock, MoreHorizontal, ExternalLink } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { Sprint } from "../types";
+import {
+  calculateSprintProgress,
+  formatSprintDates,
+  formatRelativeTime,
+} from "@/utils/sprintHelpers";
+
+interface SprintCardProps {
+  sprint: Sprint;
+  onOpenSprint?: (sprint: Sprint) => void;
+  onEditSprint?: (sprint: Sprint) => void;
+  onDeleteSprint?: (sprint: Sprint) => void;
+}
+
+export function SprintCard({
+  sprint,
+  onOpenSprint,
+  onEditSprint,
+  onDeleteSprint,
+}: SprintCardProps) {
+  const navigate = useNavigate();
+
+  const progressPercent = calculateSprintProgress(
+    sprint.start_date,
+    sprint.end_date,
+    sprint.status,
+  );
+
+  const getBadgeStyle = (status: Sprint["status"]) => {
+    switch (status) {
+      case "active":
+        return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+      case "completed":
+        return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+      case "planned":
+      default:
+        return "bg-zinc-500/10 text-zinc-400 border-zinc-500/20";
+    }
+  };
+
+  const handleOpenSprint = () => {
+    if (onOpenSprint) {
+      onOpenSprint(sprint);
+    } else if (sprint.id) {
+      navigate(`${sprint.id}`);
+    }
+  };
+
+  const contentToRender = sprint.goal || sprint.description;
+
+  return (
+    <div className="bg-[#09090B] border border-white/10 p-3.5 space-y-3 font-mono hover:border-white/20 transition-all rounded-xs">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <h3 className="text-xs font-bold text-white tracking-tight truncate">
+            {sprint.name}
+          </h3>
+          <span
+            className={`text-[9px] uppercase font-semibold px-1.5 py-0.2 border rounded-xs flex items-center gap-1 shrink-0 ${getBadgeStyle(
+              sprint.status,
+            )}`}
+          >
+            <span className="h-1 w-1 rounded-full bg-current inline-block" />
+            {sprint.status}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="hidden sm:flex items-center gap-3 text-[10px] text-zinc-500">
+            <span className="flex items-center gap-1">
+              <Calendar className="h-3 w-3 text-zinc-500 shrink-0" />
+              {formatSprintDates(sprint.start_date, sprint.end_date)}
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-zinc-500 shrink-0" />
+              {formatRelativeTime(sprint.updated_at)}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 border-l border-white/10 pl-3">
+            <div className="flex items-center gap-3 text-[10px] font-mono">
+              <span className="text-zinc-400">
+                Open:{" "}
+                <strong className="text-white">
+                  {sprint.open_issues_count ?? 0}
+                </strong>
+              </span>
+              <span className="text-zinc-400">
+                Done:{" "}
+                <strong className="text-emerald-400">
+                  {sprint.completed_issues_count ?? 0}
+                </strong>
+              </span>
+              <span className="text-zinc-400">
+                Left:{" "}
+                <strong className="text-amber-400">
+                  {sprint.remaining_issues_count ?? 0}
+                </strong>
+              </span>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className="p-1 text-zinc-400 hover:text-white hover:bg-white/5 transition-colors focus:outline-none rounded-xs border border-transparent hover:border-white/10 shrink-0 cursor-pointer">
+                <MoreHorizontal className="h-3.5 w-3.5" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="bg-[#09090B] border-white/10 text-zinc-200 font-mono text-xs min-w-38 rounded-xs p-1"
+              >
+                <DropdownMenuItem
+                  onClick={handleOpenSprint}
+                  className="cursor-pointer rounded-xs focus:bg-white/10 focus:text-white flex items-center justify-between"
+                >
+                  <span>View Sprint</span>
+                  <ExternalLink className="h-3 w-3 text-zinc-400" />
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onEditSprint?.(sprint)}
+                  className="cursor-pointer rounded-xs focus:bg-white/10 focus:text-white"
+                >
+                  Edit Sprint
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-white/10 my-1" />
+                <DropdownMenuItem
+                  onClick={() => onDeleteSprint?.(sprint)}
+                  className="cursor-pointer rounded-xs text-red-400 focus:bg-red-500/10 focus:text-red-400"
+                >
+                  Delete Sprint
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-white/5">
+        <div className="text-[11px] text-zinc-400 font-sans line-clamp-1 prose prose-invert max-w-none [&_p]:m-0 [&_p]:inline flex-1">
+          {contentToRender ? (
+            <ReactMarkdown>{contentToRender}</ReactMarkdown>
+          ) : (
+            <span className="text-zinc-600 italic">No goal specified.</span>
+          )}
+        </div>
+
+        <div className="w-full sm:w-48 space-y-1 shrink-0">
+          <div className="flex items-center justify-between text-[10px]">
+            <span className="text-zinc-500 uppercase tracking-wider">
+              Progress
+            </span>
+            <span className="text-white font-semibold">{progressPercent}%</span>
+          </div>
+          <div className="w-full bg-zinc-900 h-1 border border-white/5 overflow-hidden rounded-none">
+            <div
+              className="bg-amber-500 h-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

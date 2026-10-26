@@ -1,0 +1,304 @@
+import api from "@/api/axios";
+import type {
+  AddIssueLabelParams,
+  AttachmentListResponse,
+  CommentReactionSummary,
+  CompleteUploadParams,
+  CompleteUploadResponse,
+  CreateCommentParams,
+  CreateCommentResponse,
+  CreateIssueParams,
+  DeleteAttachmentParams,
+  DeleteAttachmentResponse,
+  DeleteCommentParams,
+  DeleteCommentResponse,
+  DeleteIssueParams,
+  DeleteIssueResponse,
+  DeleteReactionResponse,
+  FetchAttachmentsParams,
+  FetchSubtasksParams,
+  GetIssueCommentsParams,
+  InitializeUploadParams,
+  InitializeUploadResponse,
+  IssueDetailParams,
+  IssueDetailResponse,
+  IssueItem,
+  IssueLabel,
+  IssueListParams,
+  IssueListResponse,
+  LabelQueryParams,
+  PaginatedCommentsResponse,
+  ReactionParams,
+  RemoveIssueLabelParams,
+  SetReactionParams,
+  SetReactionResponse,
+  SprintHistoryItem,
+  SubtaskListResponse,
+  UpdateCommentParams,
+  UpdateCommentResponse,
+  UpdateIssueParams,
+} from "../types";
+
+export async function createProjectIssue({
+  subdomain,
+  projectSlug,
+  data,
+}: CreateIssueParams): Promise<IssueItem> {
+  const response = await api.post<IssueItem>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function fetchProjectIssues(
+  subdomain: string,
+  projectSlug: string,
+  params?: IssueListParams,
+): Promise<IssueListResponse> {
+  const response = await api.get<IssueListResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/`,
+    { params },
+  );
+  return response.data;
+}
+
+export async function fetchProjectIssueDetail({
+  subdomain,
+  projectSlug,
+  issueId,
+}: IssueDetailParams): Promise<IssueDetailResponse> {
+  const response = await api.get<IssueDetailResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/`,
+  );
+  return response.data;
+}
+
+export async function updateProjectIssue({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: UpdateIssueParams): Promise<IssueDetailResponse> {
+  const response = await api.patch<IssueDetailResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function fetchIssueSprintHistory(
+  subdomain: string,
+  projectSlug: string,
+  issueId: number | string,
+): Promise<SprintHistoryItem[]> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/sprint-history/`,
+  );
+  return data;
+}
+
+export async function fetchLabelSuggestions(
+  subdomain: string,
+  projectSlug: string,
+  params?: LabelQueryParams,
+): Promise<IssueLabel[]> {
+  const response = await api.get<IssueLabel[]>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/labels/`,
+    { params },
+  );
+  return response.data;
+}
+
+export async function addIssueLabel({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: AddIssueLabelParams): Promise<IssueLabel> {
+  const response = await api.post<IssueLabel>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/labels/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function removeIssueLabel({
+  subdomain,
+  projectSlug,
+  issueId,
+  labelId,
+}: RemoveIssueLabelParams): Promise<void> {
+  await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/labels/${labelId}/`,
+  );
+}
+
+export async function createIssueComment({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: CreateCommentParams): Promise<CreateCommentResponse> {
+  const response = await api.post<CreateCommentResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function fetchIssueComments({
+  subdomain,
+  projectSlug,
+  issueId,
+  page = 1,
+  sort = "newest",
+}: GetIssueCommentsParams): Promise<PaginatedCommentsResponse> {
+  const response = await api.get<PaginatedCommentsResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/`,
+    {
+      params: {
+        page,
+        sort,
+      },
+    },
+  );
+  return response.data;
+}
+
+export async function updateIssueComment({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+  data,
+}: UpdateCommentParams): Promise<UpdateCommentResponse> {
+  const response = await api.patch<UpdateCommentResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteIssueComment({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+}: DeleteCommentParams): Promise<DeleteCommentResponse> {
+  const response = await api.delete<DeleteCommentResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/`,
+  );
+  return response.data;
+}
+
+export async function fetchCommentReactions({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+}: ReactionParams): Promise<CommentReactionSummary> {
+  const response = await api.get<CommentReactionSummary>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reactions/`,
+  );
+  return response.data;
+}
+
+export async function setCommentReaction({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+  data,
+}: SetReactionParams): Promise<SetReactionResponse> {
+  const response = await api.put<SetReactionResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reaction/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteCommentReaction({
+  subdomain,
+  projectSlug,
+  issueId,
+  commentId,
+}: ReactionParams): Promise<DeleteReactionResponse> {
+  const response = await api.delete<DeleteReactionResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/comments/${commentId}/reaction/`,
+  );
+  return response.data;
+}
+
+export async function fetchIssueSubtasks({
+  subdomain,
+  projectSlug,
+  issueId,
+  params,
+}: FetchSubtasksParams): Promise<SubtaskListResponse> {
+  const response = await api.get<SubtaskListResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/subtasks/`,
+    { params },
+  );
+  return response.data;
+}
+
+export async function deleteProjectIssue({
+  subdomain,
+  projectSlug,
+  issueId,
+}: DeleteIssueParams): Promise<DeleteIssueResponse> {
+  const response = await api.delete<DeleteIssueResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/`,
+  );
+  return response.data;
+}
+
+export async function initializeAttachmentUpload({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: InitializeUploadParams): Promise<InitializeUploadResponse> {
+  const response = await api.post<InitializeUploadResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/upload/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function completeAttachmentUpload({
+  subdomain,
+  projectSlug,
+  issueId,
+  data,
+}: CompleteUploadParams): Promise<CompleteUploadResponse> {
+  const response = await api.post<CompleteUploadResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/upload/complete/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function fetchIssueAttachments({
+  subdomain,
+  projectSlug,
+  issueId,
+}: FetchAttachmentsParams): Promise<AttachmentListResponse> {
+  const response = await api.get<AttachmentListResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/`,
+  );
+  return response.data;
+}
+
+export async function deleteIssueAttachment({
+  subdomain,
+  projectSlug,
+  issueId,
+  attachmentId,
+}: DeleteAttachmentParams): Promise<DeleteAttachmentResponse> {
+  const response = await api.delete<DeleteAttachmentResponse>(
+    `/organizations/${subdomain}/projects/${projectSlug}/issues/${issueId}/attachments/${attachmentId}/`,
+  );
+  return response.data;
+}

@@ -1,0 +1,12 @@
+import { z } from "zod";
+
+export const createCommentSchema = z.object({
+  content: z
+    .string()
+    .trim()
+    .min(1, "Comment content cannot be empty.")
+    .max(5000, "Comment cannot exceed 5000 characters."),
+  parent_id: z.number().int().positive().nullable().optional(),
+});
+
+export type CreateCommentFormValues = z.infer<typeof createCommentSchema>;

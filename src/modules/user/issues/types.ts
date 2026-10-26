@@ -1,0 +1,436 @@
+export type WorkItemType = "epic" | "story" | "task" | "bug" | "subtask";
+export type WorkItemPriority = "urgent" | "high" | "medium" | "low";
+
+export interface IssueLabel {
+  id: number;
+  name: string;
+  color: string;
+}
+
+export interface SprintInfo {
+  id: number;
+  name: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+}
+
+export interface IssueItem {
+  id: number;
+  key: string;
+  project_id: number;
+  parent_key: string | null;
+  sprint_id: number | null;
+  status_id: number;
+  status_name: string;
+  assignee_id: number | null;
+  reporter_id: number;
+  issue_number: number;
+  issue_type: WorkItemType;
+  title: string;
+  description: string;
+  priority: WorkItemPriority;
+  story_points: number | null;
+  due_date: string | null;
+  estimated_time: number | null;
+  position: number;
+  created_at: string;
+  updated_at: string;
+  message: string | null;
+}
+
+export interface CreateIssuePayload {
+  issue_type: WorkItemType;
+  title: string;
+  description?: string;
+  parent_id?: number | null;
+  sprint_id?: number | null;
+  status_id?: number;
+  assignee_id?: number | null;
+  priority: WorkItemPriority;
+  story_points?: number | null;
+  due_date?: string | null;
+  estimated_time?: number | null;
+}
+
+export interface CreateIssueParams {
+  subdomain: string;
+  projectSlug: string;
+  data: CreateIssuePayload;
+}
+
+export interface IssueListParams {
+  search?: string;
+  issue_type?: WorkItemType;
+  parent_id?: number | string;
+  epic_id?: number | string;
+  story_id?: number | string;
+  sprint_id?: number | string;
+  assignee_id?: number | string;
+  priority?: WorkItemPriority;
+  status_id?: number | string;
+  due_date?: string;
+  estimated_time?: number;
+  sort?: string;
+  page?: number;
+  page_size?: number;
+}
+
+export interface IssueListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: IssueItem[];
+}
+
+export interface GitHubLinkedIssueRef {
+  id: number;
+  linked_at: string;
+  git_issue: {
+    id: number;
+    external_id: string;
+    issue_number: number;
+    title: string;
+    state: string;
+    author_username: string;
+    url: string;
+    repository_name: string;
+  };
+}
+
+export interface IssueDetailResponse extends IssueItem {
+  sprint: SprintInfo | null;
+  assignee_name?: string | null;
+  reporter_name?: string | null;
+  parent_id?: number | string;
+  sprint_name?: string | null;
+  due_date: string | null;
+  estimated_time: number | null;
+  labels?: IssueLabel[];
+  linked_github_issues?: GitHubLinkedIssueRef[];
+}
+
+export interface UpdateIssuePayload {
+  title?: string;
+  description?: string;
+  parent_id?: number | null;
+  sprint_id?: number | null;
+  status_id?: number;
+  assignee_id?: number | null;
+  priority?: WorkItemPriority;
+  story_points?: number | null;
+  due_date?: string | null;
+  estimated_time?: number | null;
+}
+
+export interface UpdateIssueParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: UpdateIssuePayload;
+}
+
+export interface AddIssueLabelPayload {
+  label_id?: number;
+  name?: string;
+  color?: string;
+}
+
+export interface AddIssueLabelParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: AddIssueLabelPayload;
+}
+
+export interface RemoveIssueLabelParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  labelId: number | string;
+}
+
+export interface LabelQueryParams {
+  search?: string;
+}
+
+export interface IssueDetailParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+}
+export interface CommentReplyItem {
+  id: number;
+  issue_id?: number;
+  parent_id?: number | null;
+  author_id: number;
+  author_profile: string | null;
+  author_name: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommentItem {
+  id: number;
+  issue_id?: number;
+  parent_id?: number | null;
+  author_id: number;
+  author_name: string;
+  author_profile: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  replies?: CommentReplyItem[];
+}
+
+export interface PaginatedCommentsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CommentItem[];
+}
+
+export type CommentSortOption = "newest" | "top" | "oldest";
+
+export interface GetIssueCommentsParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  page?: number;
+  sort?: CommentSortOption;
+}
+
+export interface CreateCommentPayload {
+  content: string;
+  parent_id?: number | null;
+}
+
+export interface CreateCommentParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: CreateCommentPayload;
+}
+
+export interface CreateCommentResponse {
+  message: string;
+  comment: {
+    id: number;
+    issue_id: number;
+    parent_id: number | null;
+    author_profile: string | null;
+    author_id: number;
+    author_name: string;
+    content: string;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+export interface UpdateCommentPayload {
+  content: string;
+}
+
+export interface UpdateCommentParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  commentId: number | string;
+  data: UpdateCommentPayload;
+}
+
+export interface UpdateCommentResponse {
+  id: number;
+  issue_id: number;
+  author_id: number;
+  author_name: string;
+  author_profile?: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  parent_id?: number | null;
+  message: string;
+}
+
+export interface DeleteCommentParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  commentId: number | string;
+}
+
+export interface DeleteCommentResponse {
+  message?: string;
+}
+
+export type CommentReactionType =
+  "heart" | "like" | "laugh" | "celebrate" | "surprised" | "sad";
+
+export interface ReactedUser {
+  id: number;
+  name: string;
+  avatar: string | null;
+}
+
+export interface ReactionDetail {
+  count: number;
+  users: ReactedUser[];
+}
+
+export interface CommentReactionSummary {
+  heart: ReactionDetail;
+  like: ReactionDetail;
+  laugh: ReactionDetail;
+  celebrate: ReactionDetail;
+  surprised: ReactionDetail;
+  sad: ReactionDetail;
+  my_reaction: CommentReactionType | null;
+}
+
+export interface ReactionParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  commentId: number | string;
+}
+
+export interface SetReactionPayload {
+  reaction: CommentReactionType;
+}
+
+export interface SetReactionParams extends ReactionParams {
+  data: SetReactionPayload;
+}
+
+export interface DeleteReactionResponse {
+  message?: string;
+  reaction?: CommentReactionSummary;
+}
+
+export interface SetReactionResponse {
+  message: string;
+  reaction: CommentReactionSummary;
+}
+
+export type SubtaskSortOption =
+  "position" | "created_asc" | "created_desc" | "updated_asc" | "updated_desc";
+
+export interface SubtaskItem extends IssueItem {
+  due_date: string | null;
+  estimated_time: number | null;
+}
+
+export interface SubtaskListParams {
+  search?: string;
+  sort?: SubtaskSortOption;
+  page?: number;
+  page_size?: number;
+}
+
+export interface SubtaskListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SubtaskItem[];
+}
+
+export interface FetchSubtasksParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  params?: SubtaskListParams;
+}
+
+export interface DeleteIssueResponse {
+  message: string;
+}
+
+export interface DeleteIssueParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+}
+
+export interface AttachmentItem {
+  id: number;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  uploaded_by_id: number;
+  uploaded_by_name: string;
+  uploaded_by_avatar?: string | null;
+  created_at: string;
+  download_url: string;
+}
+
+export interface InitializeUploadParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: {
+    file_name: string;
+    file_size: number;
+    mime_type: string;
+  };
+}
+
+export interface InitializeUploadResponse {
+  message: string;
+  upload_url: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  expires_in: number;
+  object_key: string;
+}
+
+export interface CompleteUploadParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  data: {
+    object_key: string;
+  };
+}
+
+export interface CompleteUploadResponse {
+  message: string;
+  attachment?: AttachmentItem;
+}
+
+export interface S3UploadProgressParams {
+  uploadUrl: string;
+  file: File;
+  onProgress?: (progress: number) => void;
+}
+
+export interface AttachmentListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: AttachmentItem[];
+}
+
+export interface FetchAttachmentsParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+}
+
+export interface DeleteAttachmentParams {
+  subdomain: string;
+  projectSlug: string;
+  issueId: number | string;
+  attachmentId: number | string;
+}
+
+export interface DeleteAttachmentResponse {
+  message: string;
+}
+
+export interface SprintHistoryItem {
+  sprint_id: number;
+  sprint_name: string;
+  moved_at: string;
+}

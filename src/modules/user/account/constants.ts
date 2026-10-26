@@ -1,0 +1,4 @@
+export const DANGER_ZONE_CONSTANTS = {
+  CONFIRMATION_PHRASE: "DELETE MY ACCOUNT",
+  OTP_LENGTH: 6,
+} as const;

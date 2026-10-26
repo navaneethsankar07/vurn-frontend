@@ -1,0 +1,77 @@
+import type { RouteObject } from "react-router-dom";
+
+import { PublicLayout } from "@/layouts/PublicLayout";
+
+import { PublicOnlyRoute } from "./guards/PublicOnlyRoute";
+import { passwordResetLoader } from "./guards/PasswordResetRoute";
+
+import SignupPage from "@/modules/public/auth/pages/SignUpPage";
+import LoginPage from "@/modules/public/auth/pages/LoginPage";
+import ForgotPasswordPage from "@/modules/public/auth/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/modules/public/auth/pages/ResetPasswordPage";
+import { LandingPage } from "@/modules/public/landing/pages/LandingPage";
+import { DocumentationPage } from "@/modules/public/docs/pages/DocumentationPage";
+import { FeaturesPage } from "@/modules/public/features/pages/FeaturesPage";
+import { PricingPage } from "@/modules/public/pricing/pages/PricingPage";
+import { TermsPage } from "@/modules/public/terms/pages/TermsPage";
+import { PrivacyPage } from "@/modules/public/privacy/pages/PrivacyPage";
+
+export const PublicRoutes: RouteObject[] = [
+  {
+    element: <PublicOnlyRoute />,
+    children: [
+      {
+        element: <PublicLayout />,
+        children: [
+          {
+            path: "/",
+            element: <LandingPage />,
+          },
+          {
+            path: "/features",
+            element: <FeaturesPage />,
+          },
+          {
+            path: "/pricing",
+            element: <PricingPage />,
+          },
+          {
+            path: "/terms",
+            element: <TermsPage />,
+          },
+          {
+            path: "/privacy",
+            element: <PrivacyPage />,
+          },
+          {
+            path: "/docs",
+            element: <DocumentationPage />,
+          },
+          {
+            path: "/login",
+            element: <LoginPage />,
+          },
+          {
+            path: "/register",
+            element: <SignupPage />,
+          },
+          {
+            path: "/forgot-password",
+            element: <ForgotPasswordPage />,
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    element: <PublicLayout />,
+    children: [
+      {
+        path: "/reset-password",
+        loader: passwordResetLoader,
+        element: <ResetPasswordPage />,
+      },
+    ],
+  },
+];

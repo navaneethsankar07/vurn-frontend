@@ -1,0 +1,234 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import {
+  addIssuesToSprint,
+  completeSprint,
+  createProjectSprint,
+  moveIssueStatus,
+  startProjectSprint,
+  updateIssuePosition,
+  updateProjectSprint,
+} from "./sprintApi";
+import type { CreateSprintInput } from "../schemas/createSprintSchema";
+import type {
+  AddIssuesToSprintRequest,
+  MoveIssueStatusPayload,
+  MoveIssueStatusResponse,
+  StartSprintParams,
+  StartSprintResponse,
+  UpdateIssuePositionPayload,
+  UpdateIssuePositionResponse,
+  UseUpdateProjectSprintParams,
+} from "../types";
+import type { UpdateSprintInput } from "../schemas/updateSprintSchema";
+
+export function useCreateProjectSprint(
+  subdomain: string,
+  projectSlug: string,
+  options?: { onSuccess?: () => void },
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateSprintInput) =>
+      createProjectSprint(subdomain, projectSlug, payload),
+
+    onSuccess: () => {
+      toast.success("Sprint created successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["project-sprints", subdomain, projectSlug],
+      });
+      options?.onSuccess?.();
+    },
+
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to create sprint.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+export function useUpdateProjectSprint({
+  subdomain,
+  projectSlug,
+  sprintId,
+}: UseUpdateProjectSprintParams) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateSprintInput) =>
+      updateProjectSprint(subdomain, projectSlug, sprintId, data),
+    onSuccess: (res) => {
+      toast.success(res.message);
+      queryClient.invalidateQueries({
+        queryKey: ["project-sprints", subdomain, projectSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["sprint-detail", subdomain, projectSlug, sprintId],
+      });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update sprint.";
+      toast.error(errorMessage);
+    },
+  });
+}
+
+export const useStartProjectSprint = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<StartSprintResponse, Error, StartSprintParams>({
+    mutationFn: startProjectSprint,
+    onSuccess: (res, variables) => {
+      toast.success(res.message);
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-sprints",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "sprint-detail",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.sprintId),
+        ],
+      });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to start sprint.";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export function useMoveIssueStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation<MoveIssueStatusResponse, any, MoveIssueStatusPayload>({
+    mutationFn: moveIssueStatus,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "kanban-column-issues",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-issues",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      toast.success(data.message || "Issue status updated.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to move issue.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useUpdateIssuePosition() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    UpdateIssuePositionResponse,
+    any,
+    UpdateIssuePositionPayload
+  >({
+    mutationFn: updateIssuePosition,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "kanban-column-issues",
+          variables.subdomain,
+          variables.projectSlug,
+          variables.status_id,
+        ],
+      });
+      toast.success(data.message || "Issue position updated.");
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "Failed to update issue position.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useCompleteSprint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: completeSprint,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "sprint-detail",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.sprintId),
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-sprints",
+          variables.subdomain,
+          variables.projectSlug,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "sprint-issues",
+          variables.subdomain,
+          variables.projectSlug,
+          String(variables.sprintId),
+        ],
+      });
+      toast.success("Sprint completed successfully.");
+      // window.location.reload();
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error || "Failed to complete sprint.";
+      toast.error(message);
+    },
+  });
+}
+
+export function useAddIssuesToSprint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AddIssuesToSprintRequest) => addIssuesToSprint(data),
+    onSuccess: (res) => {
+      toast.success(res?.message || "Issues added to sprint successfully.");
+      queryClient.invalidateQueries({ queryKey: ["sprint-issues"] });
+      queryClient.invalidateQueries({ queryKey: ["backlog-issues"] });
+    },
+    onError: (err: any) => {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detail ||
+        "Failed to add issues to sprint.";
+      toast.error(msg);
+    },
+  });
+}

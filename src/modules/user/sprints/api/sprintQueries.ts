@@ -1,0 +1,146 @@
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  checkSprintCompletion,
+  fetchBacklogIssues,
+  fetchBoardSprints,
+  fetchColumnIssues,
+  fetchKanbanBoard,
+  fetchProjectSprints,
+  fetchSprintDetail,
+  fetchSprintIssues,
+} from "./sprintApi";
+import type {
+  KanbanColumnIssuesParams,
+  KanbanColumnIssuesResponse,
+  ProjectSprintsQueryParams,
+} from "../types";
+
+export function useProjectSprints(
+  subdomain: string,
+  projectSlug: string,
+  params?: ProjectSprintsQueryParams,
+) {
+  return useQuery({
+    queryKey: ["project-sprints", subdomain, projectSlug, params],
+    queryFn: () => fetchProjectSprints(subdomain, projectSlug, params),
+    enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+export function useSprintDetail(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+) {
+  return useQuery({
+    queryKey: ["sprint-detail", subdomain, projectSlug, sprintId],
+    queryFn: () => fetchSprintDetail(subdomain, projectSlug, sprintId),
+    enabled: Boolean(subdomain && projectSlug && sprintId),
+  });
+}
+
+export function useSprintIssues(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+  page: number = 1,
+) {
+  return useQuery({
+    queryKey: ["sprint-issues", subdomain, projectSlug, String(sprintId), page],
+    queryFn: () => fetchSprintIssues(subdomain, projectSlug, sprintId, page),
+    enabled: Boolean(subdomain && projectSlug && sprintId),
+  });
+}
+
+export function useKanbanBoard(subdomain: string, projectSlug: string) {
+  return useQuery({
+    queryKey: ["kanban-board", subdomain, projectSlug],
+    queryFn: () => fetchKanbanBoard(subdomain, projectSlug),
+    enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+export function useColumnIssues(
+  subdomain: string,
+  projectSlug: string,
+  statusId: number | string,
+  params?: KanbanColumnIssuesParams,
+) {
+  return useInfiniteQuery<KanbanColumnIssuesResponse>({
+    queryKey: [
+      "kanban-column-issues",
+      subdomain,
+      projectSlug,
+      statusId,
+      params,
+    ],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchColumnIssues(subdomain, projectSlug, statusId, {
+        ...params,
+        page: pageParam as number,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.next) return undefined;
+      try {
+        const url = new URL(lastPage.next);
+        const nextPage = url.searchParams.get("page");
+        return nextPage ? Number(nextPage) : undefined;
+      } catch {
+        return undefined;
+      }
+    },
+    enabled: Boolean(subdomain && projectSlug && statusId),
+  });
+}
+
+export function useBoardSprints(subdomain: string, projectSlug: string) {
+  return useQuery({
+    queryKey: ["kanban-board-sprints", subdomain, projectSlug],
+    queryFn: () => fetchBoardSprints(subdomain, projectSlug),
+    enabled: Boolean(subdomain && projectSlug),
+  });
+}
+
+export function useSprintCompletionCheck(
+  subdomain: string,
+  projectSlug: string,
+  sprintId: string | number,
+  enabled: boolean,
+) {
+  return useQuery({
+    queryKey: [
+      "sprint-completion-check",
+      subdomain,
+      projectSlug,
+      String(sprintId),
+    ],
+    queryFn: () => checkSprintCompletion(subdomain, projectSlug, sprintId),
+    enabled: Boolean(subdomain && projectSlug && sprintId && enabled),
+  });
+}
+
+export function useBacklogIssues(
+  subdomain: string,
+  projectSlug: string,
+  isOpen: boolean,
+) {
+  return useInfiniteQuery({
+    queryKey: ["backlog-issues", subdomain, projectSlug],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchBacklogIssues({
+        subdomain,
+        projectSlug,
+        page: pageParam,
+        page_size: 10,
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    enabled: Boolean(subdomain) && Boolean(projectSlug) && isOpen,
+  });
+}

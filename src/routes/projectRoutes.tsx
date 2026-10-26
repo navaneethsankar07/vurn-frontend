@@ -1,0 +1,102 @@
+import { Navigate, type RouteObject } from "react-router-dom";
+import { ProjectsPage } from "@/modules/user/projects/pages/ProjectsPage";
+import { CreateProjectPage } from "@/modules/user/projects/pages/CreateProjectPage";
+import { ProjectLayout } from "@/layouts/ProjectLayout";
+import { ProjectOverviewPage } from "@/modules/user/projects/pages/ProjectOverviewPage";
+import { ProjectSettingsLayout } from "@/modules/user/projects/layout/ProjectSettingsLayout";
+import { GeneralSettingsPage } from "@/modules/user/projects/pages/GeneralSettingsPage";
+import { DangerZoneSection } from "@/modules/user/projects/pages/DangerZonePage";
+import { ProjectMembersPage } from "@/modules/user/projects/pages/ProjectMembersPage";
+import { ProjectWorkflowPage } from "@/modules/user/projects/pages/ProjectWorkflowPage";
+import { ProjectSprintsPage } from "@/modules/user/sprints/pages/ProjectSprintsPage";
+import { SprintDetailPage } from "@/modules/user/sprints/pages/SprintDetailPage";
+import { ProjectKanbanPage } from "@/modules/user/sprints/pages/ProjectKanbanPage";
+import { ProjectIssuesPage } from "@/modules/user/issues/pages/ProjectIssuesPage";
+import { KnowledgePage } from "@/modules/user/docs/pages/KnowledgePage";
+import { ProjectRepositoryPage } from "@/modules/user/integrations/github/pages/ProjectRepositoryPage";
+
+export const projectRoutes: RouteObject[] = [
+  {
+    path: "projects",
+    children: [
+      {
+        index: true,
+        element: <ProjectsPage />,
+      },
+      {
+        path: "create",
+        element: <CreateProjectPage />,
+      },
+      {
+        path: ":projectSlug",
+        element: <ProjectLayout />,
+        children: [
+          {
+            index: true,
+            element: <ProjectOverviewPage />,
+          },
+          {
+            path: "board",
+            element: <ProjectKanbanPage />,
+          },
+          {
+            path: "sprints",
+            children: [
+              {
+                index: true,
+                element: <ProjectSprintsPage />,
+              },
+              {
+                path: ":sprintId",
+                element: <SprintDetailPage />,
+              },
+            ],
+          },
+          {
+            path: "issues",
+            element: <ProjectIssuesPage />,
+          },
+          {
+            path: "docs",
+            element: <KnowledgePage />,
+          },
+          {
+            path: "workflow",
+            element: <ProjectWorkflowPage />,
+          },
+          {
+            path: "repository",
+            element: <ProjectRepositoryPage />,
+          },
+          {
+            path: "repository/:repositoryId",
+            element: <ProjectRepositoryPage />,
+          },
+          {
+            path: "members",
+            element: <ProjectMembersPage />,
+          },
+          {
+            path: "settings",
+            element: <ProjectSettingsLayout />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="general" replace />,
+              },
+              {
+                path: "general",
+                element: <GeneralSettingsPage />,
+              },
+              
+              {
+                path: "danger-zone",
+                element: <DangerZoneSection />,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];

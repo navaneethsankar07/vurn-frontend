@@ -1,0 +1,280 @@
+import api from "@/api/axios";
+import type {
+  CompleteDocumentAttachmentUploadInput,
+  CompleteDocumentAttachmentUploadResponse,
+  CreateDocumentFolderPayload,
+  CreateDocumentFolderResponse,
+  CreateDocumentPayload,
+  CreateDocumentResponse,
+  CreateTagResponse,
+  DeleteDocumentResponse,
+  DocumentAttachment,
+  DocumentDetail,
+  DocumentFoldersQueryParams,
+  DocumentFoldersResponse,
+  DocumentsQueryParams,
+  DocumentsResponse,
+  DocumentTag,
+  InitDocumentAttachmentUploadInput,
+  InitDocumentAttachmentUploadResponse,
+  RemoveTagResponse,
+  TagSuggestionsResponse,
+  UpdateDocumentPayload,
+  UpdateDocumentResponse,
+  UpdateFolderInput,
+} from "../types";
+import type { CreateTagInput } from "../schemas/createTagSchema";
+
+export async function fetchDocumentFolders(
+  subdomain: string,
+  projectSlug: string,
+  params?: DocumentFoldersQueryParams,
+): Promise<DocumentFoldersResponse> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/document-folders/`,
+    { params },
+  );
+  return data;
+}
+
+export async function createDocumentFolder({
+  subdomain,
+  projectSlug,
+  payload,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  payload: CreateDocumentFolderPayload;
+}): Promise<CreateDocumentFolderResponse> {
+  const { data } = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/document-folders/`,
+    payload,
+  );
+  return data;
+}
+
+export async function fetchProjectDocuments(
+  subdomain: string,
+  projectSlug: string,
+  params?: DocumentsQueryParams,
+): Promise<DocumentsResponse> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/`,
+    { params },
+  );
+  return data;
+}
+
+export async function createProjectDocument({
+  subdomain,
+  projectSlug,
+  payload,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  payload: CreateDocumentPayload;
+}): Promise<CreateDocumentResponse> {
+  const { data } = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/`,
+    payload,
+  );
+  return data;
+}
+
+export async function fetchDocumentDetail(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | string,
+): Promise<DocumentDetail> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
+  );
+  return data;
+}
+
+export async function updateProjectDocument({
+  subdomain,
+  projectSlug,
+  documentId,
+  payload,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number | string;
+  payload: UpdateDocumentPayload;
+}): Promise<UpdateDocumentResponse> {
+  const { data } = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
+    payload,
+  );
+  return data;
+}
+
+export async function deleteProjectDocument({
+  subdomain,
+  projectSlug,
+  documentId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number | string;
+}): Promise<DeleteDocumentResponse> {
+  const { data } = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/`,
+  );
+  return data;
+}
+
+export async function updateDocumentFolder({
+  subdomain,
+  projectSlug,
+  folderId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  folderId: number;
+  data: UpdateFolderInput;
+}) {
+  const response = await api.patch(
+    `/organizations/${subdomain}/projects/${projectSlug}/document-folders/${folderId}/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteDocumentFolder({
+  subdomain,
+  projectSlug,
+  folderId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  folderId: number;
+}) {
+  const response = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/document-folders/${folderId}/`,
+  );
+  return response.data;
+}
+
+export async function fetchDocumentTags(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+): Promise<{ count: number; results: DocumentTag[] }> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/`,
+  );
+  return data;
+}
+
+export async function createDocumentTag({
+  subdomain,
+  projectSlug,
+  documentId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  data: CreateTagInput;
+}): Promise<CreateTagResponse> {
+  const response = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function removeDocumentTag({
+  subdomain,
+  projectSlug,
+  documentId,
+  tagId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  tagId: number;
+}): Promise<RemoveTagResponse> {
+  const response = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tags/${tagId}/`,
+  );
+  return response.data;
+}
+
+export async function fetchTagSuggestions(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+): Promise<TagSuggestionsResponse> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/tag-suggestions/`,
+  );
+  return data;
+}
+
+export async function fetchDocumentAttachments(
+  subdomain: string,
+  projectSlug: string,
+  documentId: number | null,
+): Promise<{ count: number; results: DocumentAttachment[] }> {
+  const { data } = await api.get(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/`,
+  );
+  return data;
+}
+
+export async function initDocumentAttachmentUpload({
+  subdomain,
+  projectSlug,
+  documentId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  data: InitDocumentAttachmentUploadInput;
+}): Promise<InitDocumentAttachmentUploadResponse> {
+  const response = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/upload/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function completeDocumentAttachmentUpload({
+  subdomain,
+  projectSlug,
+  documentId,
+  data,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  data: CompleteDocumentAttachmentUploadInput;
+}): Promise<CompleteDocumentAttachmentUploadResponse> {
+  const response = await api.post(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/upload/complete/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteDocumentAttachment({
+  subdomain,
+  projectSlug,
+  documentId,
+  attachmentId,
+}: {
+  subdomain: string;
+  projectSlug: string;
+  documentId: number;
+  attachmentId: number;
+}): Promise<{ message: string }> {
+  const response = await api.delete(
+    `/organizations/${subdomain}/projects/${projectSlug}/documents/${documentId}/attachments/${attachmentId}/`,
+  );
+  return response.data;
+}
